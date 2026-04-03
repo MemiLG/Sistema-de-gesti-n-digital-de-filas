@@ -1,4 +1,4 @@
-package grupo1.sistemagestiondefilas;
+package main;
 
 // main del programa
 public class SistemaGestionDeFilas {
