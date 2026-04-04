@@ -29,6 +29,11 @@ public class IngresoTotem extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jTextField2 = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jTextField3 = new javax.swing.JTextField();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         jLabel1 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
@@ -45,10 +50,52 @@ public class IngresoTotem extends javax.swing.JFrame {
         });
 
         jPanel1.setBackground(new java.awt.Color(245, 228, 200));
-        jPanel1.setAlignmentX(0.5F);
         jPanel1.setMaximumSize(new java.awt.Dimension(0, 0));
         jPanel1.setPreferredSize(new java.awt.Dimension(0, 0));
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
+
+        jPanel3.setBackground(new java.awt.Color(18, 44, 79));
+        jPanel3.setPreferredSize(new java.awt.Dimension(406, 0));
+
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("IP:");
+
+        jTextField2.setBackground(new java.awt.Color(251, 249, 228));
+
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("Puerto:");
+
+        jTextField3.setBackground(new java.awt.Color(251, 249, 228));
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(151, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 12, Short.MAX_VALUE))
+        );
+
+        jLabel2.getAccessibleContext().setAccessibleDescription("");
+
+        jPanel1.add(jPanel3);
         jPanel1.add(filler1);
 
         jLabel1.setFont(new java.awt.Font("Swis721 Lt BT", 0, 18)); // NOI18N
@@ -59,6 +106,7 @@ public class IngresoTotem extends javax.swing.JFrame {
         jPanel1.add(jLabel1);
         jLabel1.getAccessibleContext().setAccessibleName("textoIngreso");
 
+        jTextField1.setBackground(new java.awt.Color(251, 249, 228));
         jTextField1.setFont(new java.awt.Font("Swis721 Lt BT", 0, 12)); // NOI18N
         jTextField1.setText("Ej: 12345678"); // NOI18N
         jTextField1.setMaximumSize(new java.awt.Dimension(200, 30));
@@ -78,7 +126,7 @@ public class IngresoTotem extends javax.swing.JFrame {
         jPanel2.setMaximumSize(new java.awt.Dimension(200, 50));
         jPanel2.setOpaque(false);
 
-        jButton2.setBackground(new java.awt.Color(127, 71, 45));
+        jButton2.setBackground(new java.awt.Color(18, 44, 79));
         jButton2.setFont(new java.awt.Font("Swis721 Lt BT", 0, 12)); // NOI18N
         jButton2.setForeground(new java.awt.Color(245, 228, 200));
         jButton2.setText("Ingresar");
@@ -112,6 +160,26 @@ public class IngresoTotem extends javax.swing.JFrame {
         jLabel1.requestFocus();
     }//GEN-LAST:event_formWindowOpened
 
+    public String getIP() 
+    {
+        return jTextField2.getText().trim();
+    }
+    
+    public String getPuerto()
+    {
+        return jTextField3.getText().trim();
+    }
+    
+    public String getDNI()
+    {
+        return jTextField1.getText().trim();
+    }
+       
+    public javax.swing.JButton getBotonIngresar()
+    {
+        return jButton2;
+    }
+            
     /**
      * @param args the command line arguments
      */
@@ -142,8 +210,14 @@ public class IngresoTotem extends javax.swing.JFrame {
     private javax.swing.Box.Filler filler2;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField3;
     // End of variables declaration//GEN-END:variables
+
 }
