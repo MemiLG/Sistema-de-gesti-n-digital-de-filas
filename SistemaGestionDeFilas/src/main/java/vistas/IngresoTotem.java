@@ -17,6 +17,7 @@ public class IngresoTotem extends javax.swing.JFrame {
      */
     public IngresoTotem() {
         initComponents();
+        this.getBotonIngresar().addActionListener(e -> terminal.TerminalApp.enviarTurno(this));
     }
 
     /**

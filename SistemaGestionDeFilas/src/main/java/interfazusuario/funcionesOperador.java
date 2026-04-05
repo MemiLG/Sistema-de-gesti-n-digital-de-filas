@@ -6,7 +6,7 @@ package interfazusuario;
 import javax.swing.SwingUtilities;
 import vistas.PanelPuestodeOperacion;
 
-public class InterfazApp 
+public class funcionesOperador 
 {
  
    

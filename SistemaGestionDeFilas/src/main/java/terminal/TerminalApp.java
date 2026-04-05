@@ -3,6 +3,9 @@ package terminal;
 
 //Este debe ser el main del cliente, donde haga ingreso del DNI
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -12,19 +15,6 @@ import vistas.IngresoTotem;
 //crea el hilo y envia el dni, puerto e ip para ver si coincide con el puesto de atención
 
 public class TerminalApp {
-    
-    
-    
-    public static void main(String[] args) 
-    {
-        
-        SwingUtilities.invokeLater(() -> {
-            IngresoTotem vistaTotem = new IngresoTotem();
-            vistaTotem.getBotonIngresar().addActionListener(e -> enviarTurno(vistaTotem));
-            vistaTotem.setVisible(true);
-        });
-        
-    }
     
     private static void validacion(IngresoTotem vistaTotem)
     {
@@ -51,7 +41,7 @@ public class TerminalApp {
         
     }
     
-    private static void enviarTurno(IngresoTotem vistaTotem)
+    public static void enviarTurno(IngresoTotem vistaTotem)
     {
         
         validacion(vistaTotem);
@@ -62,20 +52,20 @@ public class TerminalApp {
     
         try {
             //
-            Socket conexion = new Socket(ip,puerto);
-            PrintWriter out = new PrintWriter(conexion.getOutputStream(), true);
+            Socket socket = new Socket(ip,puerto);
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out.println(dni);
+            out.close();
+            socket.close();
             
         } catch (Exception e) {
-                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(vistaTotem,
-                        "No se pudo contactar al operador:\n" + ex.getMessage(), "Error de red",
+                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(vistaTotem,"No se pudo contactar al operador:\n" + e.getMessage(), "Error de red",
                         JOptionPane.ERROR_MESSAGE));
-            }
-        }, "totem-envio").start();
+        }
+    } 
         
-    }
-    
-    
-    
-    
 }
+    
+    
+   
