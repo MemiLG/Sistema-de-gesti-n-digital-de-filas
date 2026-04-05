@@ -7,6 +7,9 @@ public class Socket {
     private String ip;
     private int puerto;
     
+    public Socket(String ip, int puerto)
+    {
     
+    }
     
 }

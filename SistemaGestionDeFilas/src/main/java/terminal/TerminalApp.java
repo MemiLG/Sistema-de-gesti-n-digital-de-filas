@@ -28,7 +28,7 @@ public class TerminalApp {
     private static void validacion(IngresoTotem vistaTotem)
     {
         String dni = vistaTotem.getDNI();
-        int puerto;
+        int puerto = Integer.parseInt(vistaTotem.getPuerto().trim());
         
         if (dni.isBlank()) 
         {
@@ -37,23 +37,15 @@ public class TerminalApp {
             return;
             
         }
-         if (!dni.matches("\\d+")) 
-         {
-            JOptionPane.showMessageDialog(vistaTotem, "El DNI debe contener solo números.", "Formato incorrecto",
-                    JOptionPane.WARNING_MESSAGE);
+        if (!dni.matches("\\d+")) 
+        {
+            JOptionPane.showMessageDialog(vistaTotem, "El DNI debe contener solo números.", "Formato incorrecto", JOptionPane.WARNING_MESSAGE);
             return;
         }
-         
-        try {
-            puerto = Integer.parseInt(vistaTotem.getPuerto().trim());
-            if (puerto < 999 || puerto > 65535) {
-                throw new NumberFormatException();
-            }
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(vistaTotem, "Ingrese un puerto numérico entre 1000 y 65535.", "Puerto inválido",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }  
+        
+        if (puerto < 999 || puerto > 65535)
+
+            JOptionPane.showMessageDialog(vistaTotem, "Ingrese un puerto numérico entre 1000 y 65535.", "Puerto inválido", JOptionPane.ERROR_MESSAGE); 
         
         
     }
@@ -69,8 +61,9 @@ public class TerminalApp {
             
         new Thread(() -> {
         try {
-              String resp = InterfazApp.enviarTurno(host, puerto, dni); // Va al socket o interfazApp ?? 
-// Si fue exitosa la conexión muestra cartel de registro completado
+            //
+            Socket conexion = new Socket(ip,puerto);
+            
               SwingUtilities.invokeLater(() -> mostrarRespuesta(vistaTotem, resp));
         } catch (Exception ex) {
                 SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(vistaTotem,
