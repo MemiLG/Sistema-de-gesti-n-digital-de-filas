@@ -3,6 +3,7 @@ package terminal;
 
 //Este debe ser el main del cliente, donde haga ingreso del DNI
 
+import java.net.Socket;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import vistas.IngresoTotem;
@@ -58,12 +59,14 @@ public class TerminalApp {
         int dni =  Integer.parseInt(vistaTotem.getDNI());
         String ip = vistaTotem.getIP();
         int puerto = Integer.parseInt(vistaTotem.getPuerto().trim());
-            
-        new Thread(() -> {
+    
         try {
             //
             Socket conexion = new Socket(ip,puerto);
-        } catch (Exception ex) {
+            PrintWriter out = new PrintWriter(conexion.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            
+        } catch (Exception e) {
                 SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(vistaTotem,
                         "No se pudo contactar al operador:\n" + ex.getMessage(), "Error de red",
                         JOptionPane.ERROR_MESSAGE));
