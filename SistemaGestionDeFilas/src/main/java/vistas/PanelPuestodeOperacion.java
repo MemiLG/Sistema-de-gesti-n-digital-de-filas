@@ -17,6 +17,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
      */
     public PanelPuestodeOperacion() {
         initComponents();
+        this.getBotonEscuchar().addActionListener(e ->operador.funcionesOperador.iniciarServidor(this));
     }
 
     /**

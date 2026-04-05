@@ -9,8 +9,11 @@ import vistas.PanelPuestodeOperacion;
 public class funcionesOperador 
 {
  
-   
+  iniciarServidor()
+  {
+
+        
     
-    
+  }   
    
 }

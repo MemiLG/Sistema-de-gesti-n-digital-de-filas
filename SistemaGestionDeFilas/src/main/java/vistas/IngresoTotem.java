@@ -108,17 +108,8 @@ public class IngresoTotem extends javax.swing.JFrame {
         jLabel1.getAccessibleContext().setAccessibleName("textoIngreso");
 
         jTextField1.setBackground(new java.awt.Color(251, 249, 228));
-        jTextField1.setFont(new java.awt.Font("Swis721 Lt BT", 0, 12)); // NOI18N
-        jTextField1.setText("Ej: 12345678"); // NOI18N
+        jTextField1.setFont(new java.awt.Font("Swis721 Lt BT", 0, 12)); // NOI18N        
         jTextField1.setMaximumSize(new java.awt.Dimension(200, 30));
-        jTextField1.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                jTextField1FocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextField1FocusLost(evt);
-            }
-        });
         jTextField1.addActionListener(this::jTextField1ActionPerformed);
         jPanel1.add(jTextField1);
         jTextField1.getAccessibleContext().setAccessibleName("ingresoNombre");
@@ -145,18 +136,6 @@ public class IngresoTotem extends javax.swing.JFrame {
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
-
-    private void jTextField1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField1FocusGained
-        if (jTextField1.getText().equals("Ej: 12345678")) {
-            jTextField1.setText("");
-        }
-    }//GEN-LAST:event_jTextField1FocusGained
-
-    private void jTextField1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField1FocusLost
-       if (jTextField1.getText().isEmpty()) {
-            jTextField1.setText("Ej: 12345678");
-        }
-    }//GEN-LAST:event_jTextField1FocusLost
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         jLabel1.requestFocus();
