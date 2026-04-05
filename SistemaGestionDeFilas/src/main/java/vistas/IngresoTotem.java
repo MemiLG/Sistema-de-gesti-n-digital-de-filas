@@ -130,6 +130,7 @@ public class IngresoTotem extends javax.swing.JFrame {
         jButton2.setFont(new java.awt.Font("Swis721 Lt BT", 0, 12)); // NOI18N
         jButton2.setForeground(new java.awt.Color(245, 228, 200));
         jButton2.setText("Ingresar");
+        jButton2.addActionListener(this::jButton2ActionPerformed);
         jPanel2.add(jButton2);
 
         jPanel1.add(jPanel2);
@@ -159,6 +160,11 @@ public class IngresoTotem extends javax.swing.JFrame {
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         jLabel1.requestFocus();
     }//GEN-LAST:event_formWindowOpened
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     public String getIP() 
     {
@@ -203,6 +209,7 @@ public class IngresoTotem extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new IngresoTotem().setVisible(true));
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

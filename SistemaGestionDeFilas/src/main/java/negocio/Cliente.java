@@ -10,4 +10,6 @@ public class Cliente {
     public void setDNI(int dni){
         this.DNI = dni;
     }
+    
+    
 }

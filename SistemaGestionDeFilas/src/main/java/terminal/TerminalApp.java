@@ -63,8 +63,6 @@ public class TerminalApp {
         try {
             //
             Socket conexion = new Socket(ip,puerto);
-            
-              SwingUtilities.invokeLater(() -> mostrarRespuesta(vistaTotem, resp));
         } catch (Exception ex) {
                 SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(vistaTotem,
                         "No se pudo contactar al operador:\n" + ex.getMessage(), "Error de red",

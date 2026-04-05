@@ -176,6 +176,8 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        
+        
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -225,6 +227,8 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new PanelPuestodeOperacion().setVisible(true));
+        
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
