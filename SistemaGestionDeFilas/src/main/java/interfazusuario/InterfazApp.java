@@ -9,5 +9,8 @@ public class InterfazApp
     
     private PanelPuestodeOperacion vistaOperador;
     
+    
+    
+    
    
 }
