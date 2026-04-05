@@ -4,6 +4,9 @@
  */
 package vistas;
 
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
 /**
  *
  * @author emila
@@ -159,6 +162,23 @@ public class PanelMonitordeSala extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
+
+
+
+    public void vizualizarActual(JTextField textfield){
+        int tope = getHistorialSize() - 1;
+        textfield.setText(Integer.toString(tope));
+    }
+
+    public void visualizarHistorial(JTextArea textarea){
+        int cantidad = Math.min(5, getHistorialSize());
+        int tope = getHistorialSize();
+        textarea.setText("");
+        for(int i= tope-2; i>= tope-cantidad; i--){
+            textarea.append(Integer.toString(getPosHistorial(i)));
+        }
+    }
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

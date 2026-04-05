@@ -4,6 +4,9 @@
  */
 package vistas;
 
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
 /**
  *
  * @author emila
@@ -18,6 +21,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
     public PanelPuestodeOperacion() {
         initComponents();
         this.getBotonEscuchar().addActionListener(e ->operador.funcionesOperador.iniciarServidor(this));
+        this.getBotonLlamar().addActionListener(e -> operador.funcionesOperador.llamarSiguiente(this));
     }
 
     /**
@@ -204,6 +208,12 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
     {
         return jButton1;
     }
+
+    public String getDNI()
+    {
+        return jLabel3.getText().trim();
+    }
+
     
     /**
      * @param args the command line arguments
