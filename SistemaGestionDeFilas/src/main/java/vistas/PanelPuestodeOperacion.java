@@ -3,6 +3,7 @@ package vistas;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import negocio.ColaIngreso;
+import interfazusuario.funcionesOperador;
 
 public class PanelPuestodeOperacion extends javax.swing.JFrame {
     
@@ -14,8 +15,9 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
      */
     public PanelPuestodeOperacion() {
         initComponents();
-        this.getBotonEscuchar().addActionListener(e ->operador.funcionesOperador.iniciarServidor(this));
-        this.getBotonLlamar().addActionListener(e -> operador.funcionesOperador.llamarSiguiente(this));
+        funcionesOperador operador = new funcionesOperador();
+        this.getBotonEscuchar().addActionListener(e -> operador.iniciarServidor(this));
+        this.getBotonLlamar().addActionListener(e -> operador.llamarSiguiente(this));
     }
 
     /**
