@@ -8,14 +8,14 @@ import interfazusuario.funcionesOperador;
 public class PanelPuestodeOperacion extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PanelPuestodeOperacion.class.getName());
-    private ColaIngreso colaIng = new ColaIngreso();
+    private funcionesOperador operador;
 
     /**
      * Creates new form PanelPuestodeOperacion
      */
     public PanelPuestodeOperacion() {
         initComponents();
-        funcionesOperador operador = new funcionesOperador();
+        operador = new funcionesOperador();
         this.getBotonEscuchar().addActionListener(e -> operador.iniciarServidor(this));
         this.getBotonLlamar().addActionListener(e -> operador.llamarSiguiente(this));
     }
@@ -210,7 +210,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
     }
 
     public void muestraDni(){
-        jLabel3.setText(Integer.toString(colaIng.getProxIngreso()));
+        jLabel3.setText(Integer.toString(operador.getProxCola()));
     }
     
     /**

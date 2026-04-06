@@ -10,13 +10,17 @@ import java.net.Socket;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import negocio.ColaIngreso;
 
-import negocio.Historial;
 import vistas.PanelPuestodeOperacion;
 
 public class funcionesOperador 
 {
-    private Historial colaIngreso = new Historial();
+    private ColaIngreso colaIng = new ColaIngreso();
+    
+    public int getProxCola(){
+        return colaIng.getProxIngreso();
+    }
  
     public void iniciarServidor(PanelPuestodeOperacion vistaOperador)
     {
