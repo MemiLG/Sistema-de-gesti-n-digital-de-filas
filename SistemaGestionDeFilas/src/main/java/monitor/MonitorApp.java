@@ -1,5 +1,9 @@
 package monitor;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Stack;
 import negocio.Historial;
 import vistas.PanelMonitordeSala;
@@ -38,7 +42,7 @@ public class MonitorApp {
                     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
                     String msg = in.readLine();
-                    vistaMonitor.
+                    historial.IngresoHistorial(Integer.parseInt(msg));
                     socket.close();
                 }
             } 

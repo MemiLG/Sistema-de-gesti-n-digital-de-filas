@@ -35,7 +35,7 @@ public class funcionesOperador
                     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
                     String msg = in.readLine();
-                    colaIngreso.nuevoIngreso(Integer.parseInt(msg));
+                    colaIng.nuevoIngreso(Integer.parseInt(msg));
                     socket.close();
                 }
             } 
