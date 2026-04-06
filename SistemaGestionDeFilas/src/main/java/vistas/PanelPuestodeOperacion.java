@@ -85,7 +85,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         jLabel4.setText("Puerto:");
 
         jTextField2.setBackground(new java.awt.Color(251, 249, 228));
-        jTextField2.setText("jTextPuerto");
+        jTextField2.addActionListener(this::jTextField2ActionPerformed);
 
         jButton2.setBackground(new java.awt.Color(251, 249, 228));
         jButton2.setText("ESCUCHAR");
@@ -187,6 +187,10 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         // Llamar al siguiente cuando se hace clic en el botón
         operador.llamarSiguiente(this);
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField2ActionPerformed
 
     public String getIP()
     {
