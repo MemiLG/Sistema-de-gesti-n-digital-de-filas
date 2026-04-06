@@ -18,6 +18,10 @@ public class funcionesOperador
 {
     private ColaIngreso colaIng = new ColaIngreso();
     
+    public funcionesOperador(){
+        
+    }
+    
     public int getProxCola(){
         return colaIng.getProxIngreso();
     }

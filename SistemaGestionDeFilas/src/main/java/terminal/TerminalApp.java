@@ -14,6 +14,9 @@ import vistas.IngresoTotem;
 
 public class TerminalApp {
     
+    public TerminalApp(){
+    }
+    
     private static boolean validacion(IngresoTotem vistaTotem)
     {
         String dni = vistaTotem.getDNI();

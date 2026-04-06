@@ -1,5 +1,6 @@
 package monitor;
 
+import java.net.InetAddress;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
@@ -11,7 +12,16 @@ import vistas.PanelMonitordeSala;
 //Aca va lo que motraria el monitor de sala
 public class MonitorApp {
     private static final int puerto = 1111;
+    private String IP = "";
     private Historial historial = new Historial();
+    
+    public MonitorApp(){
+        try {
+            IP = InetAddress.getLocalHost().getHostAddress();
+        } catch (Exception e) {
+
+        }
+    }
     
     
     public int getDniPrimero(){

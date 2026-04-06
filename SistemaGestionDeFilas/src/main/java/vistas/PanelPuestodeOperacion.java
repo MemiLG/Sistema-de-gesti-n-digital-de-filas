@@ -1,5 +1,6 @@
 package vistas;
 
+import java.net.InetAddress;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import negocio.ColaIngreso;
@@ -18,6 +19,11 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         operador = new funcionesOperador();
         this.getBotonEscuchar().addActionListener(e -> operador.iniciarServidor(this));
         this.getBotonLlamar().addActionListener(e -> operador.llamarSiguiente(this));
+        try {
+            jTextField1.setText(InetAddress.getLocalHost().getHostAddress());
+        } catch (Exception e) {
+
+        }
     }
 
     /**
