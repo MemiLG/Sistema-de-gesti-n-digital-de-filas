@@ -11,12 +11,12 @@ import java.net.Socket;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import negocio.Cola;
+import negocio.Historial;
 import vistas.PanelPuestodeOperacion;
 
 public class funcionesOperador 
 {
-    private Cola colaIngreso = new Cola();
+    private Historial colaIngreso = new Historial();
  
     public void iniciarServidor(PanelPuestodeOperacion vistaOperador)
     {

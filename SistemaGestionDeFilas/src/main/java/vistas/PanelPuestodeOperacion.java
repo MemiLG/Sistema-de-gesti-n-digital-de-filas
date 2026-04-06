@@ -1,19 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package vistas;
 
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import negocio.ColaIngreso;
 
-/**
- *
- * @author emila
- */
 public class PanelPuestodeOperacion extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PanelPuestodeOperacion.class.getName());
+    private ColaIngreso colaIng = new ColaIngreso();
 
     /**
      * Creates new form PanelPuestodeOperacion
@@ -118,7 +112,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
                     .addComponent(jLabel4)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton2))
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         jPanel6.add(jPanel4);
@@ -132,7 +126,6 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
 
         jLabel3.setFont(new java.awt.Font("Swis721 Lt BT", 0, 24)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("43746278");
         jLabel3.setAlignmentX(0.5F);
         jPanel6.add(jLabel3);
         jPanel6.add(filler2);
@@ -214,6 +207,9 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         return jLabel3.getText().trim();
     }
 
+    public void muestraDni(){
+        jLabel3.setText(Integer.toString(colaIng.getProxIngreso()));
+    }
     
     /**
      * @param args the command line arguments

@@ -4,6 +4,9 @@ package negocio;
 public class Cliente {
     private int DNI;
     
+    public Cliente(){
+    }
+    
     public int getDNI(){
         return this.DNI;
     }

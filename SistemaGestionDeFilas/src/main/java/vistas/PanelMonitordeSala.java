@@ -6,6 +6,7 @@ package vistas;
 
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import negocio.Historial;
 
 /**
  *
@@ -14,7 +15,7 @@ import javax.swing.JTextField;
 public class PanelMonitordeSala extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PanelMonitordeSala.class.getName());
-
+    private Historial historial = new Historial();
     /**
      * Creates new form PanelMonitordeSala
      */
@@ -66,10 +67,10 @@ public class PanelMonitordeSala extends javax.swing.JFrame {
         jTextField1.setBackground(new java.awt.Color(246, 236, 217));
         jTextField1.setFont(new java.awt.Font("Swis721 Lt BT", 0, 36)); // NOI18N
         jTextField1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField1.setText("43746278");
         jTextField1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(127, 71, 45), 2));
         jTextField1.setMaximumSize(new java.awt.Dimension(300, 500));
         jTextField1.setName(""); // NOI18N
+        jTextField1.addActionListener(this::jTextField1ActionPerformed);
         jPanel3.add(jTextField1);
 
         jLabel3.setFont(new java.awt.Font("Swis721 Lt BT", 0, 36)); // NOI18N
@@ -93,7 +94,6 @@ public class PanelMonitordeSala extends javax.swing.JFrame {
         jTextArea1.setColumns(20);
         jTextArea1.setFont(new java.awt.Font("Swis721 Lt BT", 0, 24)); // NOI18N
         jTextArea1.setRows(5);
-        jTextArea1.setText("46758934\n23745637\n15747838\n48743392");
         jTextArea1.setBorder(null);
         jTextArea1.setName(""); // NOI18N
         jPanel4.add(jTextArea1, java.awt.BorderLayout.CENTER);
@@ -159,23 +159,27 @@ public class PanelMonitordeSala extends javax.swing.JFrame {
         jLabel3.requestFocus();
     }//GEN-LAST:event_formWindowOpened
 
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
 
 
 
-    public void vizualizarActual(JTextField textfield){
-        int tope = getHistorialSize() - 1;
-        textfield.setText(Integer.toString(tope));
+    public void vizualizarActual(){
+        int tope = historial.getHistorialSize() - 1;
+        jTextField1.setText(Integer.toString(tope));
     }
 
-    public void visualizarHistorial(JTextArea textarea){
-        int cantidad = Math.min(5, getHistorialSize());
-        int tope = getHistorialSize();
-        textarea.setText("");
+    public void visualizarHistorial(){
+        int cantidad = Math.min(5, historial.getHistorialSize());
+        int tope = historial.getHistorialSize();
+        jTextArea1.setText("");
         for(int i= tope-2; i>= tope-cantidad; i--){
-            textarea.append(Integer.toString(getPosHistorial(i)));
+            jTextArea1.append(Integer.toString(historial.getPosHistorial(i)));
         }
     }
 
