@@ -4,6 +4,7 @@
  */
 package vistas;
 
+import java.util.Stack;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -17,14 +18,15 @@ import negocio.Historial;
 public class PanelMonitordeSala extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PanelMonitordeSala.class.getName());
-    private Historial historial = new Historial();
+    private MonitorApp monitorSala;
+    
     /**
      * Creates new form PanelMonitordeSala
      */
     public PanelMonitordeSala() {
         initComponents();
-        MonitorApp pantalla = new MonitorApp();
-        pantalla.escucha(this);
+        monitorSala = new MonitorApp();
+        monitorSala.escucha(this);
     }
 
     /**
@@ -174,16 +176,14 @@ public class PanelMonitordeSala extends javax.swing.JFrame {
 
 
     public void vizualizarActual(){
-        int tope = historial.getHistorialSize() - 1;
-        jTextField1.setText(Integer.toString(tope));
+       int dniPrimero = monitorSala.getDniPrimero();
+       jTextField1.setText(Integer.toString(dniPrimero));
     }
 
     public void visualizarHistorial(){
-        int cantidad = Math.min(5, historial.getHistorialSize());
-        int tope = historial.getHistorialSize();
-        jTextArea1.setText("");
-        for(int i= tope-2; i>= tope-cantidad; i--){
-            jTextArea1.append(Integer.toString(historial.getPosHistorial(i)));
+        Stack<Integer> historialReducido = monitorSala.getPila4();
+        for (int i = historialReducido.size()-1; i>=0;i--){
+            jTextArea1.append(Integer.toString(historialReducido.get(i)));
         }
     }
 
