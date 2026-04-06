@@ -16,7 +16,7 @@ public class ColaIngreso {
     }
     
     public void nuevoIngreso(int dni){
-        colaIng.add(dni);
+        colaIng.offer(dni);
     }
     
     public int sacarClienteColaIng(){

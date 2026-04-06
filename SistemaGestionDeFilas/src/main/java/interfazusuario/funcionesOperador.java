@@ -48,7 +48,7 @@ public class funcionesOperador
 
         int dni = Integer.parseInt(vistaOperador.getDNI());
         String ip = vistaOperador.getIP();
-        int puerto = Integer.parseInt(vistaOperador.getPuerto().trim());
+        int puerto = 1111;
 
         try {
             Socket socket = new Socket(ip, puerto);

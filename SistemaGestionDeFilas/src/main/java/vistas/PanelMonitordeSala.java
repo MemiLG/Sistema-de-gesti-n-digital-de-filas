@@ -6,6 +6,8 @@ package vistas;
 
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
+import monitor.MonitorApp;
 import negocio.Historial;
 
 /**
@@ -21,6 +23,8 @@ public class PanelMonitordeSala extends javax.swing.JFrame {
      */
     public PanelMonitordeSala() {
         initComponents();
+        MonitorApp pantalla = new MonitorApp();
+        pantalla.escucha(this);
     }
 
     /**
