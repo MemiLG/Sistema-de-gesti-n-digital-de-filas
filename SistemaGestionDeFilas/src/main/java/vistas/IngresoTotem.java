@@ -17,8 +17,7 @@ public class IngresoTotem extends javax.swing.JFrame {
      */
     public IngresoTotem() {
         initComponents();
-        this.getBotonIngresar().addActionListener(e -> terminal.TerminalApp.enviarTurno(this));
-          try {
+        try {
             jTextField2.setText(InetAddress.getLocalHost().getHostAddress());
         } catch (Exception e) {
 
@@ -156,9 +155,23 @@ public class IngresoTotem extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowOpened
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        
+        // Enviar el turno cuando se hace clic en "Ingresar"
+        terminal.TerminalApp.enviarTurno(this);
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jTextField1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField1FocusGained
+        // Limpiar el placeholder cuando el usuario empieza a escribir
+        if (jTextField1.getText().equals("Ej: 12345678")) {
+            jTextField1.setText("");
+        }
+    }//GEN-LAST:event_jTextField1FocusGained
+
+    private void jTextField1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField1FocusLost
+        // Mostrar el placeholder si el campo está vacío
+        if (jTextField1.getText().isEmpty()) {
+            jTextField1.setText("Ej: 12345678");
+        }
+    }//GEN-LAST:event_jTextField1FocusLost
 
     public String getIP() 
     {
@@ -174,7 +187,7 @@ public class IngresoTotem extends javax.swing.JFrame {
     {
         return jTextField1.getText().trim();
     }
-       
+    
     public javax.swing.JButton getBotonIngresar()
     {
         return jButton2;

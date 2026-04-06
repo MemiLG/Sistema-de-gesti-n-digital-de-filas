@@ -17,8 +17,6 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
     public PanelPuestodeOperacion() {
         initComponents();
         operador = new funcionesOperador();
-        this.getBotonEscuchar().addActionListener(e -> operador.iniciarServidor(this));
-        this.getBotonLlamar().addActionListener(e -> operador.llamarSiguiente(this));
         try {
             jTextField1.setText(InetAddress.getLocalHost().getHostAddress());
         } catch (Exception e) {
@@ -181,13 +179,13 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        
-        
+        // Iniciar el servidor al hacer clic en ESCUCHAR
+        operador.iniciarServidor(this);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        // Llamar al siguiente cuando se hace clic en el botón
+        operador.llamarSiguiente(this);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     public String getIP()

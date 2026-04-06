@@ -5,7 +5,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Stack;
+import javax.swing.SwingUtilities;
 import negocio.Historial;
 import vistas.PanelMonitordeSala;
 
@@ -25,23 +25,18 @@ public class MonitorApp {
     
     
     public int getDniPrimero(){
+        if (historial.getHistorialSize() == 0) {
+            return 0;
+        }
         int tope = historial.getHistorialSize() - 1;
         return historial.getPosHistorial(tope);
     }
     
-    public Stack<Integer> getPila4(){
-        int cantidad = Math.min(5, historial.getHistorialSize());
-        int tope = historial.getHistorialSize();
-        Stack<Integer> aux = new Stack<>();
-        for(int i = tope-cantidad; i <= tope - 2; i++){
-            aux.push(historial.getPosHistorial(i));
-        }
-        return aux;
+    public Historial getHistorial() {
+        return this.historial;
     }
 
     public void escucha(PanelMonitordeSala vistaMonitor) {
-
-
         Thread thread = new Thread(() -> {
             try 
             {
@@ -52,7 +47,22 @@ public class MonitorApp {
                     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
                     String msg = in.readLine();
-                    historial.IngresoHistorial(Integer.parseInt(msg));
+                    if (msg != null && !msg.isEmpty()) {
+                        try {
+                            int dni = Integer.parseInt(msg);
+                            historial.IngresoHistorial(dni);
+                            
+                            // Actualizar la interfaz desde el hilo principal de Swing
+                            SwingUtilities.invokeLater(() -> {
+                                vistaMonitor.vizualizarActual();
+                                vistaMonitor.visualizarHistorial();
+                            });
+                            
+                            System.out.println("Monitor recibió DNI: " + dni);
+                        } catch (NumberFormatException e) {
+                            System.err.println("DNI inválido: " + msg);
+                        }
+                    }
                     socket.close();
                 }
             } 
@@ -61,11 +71,7 @@ public class MonitorApp {
                 e.printStackTrace();
             }
         });
+        thread.setDaemon(true);
         thread.start();
-
-
     }
-    
-    
-    
 }

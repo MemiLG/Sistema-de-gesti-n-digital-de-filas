@@ -7,54 +7,107 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import negocio.ColaIngreso;
-
 import vistas.PanelPuestodeOperacion;
 
 public class funcionesOperador 
 {
     private ColaIngreso colaIng = new ColaIngreso();
+    private ServerSocket serverSocket;
+    private boolean escuchando = false;
     
     public funcionesOperador(){
         
     }
     
     public int getProxCola(){
-        return colaIng.getProxIngreso();
+        int res = colaIng.getProxIngreso();
+        return res == 0 ? 0 : res;
     }
  
     public void iniciarServidor(PanelPuestodeOperacion vistaOperador)
     {
-        Thread thread = new Thread(() -> {
-            try 
+        String puertoStr = vistaOperador.getPuerto().trim();
+        
+        // Validar que el puerto no esté vacío
+        if (puertoStr.isEmpty()) {
+            JOptionPane.showMessageDialog(vistaOperador, "Ingrese el puerto.", "Dato faltante", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Validar que sea un número
+        int puerto;
+        try {
+            puerto = Integer.parseInt(puertoStr);
+            if (puerto < 1000 || puerto > 65535) {
+                JOptionPane.showMessageDialog(vistaOperador, "Ingrese un puerto numérico entre 1000 y 65535.", "Puerto inválido", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(vistaOperador, "El puerto debe ser un número.", "Puerto inválido", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Si ya se está escuchando, no hacer nada
+        if (escuchando) {
+            JOptionPane.showMessageDialog(vistaOperador, "Ya se está escuchando en el puerto " + puerto, "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        escuchando = true;
+        Thread thread = new Thread(() -> ejecutarServidor(puerto, vistaOperador));
+        thread.setDaemon(true);
+        thread.start();
+        
+        JOptionPane.showMessageDialog(vistaOperador, "Servidor escuchando en puerto " + puerto, "Conexión", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    private void ejecutarServidor(int puerto, PanelPuestodeOperacion vistaOperador) {
+        try 
+        {
+            serverSocket = new ServerSocket(puerto);
+            while (escuchando) 
             {
-                ServerSocket ssocket = new ServerSocket(Integer.parseInt(vistaOperador.getPuerto()));
-                while (true) 
-                {
-                    Socket socket = ssocket.accept();
-                    PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-                    String msg = in.readLine();
-                    colaIng.nuevoIngreso(Integer.parseInt(msg));
-                    socket.close();
+                Socket socket = serverSocket.accept();
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String msg = in.readLine();
+                
+                if (msg != null && !msg.isEmpty()) {
+                    try {
+                        int dni = Integer.parseInt(msg);
+                        colaIng.nuevoIngreso(dni);
+                        
+                        // Actualizar la interfaz del operador
+                        SwingUtilities.invokeLater(() -> vistaOperador.muestraDni());
+                        
+                        System.out.println("DNI recibido: " + dni);
+                    } catch (NumberFormatException e) {
+                        System.err.println("DNI inválido: " + msg);
+                    }
                 }
-            } 
-            catch (Exception e)
-            {
+                socket.close();
+            }
+        } 
+        catch (Exception e)
+        {
+            if (escuchando) {
                 e.printStackTrace();
             }
-        });
-        thread.start();
+        }
     }
     
     public void llamarSiguiente(PanelPuestodeOperacion vistaOperador)
     {
-
-        int dni = Integer.parseInt(vistaOperador.getDNI());
+        int dni = colaIng.sacarClienteColaIng();
+        
+        if (dni == 0) {
+            JOptionPane.showMessageDialog(vistaOperador, "No hay clientes en la cola.", "Cola vacía", JOptionPane.WARNING_MESSAGE);
+            vistaOperador.muestraDni();
+            return;
+        }
+        
         String ip = vistaOperador.getIP();
         int puerto = 1111;
 
@@ -65,11 +118,12 @@ public class funcionesOperador
             out.close();
             socket.close();
             
+            // Actualizar el operador con el siguiente
+            SwingUtilities.invokeLater(() -> vistaOperador.muestraDni());
             
         } catch (Exception e) {
-            
+            JOptionPane.showMessageDialog(vistaOperador, "No se pudo contactar al monitor:\n" + e.getMessage(), "Error de red", JOptionPane.ERROR_MESSAGE);
         }
-    
     }
 
 }
