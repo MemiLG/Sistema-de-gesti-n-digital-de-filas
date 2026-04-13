@@ -5,29 +5,26 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class ColaIngreso {
-    private final Queue<Integer> colaIng;
+    private final Queue<Cliente> colaIng;
     
     public ColaIngreso(){
         colaIng = new LinkedList<>();
     }
     
-    public Queue<Integer> getColaIng (){
+    public Queue<Cliente> getColaIng (){
         return this.colaIng;
     }
     
-    public void nuevoIngreso(int dni){
-        colaIng.offer(dni);
+    public void nuevoIngreso(Cliente cliente){
+        colaIng.offer(cliente);
     }
     
-    public int sacarClienteColaIng(){
-        Integer elem = colaIng.poll();
-        if (elem == null){
-            elem = 0;
-        }
+    public Cliente sacarClienteColaIng(){ //puede tirar null
+        Cliente elem = colaIng.poll();
         return elem;
     }
     
-    public int getProxIngreso(){
+    public Cliente getProxIngreso(){
         return colaIng.peek();
     }
 }
