@@ -4,17 +4,17 @@ package negocio;
 import java.util.Stack;
 
 public class Historial {
-    private final Stack<Integer> historial;
+    private final Stack<Cliente> historial;
     
     public Historial(){
         historial = new Stack<>();
     }
 
-    public Stack<Integer> getHistorial (){
+    public Stack<Cliente> getHistorial (){
         return this.historial;
     }
 
-    public int getPosHistorial(int pos){
+    public Cliente getPosHistorial(int pos){
         return historial.get(pos);
     }
 
@@ -22,7 +22,7 @@ public class Historial {
         return historial.size();
     }
 
-    public void IngresoHistorial(int dni){
-        historial.push(dni);
+    public void IngresoHistorial(Cliente nuevoCliente){
+        historial.push(nuevoCliente);
     }
 }
