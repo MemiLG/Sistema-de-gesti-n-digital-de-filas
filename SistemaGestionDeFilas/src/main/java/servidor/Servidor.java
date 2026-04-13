@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import negocio.ColaIngreso;
 import negocio.Historial;
+
 public class Servidor {
     private ColaIngreso colaIng;
     private Historial historial;
