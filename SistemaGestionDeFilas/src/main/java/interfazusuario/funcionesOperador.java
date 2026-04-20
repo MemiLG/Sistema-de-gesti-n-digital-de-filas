@@ -9,6 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import negocio.Cliente;
 import negocio.ColaIngreso;
 import vistas.PanelPuestodeOperacion;
 
@@ -22,9 +23,9 @@ public class funcionesOperador
         
     }
     
-    public int getProxCola(){
-        int res = colaIng.getProxIngreso();
-        return res == 0 ? 0 : res;
+    public Cliente getProxCola(){ //puede retornar null --> validar en la otra funcion que se comunica con esta
+        Cliente res = colaIng.getProxIngreso();
+        return res;
     }
  
     public void iniciarServidor(PanelPuestodeOperacion vistaOperador)
@@ -100,9 +101,9 @@ public class funcionesOperador
     
     public void llamarSiguiente(PanelPuestodeOperacion vistaOperador)
     {
-        int dni = colaIng.sacarClienteColaIng();
+        Cliente proxCliente = colaIng.sacarClienteColaIng();
         
-        if (dni == 0) {
+        if (proxCliente == null) {
             JOptionPane.showMessageDialog(vistaOperador, "No hay clientes en la cola.", "Cola vacía", JOptionPane.WARNING_MESSAGE);
             vistaOperador.muestraDni();
             return;
@@ -114,7 +115,7 @@ public class funcionesOperador
         try {
             Socket socket = new Socket(ip, puerto);
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            out.println(dni);
+            out.println(proxCliente.getDNI());
             out.close();
             socket.close();
             

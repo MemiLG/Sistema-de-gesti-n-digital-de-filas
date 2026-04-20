@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import javax.swing.SwingUtilities;
+import negocio.Cliente;
 import negocio.Historial;
 import vistas.PanelMonitordeSala;
 
@@ -24,9 +25,9 @@ public class MonitorApp {
     }
     
     
-    public int getDniPrimero(){
+    public Cliente getClientePrimero(){
         if (historial.getHistorialSize() == 0) {
-            return 0;
+            return null;
         }
         int tope = historial.getHistorialSize() - 1;
         return historial.getPosHistorial(tope);

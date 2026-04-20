@@ -15,8 +15,9 @@ public class ColaIngreso {
         return this.colaIng;
     }
     
-    public void nuevoIngreso(Cliente cliente){
-        colaIng.offer(cliente);
+    public void nuevoIngreso(int dni){
+        Cliente clienteNuevo = new Cliente(dni);
+        colaIng.offer(clienteNuevo);
     }
     
     public Cliente sacarClienteColaIng(){ //puede tirar null

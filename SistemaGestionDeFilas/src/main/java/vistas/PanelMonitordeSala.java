@@ -9,6 +9,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import monitor.MonitorApp;
+import negocio.Cliente;
 import negocio.Historial;
 
 /**
@@ -176,9 +177,9 @@ public class PanelMonitordeSala extends javax.swing.JFrame {
 
 
     public void vizualizarActual(){
-       int dniPrimero = monitorSala.getDniPrimero();
-       if (dniPrimero > 0) {
-           jTextField1.setText(Integer.toString(dniPrimero));
+       Cliente primerCliente = monitorSala.getClientePrimero();
+       if (primerCliente != null) {
+           jTextField1.setText(Integer.toString(primerCliente.getDNI()));
        } else {
            jTextField1.setText("---");
        }
