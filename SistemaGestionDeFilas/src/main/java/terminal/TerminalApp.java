@@ -83,8 +83,8 @@ public class TerminalApp {
     
         try {
             Socket socket = new Socket(ip, puerto);
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            out.println(dni);
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true); // Objeto que permite enviar texto a traves del socket
+            out.println(dni); // Envía el DNI
             out.close();
             socket.close();
             
