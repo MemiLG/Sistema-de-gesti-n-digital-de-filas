@@ -1,4 +1,4 @@
-package interfazusuario;
+package puestoAtencion;
 
 //Aca va el main del puesto de atencion para llamar al siguiente
 

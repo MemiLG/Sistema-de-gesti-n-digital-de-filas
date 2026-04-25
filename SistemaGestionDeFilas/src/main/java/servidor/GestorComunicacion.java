@@ -9,13 +9,13 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class ManejadorAplicacion implements Runnable {
+public class GestorComunicacion implements Runnable {
     
     private Socket socket;
     private Thread t;
     private String rol;
     
-    public ManejadorAplicacion(Socket socket){
+    public GestorComunicacion(Socket socket){
         this.socket = socket;
         this.t = new Thread();
         t.start();
@@ -28,7 +28,7 @@ public class ManejadorAplicacion implements Runnable {
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             
         } catch (IOException ex) {
-            System.getLogger(ManejadorAplicacion.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            System.getLogger(GestorComunicacion.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
     }
     

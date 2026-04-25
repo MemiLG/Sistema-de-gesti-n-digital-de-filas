@@ -16,9 +16,9 @@ public class Servidor {
     private boolean escuchando = false;
     private String ip = "";
     private int puerto;
-    private ArrayList<ManejadorAplicacion> puestosAtencion; //punteros a los diferentes puestos de atencion concurrentes que se están comunicando 
-    private ArrayList<ManejadorAplicacion> terminales; //punteros a los diferentes puestos de registro (terminales) concurrentes que se están comunicando
-    private ManejadorAplicacion monitor; //puntero a la comunicacion con el monitor
+    private ArrayList<GestorComunicacion> puestosAtencion; //punteros a los diferentes puestos de atencion concurrentes que se están comunicando 
+    private ArrayList<GestorComunicacion> terminales; //punteros a los diferentes puestos de registro (terminales) concurrentes que se están comunicando
+    private GestorComunicacion monitor; //puntero a la comunicacion con el monitor
     
     public Servidor(){
         colaIng = new ColaIngreso();

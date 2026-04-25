@@ -4,7 +4,7 @@ import java.net.InetAddress;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import negocio.ColaIngreso;
-import interfazusuario.funcionesOperador;
+import puestoAtencion.funcionesOperador;
 import java.awt.Dimension;
 
 public class PanelPuestodeOperacion extends javax.swing.JFrame {
