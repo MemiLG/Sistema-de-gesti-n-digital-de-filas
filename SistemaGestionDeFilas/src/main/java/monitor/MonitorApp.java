@@ -1,8 +1,8 @@
-package monitor;
+spackage monitor;
 
 import java.net.InetAddress;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.InputStreamReader;s
 import java.net.ServerSocket;
 import java.net.Socket;
 import javax.swing.SwingUtilities;

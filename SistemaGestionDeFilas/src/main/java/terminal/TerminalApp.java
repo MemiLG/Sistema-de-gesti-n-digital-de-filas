@@ -27,6 +27,18 @@ public class TerminalApp {
             JOptionPane.showMessageDialog(vistaTotem, "Ingrese su DNI.", "Dato faltante", JOptionPane.WARNING_MESSAGE);
             return false;
         }
+        
+        if (dni.length() != 8 )
+        {
+            JOptionPane.showMessageDialog(vistaTotem, "El DNI debe tener exactamente 8 dígitos.", "Formato incorrecto", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        
+        if (dni.equals("Ej: 12345678"))
+        {
+            JOptionPane.showMessageDialog(vistaTotem, "Por favor, ingrese su DNI.", "Campo vacío", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
         if (!dni.matches("\\d+")) 
         {
             JOptionPane.showMessageDialog(vistaTotem, "El DNI debe contener solo números.", "Formato incorrecto", JOptionPane.WARNING_MESSAGE);
