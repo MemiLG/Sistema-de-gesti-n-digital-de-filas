@@ -22,6 +22,8 @@ public class IngresoTotem extends javax.swing.JFrame {
         } catch (Exception e) {
 
         }
+        //Inicia la conexión al servidor al abrir la ventana
+        terminal.TerminalApp.iniciaConexion(); 
     }
 
     /**
@@ -142,7 +144,7 @@ public class IngresoTotem extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jTextField1FocusLost
 
-    public String getIP() 
+    /**public String getIP() 
     {
         return jTextField2.getText().trim();
     }
@@ -151,7 +153,7 @@ public class IngresoTotem extends javax.swing.JFrame {
     {
         return jTextField3.getText().trim();
     }
-    
+    **/
     public String getDNI()
     {
         return jTextField1.getText().trim();
@@ -185,6 +187,7 @@ public class IngresoTotem extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new IngresoTotem().setVisible(true));
+        
         
     }
 

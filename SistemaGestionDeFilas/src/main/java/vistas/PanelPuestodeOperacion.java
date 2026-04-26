@@ -19,11 +19,6 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         initComponents();
         
         operador = new funcionesOperador();
-        try {
-            jTextField1.setText(InetAddress.getLocalHost().getHostAddress());
-        } catch (Exception e) {
-
-        }
     }
 
     /**
@@ -139,7 +134,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         jButton2.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 18)); // NOI18N
         jButton2.setForeground(new java.awt.Color(245, 240, 233));
         jButton2.setBorderPainted(false);
-        jButton2.setLabel("Rellamar");
+        jButton2.setLabel("Renotificar");
         jButton2.addActionListener(this::jButton2ActionPerformed);
 
         jLabel5.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 14)); // NOI18N
@@ -274,17 +269,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField3ActionPerformed
 
-    public String getIP()
-    {
-        return jTextField1.getText().trim();
-    }
-    
-    public String getPuerto()
-    {
-        return jTextField2.getText().trim();
-    }
-    
-    public javax.swing.JButton getBotonEscuchar()
+    public javax.swing.JTextField getBotonRenotificacion()
     {
         return jButton2;
     }
