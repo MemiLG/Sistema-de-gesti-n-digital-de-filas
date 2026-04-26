@@ -12,15 +12,20 @@ import vistas.IngresoTotem;
 
 public class TerminalApp {
 
-    private String IP;
-    private int puerto=1234;
-    private int nroTerminal;
-    private java.net.Socket socket;
-    private PrintWriter out;
+    private static String IP;
+    private static final int puerto=1234;
+    private static java.net.Socket socket;
+    private static PrintWriter out;
 
     
     public TerminalApp()
     {
+        
+        try {
+            IP = InetAddress.getLocalHost().getHostAddress();
+        } catch (Exception e) {
+
+        }
 
     }
     
@@ -59,7 +64,7 @@ public class TerminalApp {
 
         try {
 
-            socket = new java.net.Socket(ip, puerto);
+            socket = new java.net.Socket(IP, puerto);
             out = new PrintWriter(socket.getOutputStream(), true);
             out.println("TERMINAL"); // Envía terminal para identificarse en el servidor 
         } catch (Exception e) {

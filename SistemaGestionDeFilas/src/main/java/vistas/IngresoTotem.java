@@ -17,11 +17,6 @@ public class IngresoTotem extends javax.swing.JFrame {
      */
     public IngresoTotem() {
         initComponents();
-        try {
-            jTextField2.setText(InetAddress.getLocalHost().getHostAddress());
-        } catch (Exception e) {
-
-        }
         //Inicia la conexión al servidor al abrir la ventana
         terminal.TerminalApp.iniciaConexion(); 
     }

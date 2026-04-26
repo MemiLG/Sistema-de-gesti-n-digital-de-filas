@@ -5,6 +5,7 @@ package puestoAtencion;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import javax.swing.JOptionPane;
@@ -15,116 +16,92 @@ import vistas.PanelPuestodeOperacion;
 
 public class funcionesOperador 
 {
-    private ColaIngreso colaIng = new ColaIngreso();
     private ServerSocket serverSocket;
-    private boolean escuchando = false;
-    
-    public funcionesOperador(){
-        
-    }
-    
-    public Cliente getProxCola(){ //puede retornar null --> validar en la otra funcion que se comunica con esta
-        Cliente res = colaIng.getProxIngreso();
-        return res;
-    }
- 
-    public void iniciarServidor(PanelPuestodeOperacion vistaOperador)
+    private String IP;
+    private static final int puertoEnvio=1234;
+    private static final int puertoRecepcion=1235;
+    private static java.net.Socket socket;
+    private static PrintWriter out;
+    String mensaje;
+    int estadoCliente = 0;
+
+    public funcionesOperador()
     {
-        String puertoStr = vistaOperador.getPuerto().trim();
-        
-        // Validar que el puerto no esté vacío
-        if (puertoStr.isEmpty()) {
-            JOptionPane.showMessageDialog(vistaOperador, "Ingrese el puerto.", "Dato faltante", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        // Validar que sea un número
-        int puerto;
-        try {
-            puerto = Integer.parseInt(puertoStr);
-            if (puerto < 1000 || puerto > 65535) {
-                JOptionPane.showMessageDialog(vistaOperador, "Ingrese un puerto numérico entre 1000 y 65535.", "Puerto inválido", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(vistaOperador, "El puerto debe ser un número.", "Puerto inválido", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        
-        // Si ya se está escuchando, no hacer nada
-        if (escuchando) {
-            JOptionPane.showMessageDialog(vistaOperador, "Ya se está escuchando en el puerto " + puerto, "Advertencia", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        escuchando = true;
-        Thread thread = new Thread(() -> ejecutarServidor(puerto, vistaOperador));
-        thread.setDaemon(true);
-        thread.start();
-        
-        JOptionPane.showMessageDialog(vistaOperador, "Servidor escuchando en puerto " + puerto, "Conexión", JOptionPane.INFORMATION_MESSAGE);
-    }
-    
-    private void ejecutarServidor(int puerto, PanelPuestodeOperacion vistaOperador) {
-        try 
-        {
-            serverSocket = new ServerSocket(puerto);
-            while (escuchando) 
-            {
-                Socket socket = serverSocket.accept();
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                String msg = in.readLine();
-                
-                if (msg != null && !msg.isEmpty()) {
-                    try {
-                        int dni = Integer.parseInt(msg);
-                        colaIng.nuevoIngreso(dni);
-                        
-                        // Actualizar la interfaz del operador
-                        SwingUtilities.invokeLater(() -> vistaOperador.muestraDni());
-                        
-                        System.out.println("DNI recibido: " + dni);
-                    } catch (NumberFormatException e) {
-                        System.err.println("DNI inválido: " + msg);
-                    }
-                }
-                socket.close();
-            }
-        } 
-        catch (Exception e)
-        {
-            if (escuchando) {
-                e.printStackTrace();
-            }
-        }
-    }
-    
-    public void llamarSiguiente(PanelPuestodeOperacion vistaOperador)
-    {
-        Cliente proxCliente = colaIng.sacarClienteColaIng();
-        
-        if (proxCliente == null) {
-            JOptionPane.showMessageDialog(vistaOperador, "No hay clientes en la cola.", "Cola vacía", JOptionPane.WARNING_MESSAGE);
-            vistaOperador.muestraDni();
-            return;
-        }
-        
-        String ip = vistaOperador.getIP();
-        int puerto = 1111;
 
         try {
-            Socket socket = new Socket(ip, puerto);
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            out.println(proxCliente.getDNI());
-            out.close();
-            socket.close();
-            
-            // Actualizar el operador con el siguiente
-            SwingUtilities.invokeLater(() -> vistaOperador.muestraDni());
-            
+            IP = InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(vistaOperador, "No se pudo contactar al monitor:\n" + e.getMessage(), "Error de red", JOptionPane.ERROR_MESSAGE);
+
+        }
+        
+    }
+
+    public String getDNI()
+    {
+        return mensaje;
+    }
+
+    // Inicia la conexión del socket de envio 
+    public void iniciaConexion(PanelPuestodeOperacion vistaOperador)
+    {
+        
+        try {
+            socket = new java.net.Socket(IP, puertoEnvio);
+            out = new PrintWriter(socket.getOutputStream(), true);
+            out.println("OPERADOR"); // Envía operador para identificarse en el servidor 
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(vistaOperador, "No se pudo conectar al servidor:\n" + e.getMessage(), "Error de conexión", JOptionPane.ERROR_MESSAGE);
+        }
+
+    }
+
+    public void llamarSiguiente()
+    {
+        out.println("LLAMAR_NUEVO_CLIENTE");
+        estadoCliente = 1;
+    }
+
+    public void renotificarCliente()
+    {
+        out.println("RENOVAR_NOTIFICACION");
+    }
+
+    // Cierra la conexión del socket de envio al finalizar el puesto de atención
+    public void cerrarEnvio() {
+        try {
+            socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+
+    // Inicia la conexion para recibir el mensaje del servidor 
+    public void inicioRecepcion()
+    {
+        try{
+
+            serverSocket = new ServerSocket(puertoRecepcion);
+            Socket clientSocket = serverSocket.accept();
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            mensaje = in.readLine();
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+        
+    }
+
+    //Cierra la conexión del socket de recepción al finalizar el puesto de atención
+    public void cerrarRecepcion() 
+    {
+        try {
+
+            if (serverSocket != null) serverSocket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+    }
+
 
 }
