@@ -68,7 +68,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         jPanel2.setLayout(new java.awt.GridLayout(0, 1));
 
         jPanel3.setOpaque(false);
-        jPanel3.setLayout(new java.awt.GridLayout());
+        jPanel3.setLayout(new java.awt.GridLayout(1, 0));
 
         jPanel6.setOpaque(false);
         jPanel6.setPreferredSize(new java.awt.Dimension(200, 53));
@@ -121,7 +121,6 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         jButton1.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 18)); // NOI18N
         jButton1.setForeground(new java.awt.Color(245, 240, 233));
         jButton1.setText("Siguiente");
-        jButton1.setActionCommand("Siguiente");
         jButton1.setAlignmentX(5.0F);
         jButton1.setAlignmentY(5.0F);
         jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -133,8 +132,8 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         jButton2.setBackground(new java.awt.Color(91, 136, 178));
         jButton2.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 18)); // NOI18N
         jButton2.setForeground(new java.awt.Color(245, 240, 233));
+        jButton2.setText("Volver a llamar ");
         jButton2.setBorderPainted(false);
-        jButton2.setLabel("Renotificar");
         jButton2.addActionListener(this::jButton2ActionPerformed);
 
         jLabel5.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 14)); // NOI18N
@@ -152,16 +151,16 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap(93, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(93, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
