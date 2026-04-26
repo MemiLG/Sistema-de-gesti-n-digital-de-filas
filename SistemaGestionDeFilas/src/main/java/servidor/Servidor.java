@@ -2,6 +2,9 @@
 package servidor;
 //Aca van a estar las colas. Todos los componentes tienen que comunicarse con el servidor para tener la info que quieren
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -16,15 +19,19 @@ public class Servidor {
     private boolean escuchando = false;
     private String ip = "";
     private int puerto;
-    private ArrayList<GestorComunicacion> puestosAtencion; //punteros a los diferentes puestos de atencion concurrentes que se están comunicando 
-    private ArrayList<GestorComunicacion> terminales; //punteros a los diferentes puestos de registro (terminales) concurrentes que se están comunicando
-    private GestorComunicacion monitor; //puntero a la comunicacion con el monitor
+    private ArrayList<GestorComunicacion> puestosAtencion; //referencias a los diferentes puestos de atencion concurrentes que se están comunicando 
+    private ArrayList<GestorComunicacion> terminales; //referencias a los diferentes puestos de registro (terminales) concurrentes que se están comunicando
+    private GestorComunicacion monitor; //referencias a la comunicacion con el monitor
+    private PrintWriter out;
+    private BufferedReader in;
     
     public Servidor(){
         colaIng = new ColaIngreso();
         historial = new Historial();
         try {
             ip = InetAddress.getLocalHost().getHostAddress();
+            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.out = new PrintWriter(socket.getOutputStream(), true);
         } catch (Exception e) {
 
         }
