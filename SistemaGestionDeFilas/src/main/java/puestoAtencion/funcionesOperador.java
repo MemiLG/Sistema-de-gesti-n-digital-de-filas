@@ -10,7 +10,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import negocio.Cliente;
 import negocio.ColaIngreso;
 import vistas.PanelPuestodeOperacion;
 
@@ -24,10 +23,17 @@ public class funcionesOperador
     private static PrintWriter out;
     String mensaje;
     int estadoCliente = 0;
+    
+    // Control de reintentos y timer
+    private int intentosRenotificacion = 0;
+    private int dniActual = 0;
+    private Thread timerThread;
+    private boolean timerActivo = false;
+    private PanelPuestodeOperacion vistaOperador;
 
-    public funcionesOperador()
+    public funcionesOperador(PanelPuestodeOperacion vista)
     {
-
+        this.vistaOperador = vista;
         try {
             IP = InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {
@@ -59,11 +65,46 @@ public class funcionesOperador
     {
         out.println("LLAMAR_NUEVO_CLIENTE");
         estadoCliente = 1;
+        
+        // Reiniciar contador de intentos para nuevo cliente
+        intentosRenotificacion = 0;
+        dniActual = Integer.parseInt(mensaje);
+        
+        // Actualizar vista
+        SwingUtilities.invokeLater(() -> {
+            vistaOperador.actualizarContador(intentosRenotificacion);
+            vistaOperador.iniciarTimer(30);
+        });
     }
 
     public void renotificarCliente()
     {
+        // Verificar que no haya excedido intentos
+        if (intentosRenotificacion >= 3) {
+            JOptionPane.showMessageDialog(vistaOperador, 
+                "Ya se alcanzó el máximo de 3 llamadas para este cliente.",
+                "Límite alcanzado", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
         out.println("RENOVAR_NOTIFICACION");
+        estadoCliente += 1;
+        
+        // Incrementar intento de renotificación
+        intentosRenotificacion++;
+        
+        // Actualizar vista
+        SwingUtilities.invokeLater(() -> {
+            vistaOperador.actualizarContador(intentosRenotificacion);
+            
+            // Si llegó a 3 intentos, desactivar botón volver a llamar
+            if (intentosRenotificacion >= 3) {
+                vistaOperador.desactivarBotonRenotar();
+            }
+            
+            // Bloquear ambos botones por 30 segundos
+            vistaOperador.iniciarTimer(30);
+        });
     }
 
     // Cierra la conexión del socket de envio al finalizar el puesto de atención
@@ -79,11 +120,14 @@ public class funcionesOperador
     public void inicioRecepcion()
     {
         try{
-
-            serverSocket = new ServerSocket(puertoRecepcion);
-            Socket clientSocket = serverSocket.accept();
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            mensaje = in.readLine();
+            while(true)
+            {
+                serverSocket = new ServerSocket(puertoRecepcion);
+                Socket clientSocket = serverSocket.accept();
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                mensaje = in.readLine();
+            }
+            
         } catch (Exception e) {
             e.printStackTrace();
 

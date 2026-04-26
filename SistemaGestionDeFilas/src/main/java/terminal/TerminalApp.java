@@ -83,21 +83,24 @@ public class TerminalApp {
 
     public void inicioRecepcion()
     {
-        try{
-
-            serverSocket = new ServerSocket(puertoRecepcion);
-            Socket clientSocket = serverSocket.accept();
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            mensaje = in.readLine();
+        try
+        {
+            while(true)
+            {
+                serverSocket = new ServerSocket(puertoRecepcion);
+                Socket clientSocket = serverSocket.accept();
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                mensaje = in.readLine();
+            }
         
-        } catch (Exception e) {
-            e.printStackTrace();
-
         }
-        
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
-    public void enviarTurno(IngresoTotem vistaTotem)
+    public static void enviarTurno(IngresoTotem vistaTotem)
     {
 
         if (!validacion(vistaTotem))

@@ -8,6 +8,7 @@ import java.net.InetAddress;
  *
  * @author emila
  */
+@SuppressWarnings({"serial", "this-escape"})
 public class IngresoTotem extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(IngresoTotem.class.getName());
@@ -17,6 +18,7 @@ public class IngresoTotem extends javax.swing.JFrame {
      */
     public IngresoTotem() {
         initComponents();
+        
         //Inicia la conexión al servidor al abrir la ventana
         terminal.TerminalApp.iniciaConexion(); 
     }

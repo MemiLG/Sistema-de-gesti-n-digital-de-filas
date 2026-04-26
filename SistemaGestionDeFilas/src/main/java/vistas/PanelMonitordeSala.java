@@ -9,13 +9,13 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import monitor.MonitorApp;
-import negocio.Cliente;
 import negocio.Historial;
 
 /**
  *
  * @author emila
  */
+@SuppressWarnings({"serial", "this-escape"})
 public class PanelMonitordeSala extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PanelMonitordeSala.class.getName());
@@ -187,9 +187,9 @@ public class PanelMonitordeSala extends javax.swing.JFrame {
 
 
     public void vizualizarActual(){
-       Cliente primerCliente = monitorSala.getClientePrimero();
-       if (primerCliente != null) {
-           jTextField1.setText(Integer.toString(primerCliente.getDNI()));
+       String dniPrimero = monitorSala.getClientePrimero();
+       if (dniPrimero != null) {
+           jTextField1.setText(dniPrimero);
        } else {
            jTextField1.setText("---");
        }
@@ -208,9 +208,9 @@ public class PanelMonitordeSala extends javax.swing.JFrame {
         
         for (int i = size - 2; i >= inicio; i--) {
             if (i >= 0) {
-                int dni = hist.getPosHistorial(i);
-                if (dni > 0) {
-                    jTextArea1.append(Integer.toString(dni));
+                String dni = hist.getPosHistorial(i);
+                if (dni != null && !dni.isEmpty()) {
+                    jTextArea1.append(dni);
                     jTextArea1.append("\n");
                 }
             }

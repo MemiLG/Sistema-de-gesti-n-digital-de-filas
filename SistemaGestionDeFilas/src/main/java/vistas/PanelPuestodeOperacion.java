@@ -3,10 +3,12 @@ package vistas;
 import java.net.InetAddress;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import negocio.ColaIngreso;
 import puestoAtencion.funcionesOperador;
 import java.awt.Dimension;
 
+@SuppressWarnings({"serial", "this-escape"})
 public class PanelPuestodeOperacion extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PanelPuestodeOperacion.class.getName());
@@ -18,7 +20,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
     public PanelPuestodeOperacion() {
         initComponents();
         
-        operador = new funcionesOperador();
+        operador = new funcionesOperador(this);
     }
 
     /**
@@ -257,19 +259,23 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // Renotificar al cliente actual
-        operador.renotificarCliente();
+        if (jButton2.isEnabled()) {
+            operador.renotificarCliente();
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Llamar al siguiente cuando se hace clic en el botón
-        operador.llamarSiguiente();
+        if (jButton1.isEnabled()) {
+            operador.llamarSiguiente();
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField3ActionPerformed
 
-    public javax.swing.JTextField getBotonRenotificacion()
+    public javax.swing.JButton getBotonRenotificacion()
     {
         return jButton2;
     }
@@ -280,7 +286,71 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
     }
     
     public void muestraDni(){
-        jLabel3.setText(Integer.toString(operador.getDNI()));
+        jTextField2.setText(operador.getDNI());
+    }
+    
+    /**
+     * Actualiza el contador de intentos en la interfaz
+     */
+    public void actualizarContador(int intentos) {
+        jTextField1.setText(String.valueOf(intentos) + " / 3");
+    }
+    
+    /**
+     * Inicia el timer de bloqueo (30 segundos)
+     * Bloquea ambos botones mientras cuenta
+     */
+    public void iniciarTimer(int segundos) {
+        // Bloquear botones inmediatamente
+        jButton1.setEnabled(false);
+        jButton2.setEnabled(false);
+        
+        // Crear thread para contar 30 segundos
+        Thread timerThread = new Thread(() -> {
+            for (int i = segundos; i > 0; i--) {
+                final int segundosRestantes = i;
+                
+                // Actualizar GUI desde EDT
+                SwingUtilities.invokeLater(() -> {
+                    // Mostrar el contador en el botón
+                    jButton1.setText("Espera: " + segundosRestantes + "s");
+                    jButton2.setText("Espera: " + segundosRestantes + "s");
+                });
+                
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+            
+            // Cuando termina el timer, desbloquear botones
+            SwingUtilities.invokeLater(() -> {
+                jButton1.setText("Siguiente");
+                jButton2.setText("Volver a llamar");
+                
+                jButton1.setEnabled(true);
+                jButton2.setEnabled(true);
+            });
+        });
+        
+        timerThread.start();
+    }
+    
+    /**
+     * Desactiva permanentemente el botón de re-notificación
+     */
+    public void desactivarBotonRenotar() {
+        jButton2.setEnabled(false);
+        jButton2.setText("Máximo alcanzado");
+    }
+    
+    /**
+     * Activa el botón de re-notificación
+     */
+    public void activarBotonRenotar() {
+        jButton2.setEnabled(true);
+        jButton2.setText("Volver a llamar");
     }
     
     /**

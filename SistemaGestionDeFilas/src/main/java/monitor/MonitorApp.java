@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import javax.swing.SwingUtilities;
-import negocio.Cliente;
 import negocio.Historial;
 import vistas.PanelMonitordeSala;
 
@@ -25,7 +24,7 @@ public class MonitorApp {
     }
     
     
-    public Cliente getClientePrimero(){
+    public String getClientePrimero(){
         if (historial.getHistorialSize() == 0) {
             return null;
         }
@@ -51,7 +50,7 @@ public class MonitorApp {
                     if (msg != null && !msg.isEmpty()) {
                         try {
                             int dni = Integer.parseInt(msg);
-                            historial.IngresoHistorial(dni);
+                            historial.IngresoHistorial(String.valueOf(dni));
                             
                             // Actualizar la interfaz desde el hilo principal de Swing
                             SwingUtilities.invokeLater(() -> {
