@@ -2,8 +2,9 @@ package monitor;
 
 import java.net.InetAddress;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.ServerSocket;
+import java.io.PrintWriter;
 import java.net.Socket;
 import javax.swing.SwingUtilities;
 import negocio.Historial;
@@ -11,9 +12,12 @@ import vistas.PanelMonitordeSala;
 
 //Aca va lo que motraria el monitor de sala
 public class MonitorApp {
-    private static final int puerto = 1111;
+    private static final int puerto = 1234;
     private String IP = "";
-    private Historial historial = new Historial();
+    private Historial historialVentana = new Historial(); //este sera el historial ventana que se mostrará en la ventana
+    private Socket socket;
+    private BufferedReader in;
+    private PrintWriter out; 
     
     public MonitorApp(){
         try {
@@ -23,55 +27,53 @@ public class MonitorApp {
         }
     }
     
-    
     public String getClientePrimero(){
-        if (historial.getHistorialSize() == 0) {
+        if (historialVentana.getHistorialSize()==0){
             return null;
         }
-        int tope = historial.getHistorialSize() - 1;
-        return historial.getPosHistorial(tope);
+        else{
+            return historialVentana.getPosHistorial(0);
+        }
+    }
+    public Historial getHistorial() {
+        return this.historialVentana;
     }
     
-    public Historial getHistorial() {
-        return this.historial;
-    }
+    
 
-    public void escucha(PanelMonitordeSala vistaMonitor) {
-        Thread thread = new Thread(() -> {
-            try 
-            {
-                ServerSocket ssocket = new ServerSocket(puerto);
-                while (true) 
-                {
-                    Socket socket = ssocket.accept();
-                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-                    String msg = in.readLine();
-                    if (msg != null && !msg.isEmpty()) {
-                        try {
-                            int dni = Integer.parseInt(msg);
-                            historial.IngresoHistorial(String.valueOf(dni));
-                            
-                            // Actualizar la interfaz desde el hilo principal de Swing
-                            SwingUtilities.invokeLater(() -> {
-                                vistaMonitor.vizualizarActual();
-                                vistaMonitor.visualizarHistorial();
-                            });
-                            
-                            System.out.println("Monitor recibió DNI: " + dni);
-                        } catch (NumberFormatException e) {
-                            System.err.println("DNI inválido: " + msg);
-                        }
+    public void conectar(PanelMonitordeSala vistaMonitor) {
+        try {
+            socket = new Socket(IP, puerto);
+            out = new PrintWriter(socket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        
+            out.println("MONITOR");
+        
+            Thread thread = new Thread(() -> {
+                try {
+                    String msg;
+                    while ((msg = in.readLine()) != null) {
+                        final String mensaje = msg;
+                        String[] partes = mensaje.split("\\|");
+                        String dni = partes[0];
+                        String puesto = partes[1];
+                    
+                        historialVentana.IngresoHistorial(dni + " " + puesto);
+                    
+                        SwingUtilities.invokeLater(() -> {
+                            vistaMonitor.vizualizarActual();
+                            vistaMonitor.visualizarHistorial();
+                        });
                     }
-                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } 
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        });
-        thread.setDaemon(true);
-        thread.start();
+            });
+            thread.setDaemon(true);
+            thread.start();
+        
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

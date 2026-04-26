@@ -27,7 +27,7 @@ public class PanelMonitordeSala extends javax.swing.JFrame {
     public PanelMonitordeSala() {
         initComponents();
         monitorSala = new MonitorApp();
-        monitorSala.escucha(this);
+        monitorSala.conectar(this);
     }
 
     /**
@@ -198,22 +198,15 @@ public class PanelMonitordeSala extends javax.swing.JFrame {
     public void visualizarHistorial(){
         // Limpiar el área de texto
         jTextArea1.setText("");
-        
-        // Obtener el historial completo
-        Historial hist = monitorSala.getHistorial();
-        int size = hist.getHistorialSize();
-        
-        // Mostrar solo los últimos 4 (excluyendo el actual)
-        int inicio = Math.max(0, size - 5);
-        
-        for (int i = size - 2; i >= inicio; i--) {
-            if (i >= 0) {
-                String dni = hist.getPosHistorial(i);
-                if (dni != null && !dni.isEmpty()) {
-                    jTextArea1.append(dni);
-                    jTextArea1.append("\n");
-                }
+       
+        Historial histo = monitorSala.getHistorial();
+        for (int i = 1; i>=5; i++){
+            String cliente = histo.getPosHistorial(i);
+            if (cliente != null && !cliente.isEmpty()){
+                jTextArea1.append(cliente);
+                jTextArea1.append("\n");
             }
+            
         }
     }
 
