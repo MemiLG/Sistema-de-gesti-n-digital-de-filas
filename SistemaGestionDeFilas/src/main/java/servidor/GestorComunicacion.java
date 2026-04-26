@@ -23,8 +23,8 @@ public class GestorComunicacion implements Runnable {
         this.socket = socket;
         this.servidor = servidor;
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.out = new PrintWriter(socket.getOutputStream(), true);
         }
         catch(IOException e){
         
@@ -86,7 +86,9 @@ public class GestorComunicacion implements Runnable {
             }
                         
         } catch (IOException ex) {
-            System.getLogger(GestorComunicacion.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            if (ejecutando){
+                System.getLogger(GestorComunicacion.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            }
         }
     }
     
@@ -98,5 +100,15 @@ public class GestorComunicacion implements Runnable {
         this.ejecutando = estado;
     }
     
+    public void detener() {
+    ejecutando = false;
+    try {
+        if (in != null) in.close();
+        if (out != null) out.close();
+        if (socket != null && !socket.isClosed()) socket.close();
+    } catch (IOException e) {
+        System.getLogger(GestorComunicacion.class.getName()).log(System.Logger.Level.ERROR, "Error al cerrar el gestor", e);
+    }
+}
    
 }
