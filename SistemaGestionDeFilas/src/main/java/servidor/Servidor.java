@@ -2,11 +2,9 @@
 package servidor;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
 import negocio.ColaIngreso;
 import negocio.Historial;
@@ -21,6 +19,7 @@ public class Servidor {
     private boolean escuchando = false;
     private String ip = "";
     private int puerto = 1234;
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Servidor.class.getName());
     
     private HashMap<String,GestorComunicacion> puestosAtencion;     //referencias a los diferentes puestos de atencion concurrentes que se están comunicando 
     private HashMap<String,GestorComunicacion> terminales;          //referencias a los diferentes puestos de registro (terminales) concurrentes que se están comunicando
@@ -64,6 +63,17 @@ public class Servidor {
             }
         
         }).start();
+    }
+    
+    public void detener(){
+        try {
+            if (puestosAtencion != null) puestosAtencion.values().forEach(GestorComunicacion::detener);
+            if (terminales != null) terminales.values().forEach(GestorComunicacion::detener);
+            if (monitor != null) monitor.detener();
+            if (serverSocket != null && !serverSocket.isClosed()) serverSocket.close();
+        } catch (IOException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error al detener el servidor", e);
+        }
     }
 
     public synchronized void agregarTerminal(String tipo,GestorComunicacion socket){
