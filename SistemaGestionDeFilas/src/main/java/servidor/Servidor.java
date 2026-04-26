@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import negocio.ColaIngreso;
 import negocio.Historial;
+import static servidor.ConstantesServidor.*;
+
 
 public class Servidor {
     
@@ -66,4 +68,30 @@ public class Servidor {
         }).start();
     }
 
+    public void agregarTerminal(String tipo,GestorComunicacion socket){
+        this.terminales.put(tipo, socket);
+    }
+    
+    public void agregarPuestoAtencion(String puesto, GestorComunicacion socket){
+        this.puestosAtencion.put(puesto, socket);
+    }
+    
+    public void agregarMonitor(GestorComunicacion socket){
+        this.monitor = socket;
+    }
+    
+    public synchronized String verificarCliente(int dni){
+        if (colaIng.equals(dni)){
+            return CLIENTE_YA_EXISTE;
+        } else{
+            return CLIENTE_VERIFICADO;
+        }
+    }
+    public synchronized void cargarNuevoCliente(int dni){
+        this.colaIng.nuevoIngreso(dni);
+    }
+    
+    public synchronized int siguienteEnCola(){
+        return colaIng.getProxIngreso();
+    }
 }
