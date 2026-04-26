@@ -1,20 +1,20 @@
 package negocio;
 
 //Aca va la logica del historial
-import java.util.Stack;
+import java.util.ArrayList;
 
 public class Historial {
-    private final Stack<Integer> historial;
+    private final ArrayList<String> historial;
     
     public Historial(){
-        historial = new Stack<>();
+        historial = new ArrayList<>();
     }
 
-    public Stack<Integer> getHistorial (){
+    public ArrayList<String> getHistorial (){
         return this.historial;
     }
 
-    public int getPosHistorial(int pos){
+    public String getPosHistorial(int pos){
         return historial.get(pos);
     }
 
@@ -22,7 +22,15 @@ public class Historial {
         return historial.size();
     }
 
-    public void IngresoHistorial(int dni){
-        historial.push(dni);
+    public void IngresoHistorial(String cliente){
+        historial.add(0, cliente);
+    }
+    
+    public int buscaHistorial(String cliente){
+        return historial.indexOf(cliente);
+    }
+    
+    public void eliminaClienteHistorial(int pos){
+        historial.remove(pos);
     }
 }

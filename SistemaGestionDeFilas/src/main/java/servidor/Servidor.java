@@ -68,11 +68,11 @@ public class Servidor {
         }).start();
     }
 
-    public void agregarTerminal(String tipo,GestorComunicacion socket){
+    public synchronized void agregarTerminal(String tipo,GestorComunicacion socket){
         this.terminales.put(tipo, socket);
     }
     
-    public void agregarPuestoAtencion(String puesto, GestorComunicacion socket){
+    public synchronized void agregarPuestoAtencion(String puesto, GestorComunicacion socket){
         this.puestosAtencion.put(puesto, socket);
     }
     
@@ -87,11 +87,34 @@ public class Servidor {
             return CLIENTE_VERIFICADO;
         }
     }
+    
     public synchronized void cargarNuevoCliente(int dni){
         this.colaIng.nuevoIngreso(dni);
     }
     
     public synchronized int siguienteEnCola(){
         return colaIng.getProxIngreso();
+    }
+    
+    public synchronized void cargaHistorial(String cliente){
+        historial.IngresoHistorial(cliente);
+    }
+    
+    public synchronized int verificaHistorial (String cliente){
+        return historial.buscaHistorial(cliente);
+    }
+    
+     public synchronized void cambiaHistorial(String cliente, int pos){
+         historial.eliminaClienteHistorial(pos);
+         historial.IngresoHistorial(cliente);
+     }
+    
+    public synchronized void mandaMonitor(String dni, String puesto){
+        String mensaje = dni + "|" + puesto;
+        this.monitor.enviarMensaje(mensaje);
+    }
+    
+    public synchronized void mandaTerminal(String mensaje, String numeroTerminal){
+        this.terminales.get(numeroTerminal).enviarMensaje(mensaje);
     }
 }

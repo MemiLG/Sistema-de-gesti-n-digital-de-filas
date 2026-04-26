@@ -13,8 +13,8 @@ import static servidor.ConstantesServidor.*;
 public class GestorComunicacion implements Runnable {
     
     private Socket socket;
-    private String rol;
     private Servidor servidor;
+    private String numeroInstancia;
     private PrintWriter out;
     private BufferedReader in;
     private boolean ejecutando = true;
@@ -22,20 +22,28 @@ public class GestorComunicacion implements Runnable {
     public GestorComunicacion(Socket socket, Servidor servidor){
         this.socket = socket;
         this.servidor = servidor;
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        }
+        catch(IOException e){
+        
+        }
     }
     
     @Override
     public void run() {
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            
             String mensaje = in.readLine();
             String[] identificacion = mensaje.split("\\|");
             switch (identificacion[0]){
                 case "ATENCION" ->{
+                    this.numeroInstancia = identificacion[1];
                     servidor.agregarPuestoAtencion(identificacion[1], this);
                 }
                 case "TERMINAL" ->{
+                    this.numeroInstancia = identificacion[1];
                     servidor.agregarTerminal(identificacion[1], this);
                 }
                 case "MONITOR" ->{
@@ -50,7 +58,7 @@ public class GestorComunicacion implements Runnable {
                         int dni = Integer.parseInt(num);
                         String estado = servidor.verificarCliente(dni);
                         if (estado.equals(CLIENTE_YA_EXISTE)){
-                            //Tiene que mandarle a la terminal que ya fue cargado
+                            servidor.mandaTerminal(CLIENTE_YA_EXISTE, this.numeroInstancia);
                         } else{
                             if (estado.equals(CLIENTE_VERIFICADO)){
                                 servidor.cargarNuevoCliente(dni);
@@ -58,11 +66,21 @@ public class GestorComunicacion implements Runnable {
                         }
                     }
                     case LLAMAR_SIGUIENTE ->{
-                        
+                        int siguiente_dni = servidor.siguienteEnCola();
+                        out.println(siguiente_dni); //Porque está hablando con el puesto de atencion.
+                        String clienteHistorial = Integer.toString(siguiente_dni)+" "+this.numeroInstancia;
+                        servidor.cargaHistorial(clienteHistorial);
+                        servidor.mandaMonitor(Integer.toString(siguiente_dni), this.numeroInstancia);
                         
                     }
-                    case RE_NOTIFICAR ->{
-                        
+                    case RENOVAR_NOTIFICACION ->{
+                        String dni_renotif = in.readLine(); //el puesto de atencion le manda el dni de la persona que quiere vover a llamar
+                        String dni_renotif_entero = dni_renotif + " " + this.numeroInstancia;
+                        int estado = servidor.verificaHistorial(dni_renotif_entero);
+                        if (estado != -1){
+                            servidor.cambiaHistorial(dni_renotif_entero, estado);
+                            servidor.mandaMonitor(dni_renotif, this.numeroInstancia);
+                        }
                     }
                 }
             }
@@ -72,7 +90,13 @@ public class GestorComunicacion implements Runnable {
         }
     }
     
+    public void enviarMensaje(String mensaje){
+        out.println(mensaje);
+    }
+    
     public void setEjecutando(boolean estado){ //Esto lo tengo que transformar en el metodo para detener el gestor (cerrarlo)
         this.ejecutando = estado;
     }
+    
+   
 }
