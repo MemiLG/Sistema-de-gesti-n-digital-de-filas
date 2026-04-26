@@ -1,10 +1,8 @@
 
 package servidor;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -23,8 +21,6 @@ public class Servidor {
     private boolean escuchando = false;
     private String ip = "";
     private int puerto = 1234;
-    private PrintWriter out; 
-    private BufferedReader in;
     
     private HashMap<String,GestorComunicacion> puestosAtencion;     //referencias a los diferentes puestos de atencion concurrentes que se están comunicando 
     private HashMap<String,GestorComunicacion> terminales;          //referencias a los diferentes puestos de registro (terminales) concurrentes que se están comunicando
@@ -33,6 +29,8 @@ public class Servidor {
     public Servidor(){
         colaIng = new ColaIngreso();
         historial = new Historial();
+        puestosAtencion = new HashMap<>();
+        terminales = new HashMap<>();
         try {
             ip = InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {}
@@ -76,7 +74,7 @@ public class Servidor {
         this.puestosAtencion.put(puesto, socket);
     }
     
-    public void agregarMonitor(GestorComunicacion socket){
+    public synchronized void agregarMonitor(GestorComunicacion socket){
         this.monitor = socket;
     }
     
@@ -93,8 +91,9 @@ public class Servidor {
     }
     
     public synchronized int siguienteEnCola(){
-        return colaIng.getProxIngreso();
+        return colaIng.sacarClienteColaIng();
     }
+    
     
     public synchronized void cargaHistorial(String cliente){
         historial.IngresoHistorial(cliente);
@@ -116,5 +115,9 @@ public class Servidor {
     
     public synchronized void mandaTerminal(String mensaje, String numeroTerminal){
         this.terminales.get(numeroTerminal).enviarMensaje(mensaje);
+    }
+    
+    public synchronized void mandaPuestoAtencion(String mensaje, String numeroPuesto){
+        this.puestosAtencion.get(numeroPuesto).enviarMensaje(mensaje);
     }
 }

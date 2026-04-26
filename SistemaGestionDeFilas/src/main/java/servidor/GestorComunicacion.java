@@ -14,7 +14,7 @@ public class GestorComunicacion implements Runnable {
     
     private Socket socket;
     private Servidor servidor;
-    private String numeroInstancia;
+    private String numeroInstancia = "";
     private PrintWriter out;
     private BufferedReader in;
     private boolean ejecutando = true;
@@ -62,15 +62,21 @@ public class GestorComunicacion implements Runnable {
                         } else{
                             if (estado.equals(CLIENTE_VERIFICADO)){
                                 servidor.cargarNuevoCliente(dni);
+                                servidor.mandaTerminal(CLIENTE_CARGADO, this.numeroInstancia);
                             }
                         }
                     }
                     case LLAMAR_SIGUIENTE ->{
                         int siguiente_dni = servidor.siguienteEnCola();
-                        out.println(siguiente_dni); //Porque está hablando con el puesto de atencion.
-                        String clienteHistorial = Integer.toString(siguiente_dni)+" "+this.numeroInstancia;
-                        servidor.cargaHistorial(clienteHistorial);
-                        servidor.mandaMonitor(Integer.toString(siguiente_dni), this.numeroInstancia);
+                        if (siguiente_dni != 0){
+                            out.println(siguiente_dni); //Porque está hablando con el puesto de atencion.
+                            String clienteHistorial = Integer.toString(siguiente_dni)+" "+this.numeroInstancia;
+                            servidor.cargaHistorial(clienteHistorial);
+                            servidor.mandaMonitor(Integer.toString(siguiente_dni), this.numeroInstancia);
+                        }
+                        else {
+                           servidor.mandaPuestoAtencion(COLA_VACIA, this.numeroInstancia);
+                        }
                         
                     }
                     case RENOVAR_NOTIFICACION ->{
@@ -101,14 +107,14 @@ public class GestorComunicacion implements Runnable {
     }
     
     public void detener() {
-    ejecutando = false;
-    try {
-        if (in != null) in.close();
-        if (out != null) out.close();
-        if (socket != null && !socket.isClosed()) socket.close();
-    } catch (IOException e) {
-        System.getLogger(GestorComunicacion.class.getName()).log(System.Logger.Level.ERROR, "Error al cerrar el gestor", e);
+        ejecutando = false;
+        try {
+            if (in != null) in.close();
+            if (out != null) out.close();
+            if (socket != null && !socket.isClosed()) socket.close();
+        } catch (IOException e) {
+            System.getLogger(GestorComunicacion.class.getName()).log(System.Logger.Level.ERROR, "Error al cerrar el gestor", e);
+        }
     }
-}
    
 }
