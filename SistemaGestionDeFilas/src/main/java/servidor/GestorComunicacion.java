@@ -12,13 +12,14 @@ import java.net.Socket;
 public class GestorComunicacion implements Runnable {
     
     private Socket socket;
-    private Thread t;
     private String rol;
+    private Servidor servidor;
+    private PrintWriter out;
+    private BufferedReader in;
     
-    public GestorComunicacion(Socket socket){
+    public GestorComunicacion(Socket socket, Servidor servidor){
         this.socket = socket;
-        this.t = new Thread();
-        t.start();
+        this.servidor = servidor;
     }
     
     @Override
@@ -26,7 +27,12 @@ public class GestorComunicacion implements Runnable {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            
+            String mensaje = in.readLine();
+            String[] identificacion = mensaje.split("\\|");
+            if ("ATENCION".equals(identificacion[0])){
+                //mandarle al servidor la info
+            }
+                        
         } catch (IOException ex) {
             System.getLogger(GestorComunicacion.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
