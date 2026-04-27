@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "InterfazServidor",
+            "request": "launch",
+            "mainClass": "vistas.InterfazServidor",
+            "projectName": "SistemaGestionDeFilas"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"

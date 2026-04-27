@@ -6,7 +6,7 @@ import terminal.TerminalApp;
 public class IngresoTotem extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(IngresoTotem.class.getName());
-    private TerminalApp terminal;
+    private TerminalApp terminal = new TerminalApp();
    
     public IngresoTotem() {
         initComponents();
