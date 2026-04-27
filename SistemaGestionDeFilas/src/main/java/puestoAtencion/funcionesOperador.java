@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -19,8 +18,8 @@ public class funcionesOperador
 {
     private String IP;
     private static final int puerto=1234;
-    private static java.net.Socket socket;
-    private static PrintWriter out;
+    private java.net.Socket socket;
+    private PrintWriter out;
     private BufferedReader in;
     String mensaje;
     int estadoCliente = 0;
@@ -69,14 +68,12 @@ public class funcionesOperador
                         SwingUtilities.invokeLater(() -> procesarMensaje(msg));
                     }
                 } catch (IOException e) {
-                    if (ejecutando) {
-                    //cambiar
-                    }
+                    e.printStackTrace();
                 }
             }).start();
 
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "No se pudo conectar al servidor", "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }
 

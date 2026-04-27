@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -15,10 +14,10 @@ import static servidor.ConstantesServidor.*;
 
 public class TerminalApp {
 
-    private static String IP;
+    private String IP;
     private static final int puerto = 1234;
-    private static java.net.Socket socket;
-    private static PrintWriter out;
+    private java.net.Socket socket;
+    private PrintWriter out;
     private BufferedReader in;
     String mensaje;
 
@@ -64,7 +63,7 @@ public class TerminalApp {
         return true;
     }
 
-    public static void iniciaConexion() 
+    public void iniciaConexion() 
     {
 
         try {
@@ -84,15 +83,13 @@ public class TerminalApp {
                         SwingUtilities.invokeLater(() -> procesarMensaje(msg));
                     }
                 } catch (IOException e) {
-                    if(ejecutando) {
-                        //loguear error real
-                    }
+                    e.printStackTrace();
                 }
             }).start();
 
         } catch (IOException e) {
             
-            JOptionPane.showMessageDialog(null, "No se pudo conectar al servidor", "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
 
     }
@@ -101,21 +98,21 @@ public class TerminalApp {
         switch (mensaje) {
             case CARGA_NUEVO_CLIENTE ->
             {
-                JOptionPane.showMessageDialog(null, "Turno registrado exitosamente.\nDNI: " + getDNI(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Turno registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             } 
             case CLIENTE_CARGADO -> 
             { // mostrar confirmación
-                JOptionPane.showMessageDialog(null, "Cliente con DNI " + getDNI() + " cargado correctamente.", "Cliente cargado", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Cliente cargado correctamente.", "Cliente cargado", JOptionPane.INFORMATION_MESSAGE);
             }
             case CLIENTE_YA_EXISTE -> 
             { // mostrar error en pantalla
-                JOptionPane.showMessageDialog(null, "El cliente con DNI " + getDNI() + " ya existe en la fila.", "Cliente existente", JOptionPane.INFORMATION_MESSAGE);   
+                JOptionPane.showMessageDialog(null, "El cliente ya existe en la fila.", "Cliente existente", JOptionPane.INFORMATION_MESSAGE);   
             }
          }
     }
 
 
-    public static void enviarTurno(IngresoTotem vistaTotem)
+    public void enviarTurno(IngresoTotem vistaTotem)
     {
 
         if (!validacion(vistaTotem))
