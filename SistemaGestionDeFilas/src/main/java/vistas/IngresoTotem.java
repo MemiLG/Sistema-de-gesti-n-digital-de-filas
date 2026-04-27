@@ -1,26 +1,18 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package vistas;
-import java.net.InetAddress;
-/**
- *
- * @author emila
- */
+
+import terminal.TerminalApp;
+
 @SuppressWarnings({"serial", "this-escape"})
 public class IngresoTotem extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(IngresoTotem.class.getName());
-
-    /**
-     * Creates new form IngresoTotem
-     */
+    private TerminalApp terminal;
+   
     public IngresoTotem() {
         initComponents();
         
         //Inicia la conexión al servidor al abrir la ventana
-        terminal.TerminalApp.iniciaConexion(); 
+        terminal.iniciaConexion(); 
     }
 
     /**
@@ -124,7 +116,7 @@ public class IngresoTotem extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // Enviar el turno cuando se hace clic en "Ingresar"
-        terminal.TerminalApp.enviarTurno(this);
+        terminal.enviarTurno(this);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jTextField1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField1FocusGained

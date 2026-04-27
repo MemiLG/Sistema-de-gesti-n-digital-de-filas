@@ -65,6 +65,7 @@ public class MonitorApp {
                             vistaMonitor.visualizarHistorial();
                         });
                     }
+                    cerrarConexion();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -76,4 +77,13 @@ public class MonitorApp {
             e.printStackTrace();
         }
     }
+    
+    public void cerrarConexion(){
+        try {
+            socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
