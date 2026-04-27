@@ -2,10 +2,8 @@
 package terminal;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
-
-//Este debe ser el main del cliente, donde haga ingreso del DNI
-
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -13,15 +11,15 @@ import java.net.Socket;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import vistas.IngresoTotem;
+import static servidor.ConstantesServidor.*;
 
 public class TerminalApp {
 
     private static String IP;
-    private static final int puertoEnvio=1234;
-    private static final int puertoRecepcion=1235;
+    private static final int puerto = 1234;
     private static java.net.Socket socket;
     private static PrintWriter out;
-    private ServerSocket serverSocket;
+    private BufferedReader in;
     String mensaje;
 
     
@@ -70,35 +68,52 @@ public class TerminalApp {
     {
 
         try {
-
-            socket = new java.net.Socket(IP, puertoEnvio);
+            socket = new Socket(IP, puerto);
             out = new PrintWriter(socket.getOutputStream(), true);
-            out.println("TERMINAL"); // Envía terminal para identificarse en el servidor 
-        } catch (Exception e) {
-            e.printStackTrace();
-        
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+            // identificarse ante el servidor
+            out.println("TERMINAL");
+
+            // hilo que escucha respuestas del servidor
+            new Thread(() -> {
+                try {
+                    String mensaje;
+                    while ((mensaje = in.readLine()) != null) {
+                        final String msg = mensaje;
+                        SwingUtilities.invokeLater(() -> procesarMensaje(msg));
+                    }
+                } catch (IOException e) {
+                    if(ejecutando) {
+                        //loguear error real
+                    }
+                }
+            }).start();
+
+        } catch (IOException e) {
+            
+            JOptionPane.showMessageDialog(null, "No se pudo conectar al servidor", "Error", JOptionPane.ERROR_MESSAGE);
         }
 
     }
 
-    public void inicioRecepcion()
-    {
-        try
-        {
-            while(true)
+    private void procesarMensaje(String mensaje) {
+        switch (mensaje) {
+            case CARGA_NUEVO_CLIENTE ->
             {
-                serverSocket = new ServerSocket(puertoRecepcion);
-                Socket clientSocket = serverSocket.accept();
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                mensaje = in.readLine();
+                JOptionPane.showMessageDialog(null, "Turno registrado exitosamente.\nDNI: " + getDNI(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            } 
+            case CLIENTE_CARGADO -> 
+            { // mostrar confirmación
+                JOptionPane.showMessageDialog(null, "Cliente con DNI " + getDNI() + " cargado correctamente.", "Cliente cargado", JOptionPane.INFORMATION_MESSAGE);
             }
-        
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+            case CLIENTE_YA_EXISTE -> 
+            { // mostrar error en pantalla
+                JOptionPane.showMessageDialog(null, "El cliente con DNI " + getDNI() + " ya existe en la fila.", "Cliente existente", JOptionPane.INFORMATION_MESSAGE);   
+            }
+         }
     }
+
 
     public static void enviarTurno(IngresoTotem vistaTotem)
     {
@@ -124,17 +139,7 @@ public class TerminalApp {
         }
 
     }
-    public void cerrarRecepcion() 
-    {
-        try {
-
-            if (serverSocket != null) serverSocket.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-    }
+    
 }
-    
-    
+
    

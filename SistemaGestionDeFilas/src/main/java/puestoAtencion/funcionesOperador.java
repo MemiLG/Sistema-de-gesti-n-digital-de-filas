@@ -3,6 +3,7 @@ package puestoAtencion;
 //Aca va el main del puesto de atencion para llamar al siguiente
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -12,15 +13,15 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import negocio.ColaIngreso;
 import vistas.PanelPuestodeOperacion;
+import static servidor.ConstantesServidor.*;
 
 public class funcionesOperador 
 {
-    private ServerSocket serverSocket;
     private String IP;
-    private static final int puertoEnvio=1234;
-    private static final int puertoRecepcion=1235;
+    private static final int puerto=1234;
     private static java.net.Socket socket;
     private static PrintWriter out;
+    private BufferedReader in;
     String mensaje;
     int estadoCliente = 0;
     
@@ -52,18 +53,48 @@ public class funcionesOperador
     {
         
         try {
-            socket = new java.net.Socket(IP, puertoEnvio);
+            socket = new Socket(IP, puerto);
             out = new PrintWriter(socket.getOutputStream(), true);
-            out.println("OPERADOR"); // Envía operador para identificarse en el servidor 
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(vistaOperador, "No se pudo conectar al servidor:\n" + e.getMessage(), "Error de conexión", JOptionPane.ERROR_MESSAGE);
-        }
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
+            // identificarse ante el servidor
+            out.println("OPERADOR");
+
+            // hilo que escucha respuestas del servidor
+            new Thread(() -> {
+                try {
+                    String mensaje;
+                    while ((mensaje = in.readLine()) != null) {
+                        final String msg = mensaje;
+                        SwingUtilities.invokeLater(() -> procesarMensaje(msg));
+                    }
+                } catch (IOException e) {
+                    if (ejecutando) {
+                    //cambiar
+                    }
+                }
+            }).start();
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "No se pudo conectar al servidor", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
+
+    private void procesarMensaje(String mensaje) {
+        switch (mensaje) {
+            case COLA_VACIA ->
+            {
+                JOptionPane.showMessageDialog(vistaOperador, "La cola está vacía.", "Cola vacía", JOptionPane.INFORMATION_MESSAGE);
+                llamarSiguiente();
+            }
+        } 
+    } 
+    
+
 
     public void llamarSiguiente()
     {
-        out.println("LLAMAR_NUEVO_CLIENTE");
+        out.println("LLAMAR_SIGUIENTE");
         estadoCliente = 1;
         
         // Reiniciar contador de intentos para nuevo cliente
@@ -87,7 +118,7 @@ public class funcionesOperador
             return;
         }
         
-        out.println("RENOVAR_NOTIFICACION");
+        out.println(RENOVAR_NOTIFICACION);
         estadoCliente += 1;
         
         // Incrementar intento de renotificación
@@ -113,37 +144,6 @@ public class funcionesOperador
             socket.close();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    // Inicia la conexion para recibir el mensaje del servidor 
-    public void inicioRecepcion()
-    {
-        try{
-            while(true)
-            {
-                serverSocket = new ServerSocket(puertoRecepcion);
-                Socket clientSocket = serverSocket.accept();
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                mensaje = in.readLine();
-            }
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-        
-    }
-
-    //Cierra la conexión del socket de recepción al finalizar el puesto de atención
-    public void cerrarRecepcion() 
-    {
-        try {
-
-            if (serverSocket != null) serverSocket.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-
         }
     }
 
