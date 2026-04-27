@@ -45,12 +45,13 @@ public class IngresoTotem extends javax.swing.JFrame {
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
         jPanel1.add(filler1);
 
-        jLabel1.setFont(new java.awt.Font("Hind Siliguri SemiBold", 0, 28)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Hind Siliguri SemiBold", 0, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(18, 44, 79));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("INGRESE SU DNI");
         jLabel1.setAlignmentX(0.5F);
         jLabel1.setMaximumSize(new java.awt.Dimension(200, 30));
+        jLabel1.setPreferredSize(new java.awt.Dimension(406, 182));
         jPanel1.add(jLabel1);
         jLabel1.getAccessibleContext().setAccessibleName("textoIngreso");
 
@@ -95,7 +96,7 @@ public class IngresoTotem extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(5, 5, 5)
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(10, Short.MAX_VALUE))
         );
 
         jPanel1.add(jPanel2);

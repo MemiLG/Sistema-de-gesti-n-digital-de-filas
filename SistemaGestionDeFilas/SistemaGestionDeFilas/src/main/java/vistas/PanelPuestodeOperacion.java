@@ -88,6 +88,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         jTextField3.setEditable(false);
         jTextField3.setBackground(new java.awt.Color(18, 44, 79));
         jTextField3.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 24)); // NOI18N
+        jTextField3.setForeground(new java.awt.Color(245, 240, 233));
         jTextField3.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jTextField3.addActionListener(this::jTextField3ActionPerformed);
 

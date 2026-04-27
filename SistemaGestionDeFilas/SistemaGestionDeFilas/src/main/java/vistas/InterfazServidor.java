@@ -15,6 +15,7 @@ public class InterfazServidor extends javax.swing.JFrame {
         
         jButton1.addActionListener(e -> {
             servidor.iniciar();
+            jButton1.setEnabled(false);
         });
         
         jButton2.addActionListener(e -> {
@@ -49,7 +50,7 @@ public class InterfazServidor extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setResizable(false);
+        setPreferredSize(new java.awt.Dimension(400, 300));
 
         jPanel1.setLayout(new java.awt.GridLayout(2, 0));
 
