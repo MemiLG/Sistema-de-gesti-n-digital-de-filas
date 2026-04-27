@@ -67,6 +67,7 @@ public class funcionesOperador
                         final String msg = mensaje;
                         SwingUtilities.invokeLater(() -> procesarMensaje(msg));
                     }
+                    cerrarConexion();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -136,12 +137,16 @@ public class funcionesOperador
     }
 
     // Cierra la conexión del socket de envio al finalizar el puesto de atención
-    public void cerrarEnvio() {
+    public void cerrarConexion()
+    {
+
         try {
             socket.close();
         } catch (Exception e) {
             e.printStackTrace();
+    
         }
+
     }
 
 

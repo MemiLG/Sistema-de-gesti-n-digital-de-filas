@@ -82,6 +82,7 @@ public class TerminalApp {
                         final String msg = mensaje;
                         SwingUtilities.invokeLater(() -> procesarMensaje(msg));
                     }
+                    cerrarConexion();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
