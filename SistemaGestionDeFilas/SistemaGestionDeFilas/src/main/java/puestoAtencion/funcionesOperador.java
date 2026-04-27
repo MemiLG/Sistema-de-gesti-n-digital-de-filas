@@ -38,7 +38,7 @@ public class funcionesOperador
         try {
             IP = InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {
-
+            IP = "localhost";
         }
         
     }
@@ -75,10 +75,12 @@ public class funcionesOperador
             }).start();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null,
+                "No se pudo conectar al servidor en " + IP + ":" + puerto + ".\nVerifique que el servidor esté iniciado.",
+                "Error de conexión", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     private void procesarMensaje(String mensaje) {
         if (mensaje.startsWith("ID|")) {
             idPuesto = mensaje.split("\\|")[1];
@@ -111,7 +113,7 @@ public class funcionesOperador
     {
         out.println("LLAMAR_SIGUIENTE");
         estadoCliente = 1;
-        intentosRenotificacion = 0;
+        intentosRenotificacion = 1;
       
         SwingUtilities.invokeLater(() -> {
             vistaOperador.actualizarContador(intentosRenotificacion);

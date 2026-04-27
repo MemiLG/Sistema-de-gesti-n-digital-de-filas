@@ -127,15 +127,18 @@ public class Servidor {
      }
     
     public synchronized void mandaMonitor(String dni, String puesto){
+        if (this.monitor == null) return;
         String mensaje = dni + "|" + puesto;
         this.monitor.enviarMensaje(mensaje);
     }
-    
+
     public synchronized void mandaTerminal(String mensaje, String numeroTerminal){
-        this.terminales.get(numeroTerminal).enviarMensaje(mensaje);
+        GestorComunicacion g = this.terminales.get(numeroTerminal);
+        if (g != null) g.enviarMensaje(mensaje);
     }
-    
+
     public synchronized void mandaPuestoAtencion(String mensaje, String numeroPuesto){
-        this.puestosAtencion.get(numeroPuesto).enviarMensaje(mensaje);
+        GestorComunicacion g = this.puestosAtencion.get(numeroPuesto);
+        if (g != null) g.enviarMensaje(mensaje);
     }
 }

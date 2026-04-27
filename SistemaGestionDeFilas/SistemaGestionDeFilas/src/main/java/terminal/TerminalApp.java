@@ -28,7 +28,7 @@ public class TerminalApp {
         try {
             IP = InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {
-
+            IP = "localhost";
         }
 
     }
@@ -89,8 +89,9 @@ public class TerminalApp {
             }).start();
 
         } catch (IOException e) {
-            
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null,
+                "No se pudo conectar al servidor en " + IP + ":" + puerto + ".\nVerifique que el servidor esté iniciado.",
+                "Error de conexión", JOptionPane.ERROR_MESSAGE);
         }
 
     }
@@ -101,19 +102,11 @@ public class TerminalApp {
         return;
         }
         switch (mensaje) {
-            case CARGA_NUEVO_CLIENTE ->
-            {
-                JOptionPane.showMessageDialog(null, "Turno registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            } 
-            case CLIENTE_CARGADO -> 
-            { // mostrar confirmación
-                JOptionPane.showMessageDialog(null, "Cliente cargado correctamente.", "Cliente cargado", JOptionPane.INFORMATION_MESSAGE);
-            }
-            case CLIENTE_YA_EXISTE -> 
-            { // mostrar error en pantalla
-                JOptionPane.showMessageDialog(null, "El cliente ya existe en la fila.", "Cliente existente", JOptionPane.INFORMATION_MESSAGE);   
-            }
-         }
+            case CLIENTE_CARGADO ->
+                JOptionPane.showMessageDialog(null, "Cliente cargado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            case CLIENTE_YA_EXISTE ->
+                JOptionPane.showMessageDialog(null, "El cliente ya existe en la fila.", "Cliente existente", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
 
@@ -127,7 +120,6 @@ public class TerminalApp {
     
         out.println(CARGA_NUEVO_CLIENTE);
         out.println(dni);
-        JOptionPane.showMessageDialog(vistaTotem, "Turno registrado exitosamente.\nDNI: " + dni, "Éxito", JOptionPane.INFORMATION_MESSAGE);
     
     }
 

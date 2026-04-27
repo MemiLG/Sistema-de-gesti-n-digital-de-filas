@@ -23,7 +23,7 @@ public class MonitorApp {
         try {
             IP = InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {
-
+            IP = "localhost";
         }
     }
     
@@ -58,6 +58,9 @@ public class MonitorApp {
                         String dni = partes[0];
                         String puesto = partes[1];
                     
+                        if (historialVentana.buscaHistorial(dni + " " + puesto) != -1) {
+                            historialVentana.eliminaClienteHistorial(historialVentana.buscaHistorial(dni + " " + puesto));
+                        }
                         historialVentana.IngresoHistorial(dni + " " + puesto);
                     
                         SwingUtilities.invokeLater(() -> {
@@ -74,10 +77,12 @@ public class MonitorApp {
             thread.start();
         
         } catch (IOException e) {
-            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(null,
+                "No se pudo conectar al servidor en " + IP + ":" + puerto + ".\nVerifique que el servidor esté iniciado.",
+                "Error de conexión", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     public void cerrarConexion(){
         try {
             socket.close();
