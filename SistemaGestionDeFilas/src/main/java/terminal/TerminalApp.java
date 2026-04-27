@@ -19,7 +19,7 @@ public class TerminalApp {
     private java.net.Socket socket;
     private PrintWriter out;
     private BufferedReader in;
-    String mensaje;
+    private String idTerminal = "";
 
     
     public TerminalApp()
@@ -96,6 +96,10 @@ public class TerminalApp {
     }
 
     private void procesarMensaje(String mensaje) {
+        if (mensaje.startsWith("ID|")) {
+        idTerminal = mensaje.split("\\|")[1]; // guarda el ID asignado
+        return;
+        }
         switch (mensaje) {
             case CARGA_NUEVO_CLIENTE ->
             {
@@ -121,7 +125,8 @@ public class TerminalApp {
 
         String dni = vistaTotem.getDNI();
     
-        out.println("CARGA_NUEVO_CLIENTE|" + dni);
+        out.println(CARGA_NUEVO_CLIENTE);
+        out.println(dni);
         JOptionPane.showMessageDialog(vistaTotem, "Turno registrado exitosamente.\nDNI: " + dni, "Éxito", JOptionPane.INFORMATION_MESSAGE);
     
     }

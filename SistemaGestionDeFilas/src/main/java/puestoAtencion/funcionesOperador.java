@@ -23,6 +23,7 @@ public class funcionesOperador
     private BufferedReader in;
     String mensaje;
     int estadoCliente = 0;
+    private String idPuesto = "";
     
     // Control de reintentos y timer
     private int intentosRenotificacion = 0;
@@ -57,7 +58,7 @@ public class funcionesOperador
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             // identificarse ante el servidor
-            out.println("OPERADOR");
+            out.println("ATENCION");
 
             // hilo que escucha respuestas del servidor
             new Thread(() -> {
@@ -77,16 +78,24 @@ public class funcionesOperador
             e.printStackTrace();
         }
     }
-
+    
     private void procesarMensaje(String mensaje) {
-        switch (mensaje) {
-            case COLA_VACIA ->
-            {
-                JOptionPane.showMessageDialog(vistaOperador, "La cola está vacía.", "Cola vacía", JOptionPane.INFORMATION_MESSAGE);
-                llamarSiguiente();
-            }
-        } 
-    } 
+        if (mensaje.equals(COLA_VACIA)) {
+            JOptionPane.showMessageDialog(vistaOperador, 
+                "La cola está vacía.", "Cola vacía", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+    
+        try {
+            dniActual = Integer.parseInt(mensaje);
+            this.mensaje = String.valueOf(dniActual); 
+            SwingUtilities.invokeLater(() -> {
+                vistaOperador.muestraDni(); 
+                vistaOperador.iniciarTimer(30);
+                vistaOperador.activarBotonRenotar();
+            });
+            } catch (NumberFormatException e) {}
+    }
     
 
 
@@ -94,15 +103,10 @@ public class funcionesOperador
     {
         out.println("LLAMAR_SIGUIENTE");
         estadoCliente = 1;
-        
-        // Reiniciar contador de intentos para nuevo cliente
         intentosRenotificacion = 0;
-        dniActual = Integer.parseInt(mensaje);
-        
-        // Actualizar vista
+      
         SwingUtilities.invokeLater(() -> {
             vistaOperador.actualizarContador(intentosRenotificacion);
-            vistaOperador.iniciarTimer(30);
         });
     }
 
@@ -117,6 +121,7 @@ public class funcionesOperador
         }
         
         out.println(RENOVAR_NOTIFICACION);
+        out.println(dniActual);
         estadoCliente += 1;
         
         // Incrementar intento de renotificación

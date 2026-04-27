@@ -36,15 +36,17 @@ public class GestorComunicacion implements Runnable {
         try {
             
             String mensaje = in.readLine();
-            String[] identificacion = mensaje.split("\\|");
-            switch (identificacion[0]){
+            switch (mensaje){
                 case "ATENCION" ->{
-                    this.numeroInstancia = identificacion[1];
-                    servidor.agregarPuestoAtencion(identificacion[1], this);
+                    String id = servidor.registrarPuestoAtencion(this);
+                    this.numeroInstancia = id;
+                    enviarMensaje("ID|" + id);
+                    
                 }
                 case "TERMINAL" ->{
-                    this.numeroInstancia = identificacion[1];
-                    servidor.agregarTerminal(identificacion[1], this);
+                    String id = servidor.registrarTerminal(this);
+                    this.numeroInstancia = id;
+                    enviarMensaje("ID|" + id);
                 }
                 case "MONITOR" ->{
                     servidor.agregarMonitor(this);

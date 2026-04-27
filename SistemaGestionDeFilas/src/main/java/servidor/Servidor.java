@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import negocio.ColaIngreso;
 import negocio.Historial;
 import static servidor.ConstantesServidor.*;
@@ -20,6 +21,9 @@ public class Servidor {
     private String ip = "";
     private int puerto = 1234;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Servidor.class.getName());
+    private AtomicInteger contadorTerminales = new AtomicInteger(0);
+    private AtomicInteger contadorPuestos = new AtomicInteger(0);
+
     
     private HashMap<String,GestorComunicacion> puestosAtencion;     //referencias a los diferentes puestos de atencion concurrentes que se están comunicando 
     private HashMap<String,GestorComunicacion> terminales;          //referencias a los diferentes puestos de registro (terminales) concurrentes que se están comunicando
@@ -76,12 +80,16 @@ public class Servidor {
         }
     }
 
-    public synchronized void agregarTerminal(String tipo,GestorComunicacion socket){
-        this.terminales.put(tipo, socket);
+    public synchronized String registrarTerminal(GestorComunicacion gestor) {
+        String id = String.valueOf(contadorTerminales.incrementAndGet());
+        this.terminales.put(id, gestor);
+        return id;
     }
-    
-    public synchronized void agregarPuestoAtencion(String puesto, GestorComunicacion socket){
-        this.puestosAtencion.put(puesto, socket);
+
+    public synchronized String registrarPuestoAtencion(GestorComunicacion gestor) {
+        String id = String.valueOf(contadorPuestos.incrementAndGet());
+        this.puestosAtencion.put(id, gestor);
+        return id;
     }
     
     public synchronized void agregarMonitor(GestorComunicacion socket){
@@ -89,7 +97,7 @@ public class Servidor {
     }
     
     public synchronized String verificarCliente(int dni){
-        if (colaIng.equals(dni)){
+        if (colaIng.getColaIng().contains(dni)){
             return CLIENTE_YA_EXISTE;
         } else{
             return CLIENTE_VERIFICADO;
