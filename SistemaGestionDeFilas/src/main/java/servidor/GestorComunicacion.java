@@ -54,6 +54,7 @@ public class GestorComunicacion implements Runnable {
             }
             while (ejecutando){
                 String funcion = in.readLine();
+                if (funcion == null) break;
                 switch (funcion){
                     case CARGA_NUEVO_CLIENTE ->{
                         String num = in.readLine();

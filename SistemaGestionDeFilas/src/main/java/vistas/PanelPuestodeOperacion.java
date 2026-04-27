@@ -21,6 +21,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         initComponents();
         
         operador = new funcionesOperador(this);
+        operador.iniciaConexion(this);
     }
 
     /**
@@ -285,8 +286,12 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         return jButton1;
     }
     
-    public void muestraDni(){
-        jTextField2.setText(operador.getDNI());
+    public void muestraDni(String dni){
+        jTextField2.setText(dni);
+    }
+    
+    public void mostrarIdPuesto(String id) {
+        jTextField3.setText(id);
     }
     
     /**

@@ -80,21 +80,29 @@ public class funcionesOperador
     }
     
     private void procesarMensaje(String mensaje) {
+        if (mensaje.startsWith("ID|")) {
+            idPuesto = mensaje.split("\\|")[1];
+            SwingUtilities.invokeLater(() -> vistaOperador.mostrarIdPuesto(idPuesto));
+            return;
+        }
+
         if (mensaje.equals(COLA_VACIA)) {
-            JOptionPane.showMessageDialog(vistaOperador, 
+            JOptionPane.showMessageDialog(vistaOperador,
                 "La cola está vacía.", "Cola vacía", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-    
+
         try {
             dniActual = Integer.parseInt(mensaje);
-            this.mensaje = String.valueOf(dniActual); 
+            this.mensaje = String.valueOf(dniActual);
             SwingUtilities.invokeLater(() -> {
-                vistaOperador.muestraDni(); 
+                vistaOperador.muestraDni(String.valueOf(dniActual));
                 vistaOperador.iniciarTimer(30);
                 vistaOperador.activarBotonRenotar();
             });
-            } catch (NumberFormatException e) {}
+        } catch (NumberFormatException e) {
+            // mensaje inesperado, ignorar
+        }
     }
     
 
