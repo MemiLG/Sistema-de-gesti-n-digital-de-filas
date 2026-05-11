@@ -71,7 +71,7 @@ public class PanelMonitordeSala extends javax.swing.JFrame {
         jTextField1.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 36)); // NOI18N
         jTextField1.setForeground(new java.awt.Color(245, 240, 233));
         jTextField1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(127, 71, 45), 2));
+        jTextField1.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.WHITE, 2));
         jTextField1.setMaximumSize(new java.awt.Dimension(300, 500));
         jTextField1.setName(""); // NOI18N
         jTextField1.addActionListener(this::jTextField1ActionPerformed);
@@ -80,6 +80,7 @@ public class PanelMonitordeSala extends javax.swing.JFrame {
         jTextField2.setBackground(new java.awt.Color(18, 44, 79));
         jTextField2.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 36)); // NOI18N
         jTextField2.setForeground(new java.awt.Color(245, 240, 233));
+        jTextField2.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.WHITE, 2));
         jTextField2.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jTextField2.setDisabledTextColor(new java.awt.Color(18, 44, 79));
         jTextField2.addActionListener(this::jTextField2ActionPerformed);

@@ -6,6 +6,34 @@
     "configurations": [
         {
             "type": "java",
+            "name": "PanelMonitordeSala",
+            "request": "launch",
+            "mainClass": "vistas.PanelMonitordeSala",
+            "projectName": "SistemaGFMonitorSala"
+        },
+        {
+            "type": "java",
+            "name": "IngresoTotem",
+            "request": "launch",
+            "mainClass": "vistas.IngresoTotem",
+            "projectName": "SistemaGFTerminal"
+        },
+        {
+            "type": "java",
+            "name": "PanelPuestodeOperacion",
+            "request": "launch",
+            "mainClass": "vistas.PanelPuestodeOperacion",
+            "projectName": "SistemaGFPuestoAtencion"
+        },
+        {
+            "type": "java",
+            "name": "InterfazServidor",
+            "request": "launch",
+            "mainClass": "vistas.InterfazServidor",
+            "projectName": "SistemaGFServidor"
+        },
+        {
+            "type": "java",
             "name": "InterfazServidor",
             "request": "launch",
             "mainClass": "vistas.InterfazServidor",

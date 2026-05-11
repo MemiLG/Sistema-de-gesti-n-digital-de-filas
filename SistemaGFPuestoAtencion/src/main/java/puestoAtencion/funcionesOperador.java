@@ -99,8 +99,7 @@ public class funcionesOperador
             this.mensaje = String.valueOf(dniActual);
             SwingUtilities.invokeLater(() -> {
                 vistaOperador.muestraDni(String.valueOf(dniActual));
-                vistaOperador.iniciarTimer(30);
-                vistaOperador.activarBotonRenotar();
+                vistaOperador.iniciarTimer();
             });
         } catch (NumberFormatException e) {
             // mensaje inesperado, ignorar
@@ -117,6 +116,7 @@ public class funcionesOperador
       
         SwingUtilities.invokeLater(() -> {
             vistaOperador.actualizarContador(intentosRenotificacion);
+            vistaOperador.iniciarTimer();
         });
     }
 
@@ -147,7 +147,7 @@ public class funcionesOperador
             }
             
             // Bloquear ambos botones por 30 segundos
-            vistaOperador.iniciarTimer(30);
+            vistaOperador.iniciarTimer();
         });
     }
 

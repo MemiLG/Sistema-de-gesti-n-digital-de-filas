@@ -47,11 +47,13 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         jPanel5 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jButtonLlamarSiguiente = new javax.swing.JButton();
+        jButtonReLlammado = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
+        jLabelEspera = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
+        jLabelEnFila = new javax.swing.JLabel();
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -60,7 +62,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         jLabel2.setText("jLabel2");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(500, 400));
+        setPreferredSize(new java.awt.Dimension(500, 450));
 
         jPanel1.setBackground(new java.awt.Color(245, 240, 233));
         jPanel1.setMaximumSize(new java.awt.Dimension(100, 200));
@@ -121,28 +123,34 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
 
         jPanel5.setOpaque(false);
 
-        jButton1.setBackground(new java.awt.Color(91, 136, 178));
-        jButton1.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 18)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(245, 240, 233));
-        jButton1.setText("Siguiente");
-        jButton1.setAlignmentX(5.0F);
-        jButton1.setAlignmentY(5.0F);
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setInheritsPopupMenu(true);
-        jButton1.setMargin(new java.awt.Insets(5, 14, 3, 14));
-        jButton1.setMaximumSize(new java.awt.Dimension(150, 22));
-        jButton1.addActionListener(this::jButton1ActionPerformed);
+        jButtonLlamarSiguiente.setBackground(new java.awt.Color(91, 136, 178));
+        jButtonLlamarSiguiente.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 18)); // NOI18N
+        jButtonLlamarSiguiente.setForeground(new java.awt.Color(245, 240, 233));
+        jButtonLlamarSiguiente.setText("Siguiente");
+        jButtonLlamarSiguiente.setAlignmentX(5.0F);
+        jButtonLlamarSiguiente.setAlignmentY(5.0F);
+        jButtonLlamarSiguiente.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonLlamarSiguiente.setInheritsPopupMenu(true);
+        jButtonLlamarSiguiente.setMargin(new java.awt.Insets(5, 14, 3, 14));
+        jButtonLlamarSiguiente.setMaximumSize(new java.awt.Dimension(150, 22));
+        jButtonLlamarSiguiente.addActionListener(this::jButton1ActionPerformed);
 
-        jButton2.setBackground(new java.awt.Color(91, 136, 178));
-        jButton2.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 18)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(245, 240, 233));
-        jButton2.setText("Volver a llamar ");
-        jButton2.setBorderPainted(false);
-        jButton2.addActionListener(this::jButton2ActionPerformed);
+        jButtonReLlammado.setBackground(new java.awt.Color(91, 136, 178));
+        jButtonReLlammado.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 18)); // NOI18N
+        jButtonReLlammado.setForeground(new java.awt.Color(245, 240, 233));
+        jButtonReLlammado.setText("Volver a llamar ");
+        jButtonReLlammado.setBorderPainted(false);
+        jButtonReLlammado.addActionListener(this::jButton2ActionPerformed);
 
         jLabel5.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 14)); // NOI18N
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("CANTIDAD DE LLAMADOS :");
+
+        jLabelEspera.setFont(new java.awt.Font("Hind Siliguri Medium", 1, 18)); // NOI18N
+        jLabelEspera.setForeground(new java.awt.Color(200, 100, 50));
+        jLabelEspera.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelEspera.setText("Espera: 30s");
+        jLabelEspera.setVisible(false);
 
         jTextField1.setEditable(false);
         jTextField1.setBackground(new java.awt.Color(245, 240, 233));
@@ -161,10 +169,11 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabelEspera, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButtonLlamarSiguiente, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jButtonReLlammado, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(93, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
@@ -174,10 +183,12 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel5)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabelEspera, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButtonReLlammado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonLlamarSiguiente, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(14, 14, 14))
         );
 
@@ -187,6 +198,10 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         jTextField2.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jTextField2.setAutoscrolls(false);
         jTextField2.addActionListener(this::jTextField2ActionPerformed);
+
+        jLabelEnFila.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 18)); // NOI18N
+        jLabelEnFila.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelEnFila.setText("En fila: 0");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -201,6 +216,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
                         .addGap(122, 122, 122)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabelEnFila, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGap(208, 208, 208)
@@ -220,6 +236,8 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
                         .addGap(9, 9, 9)
                         .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
+                .addComponent(jLabelEnFila)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -261,14 +279,14 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // Renotificar al cliente actual
-        if (jButton2.isEnabled()) {
+        if (jButtonReLlammado.isEnabled()) {
             operador.renotificarCliente();
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // Llamar al siguiente cuando se hace clic en el botón
-        if (jButton1.isEnabled()) {
+        if (jButtonLlamarSiguiente.isEnabled()) {
             operador.llamarSiguiente();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -279,12 +297,12 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
 
     public javax.swing.JButton getBotonRenotificacion()
     {
-        return jButton2;
+        return jButtonReLlammado;
     }
     
     public javax.swing.JButton getBotonLlamar()
     {
-        return jButton1;
+        return jButtonLlamarSiguiente;
     }
     
     public void muestraDni(String dni){
@@ -303,40 +321,42 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
     }
     
     /**
-     * Inicia el timer de bloqueo (30 segundos)
+     * Inicia el timer de bloqueo
      * Bloquea ambos botones mientras cuenta
      */
-    public void iniciarTimer(int segundos) {
-        // Bloquear botones inmediatamente
-        jButton1.setEnabled(false);
-        jButton2.setEnabled(false);
+    public void iniciarTimer()
+    {
+        int segundos = 10;
+        jButtonLlamarSiguiente.setEnabled(false);
+        jButtonReLlammado.setEnabled(false);
+        jLabelEspera.setVisible(true);
         
-        // Crear thread para contar 30 segundos
+        // Crea un hilo para que con el sleep cuente los segundos de espera
         Thread timerThread = new Thread(() -> {
-            for (int i = segundos; i > 0; i--) {
+            for (int i = segundos; i > 0; i--)
+            {
                 final int segundosRestantes = i;
                 
-                // Actualizar GUI desde EDT
                 SwingUtilities.invokeLater(() -> {
-                    // Mostrar el contador en el botón
-                    jButton1.setText("Espera: " + segundosRestantes + "s");
-                    jButton2.setText("Espera: " + segundosRestantes + "s");
+                    jLabelEspera.setText("Espera: " + segundosRestantes + "s");
                 });
                 
-                try {
+                try
+                {
                     Thread.sleep(1000);
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException e)
+                {
                     break;
                 }
             }
             
-            // Cuando termina el timer, desbloquear botones
+            // Cuando termina el contador, oculta el label de espera y habilita los botones
             SwingUtilities.invokeLater(() -> {
-                jButton1.setText("Siguiente");
-                jButton2.setText("Volver a llamar");
+                jLabelEspera.setVisible(false);
                 
-                jButton1.setEnabled(true);
-                jButton2.setEnabled(true);
+                jButtonLlamarSiguiente.setEnabled(true);
+                jButtonReLlammado.setEnabled(true);
             });
         });
         
@@ -347,16 +367,28 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
      * Desactiva permanentemente el botón de re-notificación
      */
     public void desactivarBotonRenotar() {
-        jButton2.setEnabled(false);
-        jButton2.setText("Máximo alcanzado");
+        jButtonReLlammado.setEnabled(false);
+        jButtonReLlammado.setText("Máximo alcanzado");
     }
     
     /**
      * Activa el botón de re-notificación
      */
     public void activarBotonRenotar() {
-        jButton2.setEnabled(true);
-        jButton2.setText("Volver a llamar");
+        jButtonReLlammado.setEnabled(true);
+        jButtonReLlammado.setText("Volver a llamar");
+    }
+
+    public void actualizarEstadoFila(int personasEnCola)
+    {
+        if (personasEnCola <= 0)
+        {
+            jLabelEnFila.setText("No hay nadie esperando en la fila");
+        }
+        else
+        {
+            jLabelEnFila.setText("Cantidad de personas en la fila: " + personasEnCola);
+        }
     }
     
     /**
@@ -389,12 +421,14 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.Box.Filler filler1;
     private javax.swing.Box.Filler filler2;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButtonLlamarSiguiente;
+    private javax.swing.JButton jButtonReLlammado;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabelEspera;
+    private javax.swing.JLabel jLabelEnFila;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
