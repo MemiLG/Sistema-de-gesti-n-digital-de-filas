@@ -1,3 +1,7 @@
 /SistemaGestionDeFilas/target/
 AI_CONTEXT.md
 "*.class" 
+/SistemaGFServidor/target/
+/SistemaGFTerminal/target/
+/SistemaGFPuestoAtencion/target/
+/SistemaGFMonitorSala/target/
