@@ -90,15 +90,19 @@ public class funcionesOperador
 
         if (mensaje.equals(COLA_VACIA)) {
             JOptionPane.showMessageDialog(vistaOperador,
-                "La cola está vacía.", "Cola vacía", JOptionPane.INFORMATION_MESSAGE);
+                "No hay clientes esperando atencion.", "Cola vacía", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
         try {
             dniActual = Integer.parseInt(mensaje);
+            estadoCliente = 1;
+            intentosRenotificacion = 1;
             this.mensaje = String.valueOf(dniActual);
             SwingUtilities.invokeLater(() -> {
                 vistaOperador.muestraDni(String.valueOf(dniActual));
+                vistaOperador.actualizarContador(intentosRenotificacion);
+                vistaOperador.reiniciarBotonRenotificar();
                 vistaOperador.iniciarTimer();
             });
         } catch (NumberFormatException e) {
@@ -111,12 +115,9 @@ public class funcionesOperador
     public void llamarSiguiente()
     {
         out.println("LLAMAR_SIGUIENTE");
-        estadoCliente = 1;
-        intentosRenotificacion = 1;
-      
+    
         SwingUtilities.invokeLater(() -> {
             vistaOperador.actualizarContador(intentosRenotificacion);
-            vistaOperador.iniciarTimer();
         });
     }
 

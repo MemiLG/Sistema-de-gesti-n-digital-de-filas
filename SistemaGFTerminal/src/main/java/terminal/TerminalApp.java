@@ -20,6 +20,7 @@ public class TerminalApp {
     private PrintWriter out;
     private BufferedReader in;
     private String idTerminal = "";
+    private IngresoTotem vistaActual;
 
     
     public TerminalApp()
@@ -102,8 +103,13 @@ public class TerminalApp {
         return;
         }
         switch (mensaje) {
-            case CLIENTE_CARGADO ->
-                JOptionPane.showMessageDialog(null, "Cliente cargado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            case CLIENTE_CARGADO -> {
+            JOptionPane.showMessageDialog(vistaActual, "Cliente cargado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+                 if (vistaActual != null) {
+                 vistaActual.limpiarDNI();
+                }
+            }
             case CLIENTE_YA_EXISTE ->
                 JOptionPane.showMessageDialog(null, "El cliente ya existe en la fila.", "Cliente existente", JOptionPane.WARNING_MESSAGE);
         }
@@ -115,9 +121,9 @@ public class TerminalApp {
 
         if (!validacion(vistaTotem))
             return;
-
+        this.vistaActual = vistaTotem;
         String dni = vistaTotem.getDNI();
-    
+        
         out.println(CARGA_NUEVO_CLIENTE);
         out.println(dni);
     

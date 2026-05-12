@@ -150,7 +150,10 @@ public class IngresoTotem extends javax.swing.JFrame {
     {
         return jTextField1.getText().trim();
     }
-    
+    public void limpiarDNI() {
+        jTextField1.setText("Ej: 12345678");
+        jTextField1.requestFocus();
+    }
     public javax.swing.JButton getBotonIngresar()
     {
         return jButton2;

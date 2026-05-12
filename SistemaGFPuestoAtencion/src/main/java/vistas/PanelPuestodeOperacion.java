@@ -319,7 +319,10 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
     public void actualizarContador(int intentos) {
         jTextField1.setText(String.valueOf(intentos) + " / 3");
     }
-    
+    public void reiniciarBotonRenotificar() {
+        jButtonReLlammado.setText("Volver a llamar");
+        jButtonReLlammado.setEnabled(true);
+    }
     /**
      * Inicia el timer de bloqueo
      * Bloquea ambos botones mientras cuenta
