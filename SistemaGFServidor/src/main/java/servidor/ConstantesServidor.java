@@ -9,5 +9,7 @@ public class ConstantesServidor {
     public static final String LLAMAR_SIGUIENTE = "LLAMAR_SIGUIENTE";
     public static final String RENOVAR_NOTIFICACION = "RE-NOTIFICAR";
     public static final String COLA_VACIA = "No hay clientes por atender"; //Tiene que tratarlo el puesto de atencion
+    public static final String PING = "PING";
+    public static final String ECHO = "ECHO";
     
 }

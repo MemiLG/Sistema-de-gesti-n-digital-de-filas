@@ -9,7 +9,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 
 public class Monitor {
@@ -19,6 +18,7 @@ public class Monitor {
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
+    private int contFallos = 0;
     
     public Monitor(){
         this.servidores = new ArrayList<>();
@@ -35,7 +35,7 @@ public class Monitor {
         return this.servidores;
     }
     
-    public void iniciaConexion(PanelPuestodeOperacion vistaOperador)
+    public void iniciaConexion()
     {
         
         try {
@@ -45,26 +45,30 @@ public class Monitor {
 
             // identificarse ante el servidor
             out.println("MONITOR");
-
-            // hilo que escucha respuestas del servidor
-            new Thread(() -> {
-                try {
-                    String mensaje;
-                    while ((mensaje = in.readLine()) != null) {
-                        final String msg = mensaje;
-                        SwingUtilities.invokeLater(() -> procesarMensaje(msg));
-                    }
-                    cerrarConexion();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }).start();
-
+            
+            new Ping(out).start();
+            new Echo(in, this).start();
+            
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null,
                 "No se pudo conectar al servidor en " + IP + ":" + puerto + ".\nVerifique que el servidor esté iniciado.",
                 "Error de conexión", JOptionPane.ERROR_MESSAGE);
         }
+    }
+    
+    public void resetearFallos(){
+        this.contFallos = 0;
+    }
+    
+    public void servidorCaido(){
+        if (this.contFallos < 3)
+            this.contFallos += 1;
+            // El hilo tiene que seguir escuchando -> Ver si por la excepcion se cae y hay que volver a 
+        //Avisa de que se cayo el servidor a las demás aplicaciones
+    }
+    
+    public void aumentarFallos(){
+        this.contFallos += 1;
     }
     
     public void cerrarConexion(){
