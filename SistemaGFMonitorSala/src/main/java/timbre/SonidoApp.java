@@ -18,7 +18,6 @@ public class SonidoApp {
 
         try {
 
-            System.out.println("Intentando reproducir: " + rutaArchivo);
             if (clipAct != null && clipAct.isOpen()) 
                 clipAct.close();
         
