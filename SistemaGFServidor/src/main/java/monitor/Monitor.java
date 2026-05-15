@@ -14,15 +14,12 @@ import javax.swing.JOptionPane;
 public class Monitor {
     private ArrayList<ConexionServidor> servidores;
     private String IP;
-    private int puerto;
-    private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
     private int contFallos = 0;
     
     public Monitor(){
         this.servidores = new ArrayList<>();
-        this.puerto = 1234; 
         try{
             IP = InetAddress.getLocalHost().getHostAddress();
         }
@@ -35,11 +32,19 @@ public class Monitor {
         return this.servidores;
     }
     
-    public synchronized void agregarServidor(){
-        //this.servidores.add(e)
+    public synchronized void agregarServidor(int puerto){
+        try{
+            Socket socket = new Socket(IP,puerto);
+            ConexionServidor conexion = new ConexionServidor(puerto,socket);
+            this.servidores.add(conexion);
+        } catch(IOException e){
+            JOptionPane.showMessageDialog(null,
+                "No se pudo conectar al servidor en " + IP + ":" + puerto + ".\nVerifique que el servidor esté iniciado.",
+                "Error de conexión", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
-    public void iniciaConexion()
+    /*public void iniciaConexion()
     {
         
         try {
@@ -58,7 +63,7 @@ public class Monitor {
                 "No se pudo conectar al servidor en " + IP + ":" + puerto + ".\nVerifique que el servidor esté iniciado.",
                 "Error de conexión", JOptionPane.ERROR_MESSAGE);
         }
-    }
+    }*/
     
     public void resetearFallos(){
         this.contFallos = 0;
@@ -75,7 +80,7 @@ public class Monitor {
         this.contFallos += 1;
     }
     
-    public void cerrarConexion(){
+    /*public void cerrarConexion(){ //Hay que revisar de cerrar la conexion con cada servidor para cerrar bien el sistema
 
         try {
             socket.close();
@@ -83,6 +88,16 @@ public class Monitor {
             e.printStackTrace();
         }
 
-    }
+    }*/
     
+    public static void main(String[] args){
+        Monitor monitor = new Monitor();
+        int puerto1 = Integer.parseInt(args[0]);
+        int puerto2 = Integer.parseInt(args[1]);
+        
+        monitor.agregarServidor(puerto1);
+        monitor.agregarServidor(puerto2);
+        
+        
+    }
 }

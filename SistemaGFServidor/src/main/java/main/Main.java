@@ -23,7 +23,7 @@ public class Main {
 
         // Lanzar el Monitor como proceso separado
         try {
-            new ProcessBuilder("java", "-cp", System.getProperty("java.class.path"), "monitor.Monitor")
+            new ProcessBuilder("java", "-cp", System.getProperty("java.class.path"), "monitor.Monitor","1234","1235")
                 .inheritIO()
                 .start();
         } catch (IOException e) {
