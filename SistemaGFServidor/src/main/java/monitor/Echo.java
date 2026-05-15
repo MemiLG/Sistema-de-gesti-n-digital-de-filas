@@ -1,7 +1,9 @@
-package servidor;
+package monitor;
 
+import monitor.Monitor;
 import java.io.BufferedReader;
 import java.io.IOException;
+import servidor.ConstantesServidor;
 
 public class Echo extends Thread {
     private BufferedReader in;

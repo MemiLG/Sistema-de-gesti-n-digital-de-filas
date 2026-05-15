@@ -12,14 +12,14 @@ import negocio.Historial;
 import static servidor.ConstantesServidor.*;
 
 
-public class Servidor {
+public class Servidor extends Thread{
     
     private ColaIngreso colaIng;
     private Historial historial;
     private ServerSocket serverSocket;
     private boolean escuchando = false;
     private String ip = "";
-    private int puerto = 1234;
+    private int puerto;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Servidor.class.getName());
     private AtomicInteger contadorTerminales = new AtomicInteger(0);
     private AtomicInteger contadorPuestos = new AtomicInteger(0);
@@ -28,8 +28,10 @@ public class Servidor {
     private HashMap<String,GestorComunicacion> puestosAtencion;     //referencias a los diferentes puestos de atencion concurrentes que se están comunicando 
     private HashMap<String,GestorComunicacion> terminales;          //referencias a los diferentes puestos de registro (terminales) concurrentes que se están comunicando
     private GestorComunicacion monitor;                             //referencia a la comunicacion con el monitor
+    private GestorComunicacion monitorServidor;
     
-    public Servidor(){
+    public Servidor(int puerto){
+        this.puerto = puerto;
         colaIng = new ColaIngreso();
         historial = new Historial();
         puestosAtencion = new HashMap<>();
@@ -56,6 +58,7 @@ public class Servidor {
         new Thread(()->{
             try{
                 this.serverSocket = new ServerSocket(this.puerto);
+                System.out.println("Servidor con puerto "+ this.puerto +" iniciado");
                 while(true){ 
                    Socket clienteSocket = serverSocket.accept();
                    GestorComunicacion gestor = new GestorComunicacion(clienteSocket,this);
@@ -75,6 +78,7 @@ public class Servidor {
             if (terminales != null) terminales.values().forEach(GestorComunicacion::detener);
             if (monitor != null) monitor.detener();
             if (serverSocket != null && !serverSocket.isClosed()) serverSocket.close();
+            System.out.println("Servidor con puerto "+this.puerto+" apagado");
         } catch (IOException e) {
             logger.log(java.util.logging.Level.SEVERE, "Error al detener el servidor", e);
         }
@@ -94,6 +98,10 @@ public class Servidor {
     
     public synchronized void agregarMonitor(GestorComunicacion socket){
         this.monitor = socket;
+    }
+    
+    public void agregarMonitorServidor(GestorComunicacion socket){
+        this.monitorServidor = socket;
     }
     
     public synchronized String verificarCliente(int dni){
@@ -131,7 +139,7 @@ public class Servidor {
         String mensaje = dni + "|" + puesto;
         this.monitor.enviarMensaje(mensaje);
     }
-
+    
     public synchronized void mandaTerminal(String mensaje, String numeroTerminal){
         GestorComunicacion g = this.terminales.get(numeroTerminal);
         if (g != null) g.enviarMensaje(mensaje);
@@ -141,4 +149,16 @@ public class Servidor {
         GestorComunicacion g = this.puestosAtencion.get(numeroPuesto);
         if (g != null) g.enviarMensaje(mensaje);
     }
+    
+    public synchronized void mandaMonitorServidor(){
+        if (this.monitorServidor != null)
+            this.monitorServidor.enviarMensaje(ECHO);
+    }
+
+    @Override
+    public void run() {
+        super.run(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+    }
+    
+    
 }

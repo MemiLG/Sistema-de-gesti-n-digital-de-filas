@@ -51,6 +51,9 @@ public class GestorComunicacion implements Runnable {
                 case "MONITOR" ->{
                     servidor.agregarMonitor(this);
                 }
+                case "MONITORSERVIDOR" ->{
+                    servidor.agregarMonitorServidor(this);
+                }
             }
             while (ejecutando){
                 String funcion = in.readLine();
@@ -72,7 +75,7 @@ public class GestorComunicacion implements Runnable {
                     case LLAMAR_SIGUIENTE ->{
                         int siguiente_dni = servidor.siguienteEnCola();
                         if (siguiente_dni != 0){
-                            out.println(siguiente_dni); //Porque está hablando con el puesto de atencion.
+                            out.println(siguiente_dni); 
                             String clienteHistorial = Integer.toString(siguiente_dni)+" "+this.numeroInstancia;
                             servidor.cargaHistorial(clienteHistorial);
                             servidor.mandaMonitor(Integer.toString(siguiente_dni), this.numeroInstancia);
@@ -83,13 +86,16 @@ public class GestorComunicacion implements Runnable {
                         
                     }
                     case RENOVAR_NOTIFICACION ->{
-                        String dni_renotif = in.readLine(); //el puesto de atencion le manda el dni de la persona que quiere vover a llamar
+                        String dni_renotif = in.readLine(); 
                         String dni_renotif_entero = dni_renotif + " " + this.numeroInstancia;
                         int estado = servidor.verificaHistorial(dni_renotif_entero);
                         if (estado != -1){
                             servidor.cambiaHistorial(dni_renotif_entero, estado);
                             servidor.mandaMonitor(dni_renotif, this.numeroInstancia);
                         }
+                    }
+                    case PING ->{
+                        servidor.mandaMonitorServidor();
                     }
                 }
             }

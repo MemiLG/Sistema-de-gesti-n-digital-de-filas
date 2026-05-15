@@ -21,7 +21,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>25</maven.compiler.release>
-        <exec.mainClass>vistas.InterfazServidor</exec.mainClass>
+        <exec.mainClass>main.Main</exec.mainClass>
     </properties>
 
     <build>
@@ -39,7 +39,7 @@
                     <configuration>
                         <transformers>
                             <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                <mainClass>vistas.InterfazServidor</mainClass>
+                                <mainClass>main.Main</mainClass>
                             </transformer>
                         </transformers>
                     </configuration>

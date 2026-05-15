@@ -1,7 +1,8 @@
 
-package servidor;
+package monitor;
 
 import java.io.PrintWriter;
+import servidor.ConstantesServidor;
 
 public class Ping extends Thread{
     

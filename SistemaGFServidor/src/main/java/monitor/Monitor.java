@@ -1,5 +1,5 @@
 
-package servidor;
+package monitor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 
 
 public class Monitor {
-    private ArrayList<Servidor> servidores;
+    private ArrayList<ConexionServidor> servidores;
     private String IP;
     private int puerto;
     private Socket socket;
@@ -31,8 +31,12 @@ public class Monitor {
         }
     }
     
-    public ArrayList<Servidor> getServidores(){
+    public ArrayList<ConexionServidor> getServidores(){
         return this.servidores;
+    }
+    
+    public synchronized void agregarServidor(){
+        //this.servidores.add(e)
     }
     
     public void iniciaConexion()
@@ -44,7 +48,7 @@ public class Monitor {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             // identificarse ante el servidor
-            out.println("MONITOR");
+            out.println("MONITORSERVIDOR");
             
             new Ping(out).start();
             new Echo(in, this).start();
