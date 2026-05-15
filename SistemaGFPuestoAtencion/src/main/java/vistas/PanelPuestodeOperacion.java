@@ -62,7 +62,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         jLabel2.setText("jLabel2");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(500, 450));
+        setPreferredSize(new java.awt.Dimension(550, 550));
 
         jPanel1.setBackground(new java.awt.Color(245, 240, 233));
         jPanel1.setMaximumSize(new java.awt.Dimension(100, 200));
