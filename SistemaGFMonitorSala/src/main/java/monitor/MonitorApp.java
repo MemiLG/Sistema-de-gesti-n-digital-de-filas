@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import javax.swing.SwingUtilities;
+
 import negocio.Historial;
 import timbre.SonidoApp;
 import vistas.PanelMonitordeSala;
@@ -21,7 +22,8 @@ public class MonitorApp {
     private BufferedReader in;
     private PrintWriter out;
     private SonidoApp sonidoRenotificacion = new SonidoApp();
-    
+
+
     public MonitorApp(){
         try {
             IP = InetAddress.getLocalHost().getHostAddress();
@@ -64,6 +66,7 @@ public class MonitorApp {
                         if (historialVentana.buscaHistorial(dni + " " + puesto) != -1) {
                             historialVentana.eliminaClienteHistorial(historialVentana.buscaHistorial(dni + " " + puesto));
                             sonidoRenotificacion.reproducir("sonido/SonidoTurno.wav");
+                            vistaMonitor.iniciarParpadeo();
                         }
                         historialVentana.IngresoHistorial(dni + " " + puesto);
                     
@@ -86,6 +89,7 @@ public class MonitorApp {
                 "Error de conexión", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     public void cerrarConexion(){
         try {

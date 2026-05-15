@@ -7,6 +7,7 @@ package vistas;
 import java.util.Stack;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 
 import monitor.MonitorApp;
 import negocio.Historial;
@@ -20,7 +21,7 @@ public class PanelMonitordeSala extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PanelMonitordeSala.class.getName());
     private MonitorApp monitorSala;
-    
+    private Timer parpadeo;
     /**
      * Creates new form PanelMonitordeSala
      */
@@ -197,6 +198,30 @@ public class PanelMonitordeSala extends javax.swing.JFrame {
            jTextField1.setText("---");
            jTextField2.setText("---");
        }
+    }
+
+    public void iniciarParpadeo()
+    {
+        if(parpadeo != null && parpadeo.isRunning())
+            parpadeo.stop();
+
+        parpadeo = new Timer(500, e -> {
+            if (jTextField1.getForeground().equals(new java.awt.Color(18, 44, 79))) {
+                jTextField1.setForeground(new java.awt.Color(245, 240, 233) );
+                jTextField2.setForeground(new java.awt.Color(245, 240, 233) );
+            } else {
+                jTextField1.setForeground(new java.awt.Color(18, 44, 79));
+                jTextField2.setForeground(new java.awt.Color(18, 44, 79));
+            }
+        });
+        parpadeo.start();
+
+        new Timer(5000, e->{
+            parpadeo.stop();
+            jTextField1.setForeground(new java.awt.Color(245, 240, 233));
+            jTextField2.setForeground(new java.awt.Color(245, 240, 233));
+        }).start();
+
     }
 
     public void visualizarHistorial(){
