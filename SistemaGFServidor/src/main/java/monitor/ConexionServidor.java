@@ -6,7 +6,7 @@ import java.net.Socket;
 public class ConexionServidor {
     private int puerto;
     private Socket socket;
-    private int estado; // 0 es si el servidor esy[a inactivo (roto), 1 si es el servidor activo y 2 si es el pasivo.
+    private int estado; // 0 es si el servidor esta inactivo (roto), 1 si es el servidor activo y 2 si es el pasivo.
 
     public ConexionServidor(int puerto, Socket socket) {
         this.puerto = puerto;

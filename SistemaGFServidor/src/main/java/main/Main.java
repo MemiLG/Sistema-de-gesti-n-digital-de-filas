@@ -18,8 +18,8 @@ public class Main {
         Servidor servidorPrincipal = new Servidor(1234);
         Servidor servidorRespaldo  = new Servidor(1235);
 
-        //new Thread(servidorPrincipal).start();
-        //new Thread(servidorRespaldo).start(); Hay que hacer que el servidor sea Hilo
+        new Thread(servidorPrincipal).start();
+        new Thread(servidorRespaldo).start();
 
         // Lanzar el Monitor como proceso separado
         try {
