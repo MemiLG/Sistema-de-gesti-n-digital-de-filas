@@ -7,19 +7,23 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import javax.swing.JOptionPane;
 
 
 public class Monitor {
-    private ArrayList<ConexionServidor> servidores;
+    private HashMap<Integer,ConexionServidor> servidores;
     private String IP;
     private PrintWriter out;
     private BufferedReader in;
     private int contFallos = 0;
+    private Ping hiloPing;
+    private Echo hiloEcho;
+    private int puertoActivo;
     
     public Monitor(){
-        this.servidores = new ArrayList<>();
+        this.servidores = new HashMap<>();
         try{
             IP = InetAddress.getLocalHost().getHostAddress();
         }
@@ -27,21 +31,25 @@ public class Monitor {
             IP = "localhost";
         }
     }
+
+    public int getPuertoActivo() {
+        return puertoActivo;
+    }
+
+    public void setPuertoActivo(int puertoActivo) {
+        this.puertoActivo = puertoActivo;
+    }
     
-    public ArrayList<ConexionServidor> getServidores(){
+    public HashMap<Integer,ConexionServidor> getServidores(){
         return this.servidores;
     }
     
-    public synchronized void agregarServidor(int puerto){
+    public synchronized void agregarServidor(int puerto, int estado){
         try{
             Socket socket = new Socket(IP,puerto);
             ConexionServidor conexion = new ConexionServidor(puerto,socket);
-            this.servidores.add(conexion);
-            if (this.servidores.indexOf(conexion) == 0){
-                conexion.setEstado(1);
-            } else{
-                conexion.setEstado(2);
-            }
+            conexion.setEstado(estado);
+            this.servidores.put(puerto,conexion);
         } catch(IOException e){
             JOptionPane.showMessageDialog(null,
                 "No se pudo conectar al servidor en " + IP + ":" + puerto + ".\nVerifique que el servidor esté iniciado.",
@@ -49,36 +57,59 @@ public class Monitor {
         }
     }
     
-    /*public void iniciaConexion()
-    {
+    public void iniciaConexion(int puerto){
         
         try {
-            socket = new Socket(IP, puerto);
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            ConexionServidor conexion = this.servidores.get(puerto);
+            out = new PrintWriter(conexion.getSocket().getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(conexion.getSocket().getInputStream()));
 
             // identificarse ante el servidor
             out.println("MONITORSERVIDOR");
             
-            new Ping(out).start();
-            new Echo(in, this).start();
+            this.hiloPing = new Ping(out);
+            this.hiloEcho = new Echo(in, this);
+            this.hiloPing.start();
+            this.hiloEcho.start();
             
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null,
                 "No se pudo conectar al servidor en " + IP + ":" + puerto + ".\nVerifique que el servidor esté iniciado.",
                 "Error de conexión", JOptionPane.ERROR_MESSAGE);
         }
-    }*/
+    }
     
     public void resetearFallos(){
         this.contFallos = 0;
     }
     
-    public void servidorCaido(){
-        if (this.contFallos < 3)
+    public synchronized void servidorCaido(){
+        this.hiloPing.interrupt();
+        this.hiloEcho.interrupt();
+        if (this.contFallos < 3){
             this.contFallos += 1;
-            // El hilo tiene que seguir escuchando -> Ver si por la excepcion se cae y hay que volver a 
-        //Avisa de que se cayo el servidor a las demás aplicaciones
+            this.hiloPing = new Ping(out);
+            this.hiloEcho = new Echo(in, this);
+        } else {
+            ConexionServidor conect = this.servidores.get(this.puertoActivo);
+            conect.setEstado(0);
+            int puertoIt = this.puertoActivo;
+            Iterator<Integer> it = servidores.keySet().iterator();
+            int otroPuerto = -1;
+            while (it.hasNext() && otroPuerto == -1) {
+                int puerto = it.next();
+                if (puerto != this.puertoActivo) {
+                    otroPuerto = puerto;
+                }
+            }
+            this.puertoActivo = otroPuerto;
+            ConexionServidor con2 = this.servidores.get(this.puertoActivo);
+            con2.setEstado(1);
+            //Tiene que avisarle a las apliaciones que se tienen que cambiar de servidor
+            this.iniciaConexion(this.puertoActivo);
+            //Hay que salvar al servidor para que se pueda volver pasivo y resincronizarlo
+            
+        }
     }
     
     public void aumentarFallos(){
@@ -100,10 +131,11 @@ public class Monitor {
         int puerto1 = Integer.parseInt(args[0]);
         int puerto2 = Integer.parseInt(args[1]);
         
-        monitor.agregarServidor(puerto1);
-        monitor.agregarServidor(puerto2);
+        monitor.agregarServidor(puerto1,1);
+        monitor.agregarServidor(puerto2,2);
         
-        
+        monitor.setPuertoActivo(puerto1);
+        monitor.iniciaConexion(puerto1);
         
         
     }

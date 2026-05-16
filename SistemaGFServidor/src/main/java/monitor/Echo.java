@@ -1,8 +1,8 @@
 package monitor;
 
-import monitor.Monitor;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import servidor.ConstantesServidor;
 
 public class Echo extends Thread {
@@ -23,8 +23,16 @@ public class Echo extends Thread {
                     monitor.resetearFallos();
                 }
             }
+        }catch(SocketTimeoutException e){
+            if(!Thread.currentThread().isInterrupted()){
+                System.out.println("Echo cierra");
+                monitor.servidorCaido();
+            }
         }catch(IOException e){
-            monitor.servidorCaido();   
+            if (!Thread.currentThread().isInterrupted()){
+                System.out.println("Echo cierra");
+                monitor.servidorCaido();
+            }
         }
     }
     

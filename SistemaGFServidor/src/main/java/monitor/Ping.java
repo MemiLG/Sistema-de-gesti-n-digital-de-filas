@@ -7,6 +7,8 @@ import servidor.ConstantesServidor;
 public class Ping extends Thread{
     
     private PrintWriter out;
+    private boolean canalSano = true;
+    private Monitor monitor;
     
     public Ping(PrintWriter out){
         this.out = out;
@@ -15,12 +17,17 @@ public class Ping extends Thread{
     @Override
     public void run() {
         try{
-            while(true){
+            while(canalSano){
                 out.println(ConstantesServidor.PING);
-                Thread.sleep(3000);
+                if (out.checkError()) {
+                    canalSano = false;
+                    monitor.servidorCaido();
+                }
+                if (canalSano)
+                    Thread.sleep(3000);
             }
         } catch(InterruptedException e){
-            //ver como cerrar la transmicion
+           System.out.println("Ping cierra");
         }
     }
 }
