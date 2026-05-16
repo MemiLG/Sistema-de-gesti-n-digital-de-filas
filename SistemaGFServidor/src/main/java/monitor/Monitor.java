@@ -37,6 +37,11 @@ public class Monitor {
             Socket socket = new Socket(IP,puerto);
             ConexionServidor conexion = new ConexionServidor(puerto,socket);
             this.servidores.add(conexion);
+            if (this.servidores.indexOf(conexion) == 0){
+                conexion.setEstado(1);
+            } else{
+                conexion.setEstado(2);
+            }
         } catch(IOException e){
             JOptionPane.showMessageDialog(null,
                 "No se pudo conectar al servidor en " + IP + ":" + puerto + ".\nVerifique que el servidor esté iniciado.",
@@ -97,6 +102,8 @@ public class Monitor {
         
         monitor.agregarServidor(puerto1);
         monitor.agregarServidor(puerto2);
+        
+        
         
         
     }
