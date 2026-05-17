@@ -78,14 +78,24 @@ public class TerminalApp {
             new Thread(() -> {
                 try {
                     String mensaje;
-                    while ((mensaje = inMonitor.readLine()) != null) {
+                    if ((mensaje = inMonitor.readline()) != null)
+                    {
+
                         final String msg = mensaje;
                         int puertoServidor = Integer.parseInt(msg);
                         iniciaConexion(puertoServidor);
+
                     }
-                    cerrarConexion();
+                    while ((mensaje = inMonitor.readLine()) != null) {
+                        final String msg = mensaje;
+                        int puertoServidor = Integer.parseInt(msg);
+                        cerrarConexionMonitor();
+                        iniciaConexion(puertoServidor);
+                    }
+                    cerrarConexionMonitor();
                 } catch (IOException e) {
                     e.printStackTrace();
+
                 }
             }).start();
             
@@ -116,7 +126,7 @@ public class TerminalApp {
                         final String msg = mensaje;
                         SwingUtilities.invokeLater(() -> procesarMensaje(msg));
                     }
-                    cerrarConexion();
+                    cerrarConexionServidor();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -162,13 +172,37 @@ public class TerminalApp {
     
     }
 
-    public void cerrarConexion()
+    public void cerrarConexionServidor()
+    {
+
+        try 
+        {
+
+            if (in!= null)
+                in.close();
+            
+            if (out != null)
+                out.close();
+            
+            if (socketServidor != null && !socketServidor.isClosed())
+                socketServidor.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+    
+        }
+
+    }
+
+    public void cerrarConexionMonitor()
     {
 
         try {
-            socketServidor.close();
+          
             socketMonitor.close();
+        
         } catch (Exception e) {
+    
             e.printStackTrace();
     
         }

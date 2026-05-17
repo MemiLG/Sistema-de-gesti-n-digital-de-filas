@@ -28,7 +28,7 @@ public class PanelMonitordeSala extends javax.swing.JFrame {
     public PanelMonitordeSala() {
         initComponents();
         monitorSala = new MonitorApp();
-        monitorSala.conectar(this);
+        monitorSala.iniciaConexionMonitor(this);
     }
 
     /**

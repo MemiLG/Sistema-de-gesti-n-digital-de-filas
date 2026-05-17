@@ -21,7 +21,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         initComponents();
         
         operador = new funcionesOperador(this);
-        operador.iniciaConexion(this);
+        operador.iniciaConexionMonitor();
     }
 
     /**
