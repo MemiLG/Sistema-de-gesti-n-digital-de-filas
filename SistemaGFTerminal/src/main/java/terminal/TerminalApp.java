@@ -16,9 +16,13 @@ public class TerminalApp {
 
     private String IP;
     private static final int puerto = 1234;
-    private java.net.Socket socket;
+    private static final int puertoMonitor = 2345;
+    private java.net.Socket socketServidor;
+    private java.net.Socket socketMonitor;
     private PrintWriter out;
+    private PrintWriter outMonitor;
     private BufferedReader in;
+    private BufferedReader inMonitor;
     private String idTerminal = "";
     private IngresoTotem vistaActual;
 
@@ -63,14 +67,43 @@ public class TerminalApp {
         
         return true;
     }
+    
+    public void iniciaConexionMonitor(){
 
-    public void iniciaConexion() 
+        try{
+            socketMonitor = new Socket(IP, puertoMonitor);
+            outMonitor = new PrintWriter(socketMonitor.getOutputStream(), true);
+            inMonitor = new BufferedReader(new InputStreamReader(socketMonitor.getInputStream()));
+
+            new Thread(() -> {
+                try {
+                    String mensaje;
+                    while ((mensaje = inMonitor.readLine()) != null) {
+                        final String msg = mensaje;
+                        int puertoServidor = Integer.parseInt(msg);
+                        iniciaConexion(puertoServidor);
+                    }
+                    cerrarConexion();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+            
+        }catch(IOException e){
+            JOptionPane.showMessageDialog(null,
+                "No se pudo conectar al monitor en " + IP + ":" + puertoMonitor + ".\nVerifique que el monitor esté iniciado.",
+                "Error de conexión", JOptionPane.ERROR_MESSAGE);
+        }
+
+    }
+
+    public void iniciaConexion(int puertoServidor)
     {
-
+        
         try {
-            socket = new Socket(IP, puerto);
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            socketServidor = new Socket(IP, puertoServidor);
+            out = new PrintWriter(socketServidor.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(socketServidor.getInputStream()));
 
             // identificarse ante el servidor
             out.println("TERMINAL");
@@ -133,7 +166,8 @@ public class TerminalApp {
     {
 
         try {
-            socket.close();
+            socketServidor.close();
+            socketMonitor.close();
         } catch (Exception e) {
             e.printStackTrace();
     

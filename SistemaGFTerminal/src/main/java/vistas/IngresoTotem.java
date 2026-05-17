@@ -12,7 +12,7 @@ public class IngresoTotem extends javax.swing.JFrame {
         initComponents();
         
         //Inicia la conexión al servidor al abrir la ventana
-        terminal.iniciaConexion(); 
+        terminal.iniciaConexionMonitor(); 
     }
 
     /**

@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "main.Main",
+            "projectName": "SistemaGFServidor"
+        },
+        {
+            "type": "java",
             "name": "PanelMonitordeSala",
             "request": "launch",
             "mainClass": "vistas.PanelMonitordeSala",
