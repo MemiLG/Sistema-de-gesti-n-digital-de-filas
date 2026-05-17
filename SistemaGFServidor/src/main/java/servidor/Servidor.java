@@ -235,7 +235,7 @@ public class Servidor extends Thread{
 
     @Override
     public void run() {
-        super.run(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+        this.iniciar();
     }
     
     

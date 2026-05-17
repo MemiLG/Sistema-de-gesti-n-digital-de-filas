@@ -51,4 +51,14 @@ public class ComunicacionMonitor extends Thread {
         String mensaje = Integer.toString(puerto);
         out.println(mensaje);
     }
+    
+    public void detener(){
+        try {
+            if (in != null) in.close();
+            if (out != null) out.close();
+            if (socket != null && !socket.isClosed()) socket.close();
+        } catch (IOException e) {
+            System.getLogger(ComunicacionMonitor.class.getName()).log(System.Logger.Level.ERROR, "Error al cerrar el gestor", e);
+        }
+    }
 }
