@@ -88,8 +88,15 @@ public class Monitor {
         this.monitordeSala = monitor;
     }
     
-    // --- Conexiones ---
+       public int getContFallos() {
+        return contFallos;
+    }
+
+    public void setContFallos(int contFallos) {
+        this.contFallos = contFallos;
+    }
     
+    // --- Conexiones ---
     
     public synchronized void agregarServidor(int puerto, int estado){
         try{
@@ -179,7 +186,6 @@ public class Monitor {
                 this.terminales.get(i).enviarPuerto(this.puertoActivo);
             }
             this.monitordeSala.enviarPuerto(this.puertoActivo);
-            //Hay que salvar al servidor para que se pueda volver pasivo y resincronizarlo
             
         }
     }

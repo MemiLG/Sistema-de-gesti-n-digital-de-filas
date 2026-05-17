@@ -9,9 +9,9 @@ import java.net.Socket;
 public class ComunicacionMonitor extends Thread {
     private Socket socket;
     private Monitor monitor;
-    private String numeroInstancia = "";
     private PrintWriter out;
     private BufferedReader in;
+    private boolean ejecutando = true;
     
     
     public ComunicacionMonitor(Socket socket, Monitor monitor){
@@ -42,8 +42,13 @@ public class ComunicacionMonitor extends Thread {
                     enviarPuerto(monitor.getPuertoActivo());
                 }
             }
-            
-            
+            while(ejecutando){
+                String mensajeCaida = in.readLine();
+                if (mensaje != null && mensajeCaida.equals("SERVIDOR_CAIDO")){
+                    monitor.setContFallos(3);
+                    monitor.servidorCaido();
+                }
+            }
         } catch(IOException e){}
     }
     
@@ -53,6 +58,7 @@ public class ComunicacionMonitor extends Thread {
     }
     
     public void detener(){
+        ejecutando = false;
         try {
             if (in != null) in.close();
             if (out != null) out.close();
