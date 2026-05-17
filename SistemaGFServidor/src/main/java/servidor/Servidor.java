@@ -5,8 +5,11 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import negocio.ColaIngreso;
 import negocio.Historial;
 import static servidor.ConstantesServidor.*;
@@ -29,6 +32,10 @@ public class Servidor extends Thread{
     private HashMap<String,GestorComunicacion> terminales;          //referencias a los diferentes puestos de registro (terminales) concurrentes que se están comunicando
     private GestorComunicacion monitor;                             //referencia a la comunicacion con el monitor
     private GestorComunicacion monitorServidor;
+    
+    private boolean pausado = false;
+    private boolean logActivo = false;
+    private ArrayList<String> logOperaciones = new ArrayList<>();
     
     public Servidor(int puerto){
         this.puerto = puerto;
@@ -97,6 +104,40 @@ public class Servidor extends Thread{
 
     //--- Funciones de recursos compartidos ---
     
+    public synchronized String obtenerSnapshot() {
+    StringBuilder sbCola = new StringBuilder("COLA:");
+    Queue<Integer> colaActual = colaIng.getColaIng();
+    sbCola.append(colaActual.stream().map(String::valueOf).collect(Collectors.joining(",")));
+    
+    StringBuilder sbHistorial = new StringBuilder(";HISTORIAL:");
+    ArrayList<String> histActual = historial.getHistorial();
+    sbHistorial.append(histActual.stream().collect(Collectors.joining(",")));
+    
+    logActivo = true;
+    logOperaciones.clear();
+    
+    return sbCola.toString() + sbHistorial.toString();
+    }
+
+    public synchronized String obtenerLogYPausar() {
+        pausado = true;
+        String logStr = String.join("|", logOperaciones);
+        logOperaciones.clear();
+        logActivo = false;
+        return logStr;
+    }
+
+    public synchronized void reanudar() {
+        pausado = false;
+        notifyAll();
+    }
+
+    private synchronized void loggear(String operacion) {
+        if (logActivo) {
+            logOperaciones.add(operacion);
+        }
+    }
+    
     public synchronized String registrarTerminal(GestorComunicacion gestor) {
         String id = String.valueOf(contadorTerminales.incrementAndGet());
         this.terminales.put(id, gestor);
@@ -125,26 +166,39 @@ public class Servidor extends Thread{
         }
     }
     
-    public synchronized void cargarNuevoCliente(int dni){
+    public synchronized void cargarNuevoCliente(int dni) throws InterruptedException{
+        while(pausado)
+            wait();
         this.colaIng.nuevoIngreso(dni);
+        loggear("AGREGAR_COLA:" + dni);
     }
     
-    public synchronized int siguienteEnCola(){
-        return colaIng.sacarClienteColaIng();
+    public synchronized int siguienteEnCola() throws InterruptedException{
+        while (pausado) 
+            wait();
+        int dni = colaIng.sacarClienteColaIng();
+        loggear("LLAMAR_SIGUIENTE:" + dni);
+        return dni;
     }
     
     
-    public synchronized void cargaHistorial(String cliente){
+    public synchronized void cargaHistorial(String cliente) throws InterruptedException{
+        while (pausado) 
+            wait();
         historial.IngresoHistorial(cliente);
+        loggear("AGREGAR_HISTORIAL:" + cliente);
     }
     
     public synchronized int verificaHistorial (String cliente){
         return historial.buscaHistorial(cliente);
     }
     
-     public synchronized void cambiaHistorial(String cliente, int pos){
+     public synchronized void cambiaHistorial(String cliente, int pos) throws InterruptedException{
+         while (pausado) 
+             wait();
          historial.eliminaClienteHistorial(pos);
          historial.IngresoHistorial(cliente);
+         loggear("CAMBIAR_HISTORIAL:" + cliente + " " + pos);
      }
     
     public synchronized void mandaMonitor(String dni, String puesto){

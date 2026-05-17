@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import javax.swing.JOptionPane;
+import negocio.ColaIngreso;
+import negocio.Historial;
 import servidor.ConstantesServidor;
 import servidor.Servidor;
 
@@ -186,10 +188,48 @@ public class Monitor {
     }
     
     public void salvarServidorCaido(int puertoCaido){
-        Servidor server = new Servidor(puertoCaido);
-        ConexionServidor conexion = this.servidores.get(puertoCaido);
-        conexion.setEstado(2);
-        out.println(ConstantesServidor.ESTADO_INTERNO);
+        try{
+            Servidor server = new Servidor(puertoCaido);
+            ConexionServidor conexion = this.servidores.get(puertoCaido);
+            out.println(ConstantesServidor.ESTADO_INTERNO);
+            String snapshot = in.readLine();
+            out.println(ConstantesServidor.SNAPSHOT_OK);
+            
+            String[] partes = snapshot.split(";");
+            String[] cola = partes[0].replace("COLA:", "").split(",");
+            String[] historial = partes[1].replace("HISTORIAL:", "").split(",");
+            ColaIngreso colaCopia = new ColaIngreso();
+            for (int i=0; i< cola.length;i+=1){
+                colaCopia.nuevoIngreso(Integer.parseInt(cola[i]));
+            }
+            Historial historialCopia = new Historial();
+            for (int i=0;i<historial.length;i+=1){
+                historialCopia.IngresoHistorial(historial[i]);
+            }
+            server.setColaIng(colaCopia);
+            server.setHistorial(historialCopia);
+            
+            String logs = in.readLine(); //Lee los logs que fue recopilando
+            String[] operaciones = logs.split("\\|");
+            for (String op : operaciones) {
+                if (!op.isEmpty()){
+                    String[] partesLogs = op.split(":");
+                    switch (partesLogs[0]) {
+                        case "AGREGAR_COLA" -> server.cargarNuevoCliente(Integer.parseInt(partesLogs[1]));
+                        case "LLAMAR_SIGUIENTE" -> server.siguienteEnCola();
+                        case "AGREGAR_HISTORIAL" -> server.cargaHistorial(partesLogs[1]);
+                        case "CAMBIAR_HISTORIAL" -> {
+                            String[] datos = partesLogs[1].split("-");
+                            server.cambiaHistorial(datos[0], Integer.parseInt(datos[1]));
+                        }
+                    }
+                }
+            }
+            conexion.setEstado(2);
+        }catch(InterruptedException | IOException e){
+            JOptionPane.showMessageDialog(null,"Error al recuperar al servidor caido","Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
         
     }
     

@@ -27,9 +27,7 @@ public class Main {
                 .inheritIO()
                 .start();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null,
-                "No se pudo iniciar el Monitor.",
-                "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,"No se pudo iniciar el Monitor.","Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

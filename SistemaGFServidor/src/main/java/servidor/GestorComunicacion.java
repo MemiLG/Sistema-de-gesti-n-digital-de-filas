@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import javax.swing.JOptionPane;
 import static servidor.ConstantesServidor.*;
 
 public class GestorComunicacion implements Runnable {
@@ -60,43 +61,64 @@ public class GestorComunicacion implements Runnable {
                 if (funcion == null) break; //Aca falla el servidor y tiene que automatarse
                 switch (funcion){
                     case CARGA_NUEVO_CLIENTE ->{
-                        String num = in.readLine();
-                        int dni = Integer.parseInt(num);
-                        String estado = servidor.verificarCliente(dni);
-                        if (estado.equals(CLIENTE_YA_EXISTE)){
-                            servidor.mandaTerminal(CLIENTE_YA_EXISTE, this.numeroInstancia);
-                        } else{
-                            if (estado.equals(CLIENTE_VERIFICADO)){
-                                servidor.cargarNuevoCliente(dni);
-                                servidor.mandaTerminal(CLIENTE_CARGADO, this.numeroInstancia);
-                                servidor.notificarTamanoColaATodosLosPuestos();
+                        try{
+                            String num = in.readLine();
+                            int dni = Integer.parseInt(num);
+                            String estado = servidor.verificarCliente(dni);
+                            if (estado.equals(CLIENTE_YA_EXISTE)){
+                                servidor.mandaTerminal(CLIENTE_YA_EXISTE, this.numeroInstancia);
+                            } else{
+                                if (estado.equals(CLIENTE_VERIFICADO)){
+                                    servidor.cargarNuevoCliente(dni);
+                                    servidor.mandaTerminal(CLIENTE_CARGADO, this.numeroInstancia);
+                                    servidor.notificarTamanoColaATodosLosPuestos();
+                                }
                             }
+                        }catch (InterruptedException e){
+                            JOptionPane.showMessageDialog(null,"No se pudo cargar el nuevo cliente","Error", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                     case LLAMAR_SIGUIENTE ->{
-                        int siguiente_dni = servidor.siguienteEnCola();
-                        if (siguiente_dni != 0){
-                            out.println(siguiente_dni); 
-                            String clienteHistorial = Integer.toString(siguiente_dni)+" "+this.numeroInstancia;
-                            servidor.cargaHistorial(clienteHistorial);
-                            servidor.mandaMonitor(Integer.toString(siguiente_dni), this.numeroInstancia);
+                        try{
+                            int siguiente_dni = servidor.siguienteEnCola();
+                            if (siguiente_dni != 0){
+                                out.println(siguiente_dni); 
+                                String clienteHistorial = Integer.toString(siguiente_dni)+" "+this.numeroInstancia;
+                                servidor.cargaHistorial(clienteHistorial);
+                                servidor.mandaMonitor(Integer.toString(siguiente_dni), this.numeroInstancia);
+                            }
+                            else {
+                                servidor.mandaPuestoAtencion(COLA_VACIA, this.numeroInstancia);
+                            }
+                            servidor.notificarTamanoColaATodosLosPuestos();
+                        }catch (InterruptedException e){
+                            JOptionPane.showMessageDialog(null,"No se pudo llamar al siguiente","Error", JOptionPane.ERROR_MESSAGE);
                         }
-                        else {
-                           servidor.mandaPuestoAtencion(COLA_VACIA, this.numeroInstancia);
-                        }
-                        servidor.notificarTamanoColaATodosLosPuestos();
                     }
                     case RENOVAR_NOTIFICACION ->{
-                        String dni_renotif = in.readLine(); 
-                        String dni_renotif_entero = dni_renotif + " " + this.numeroInstancia;
-                        int estado = servidor.verificaHistorial(dni_renotif_entero);
-                        if (estado != -1){
-                            servidor.cambiaHistorial(dni_renotif_entero, estado);
-                            servidor.mandaMonitor(dni_renotif, this.numeroInstancia);
+                        try{
+                            String dni_renotif = in.readLine(); 
+                            String dni_renotif_entero = dni_renotif + " " + this.numeroInstancia;
+                            int estado = servidor.verificaHistorial(dni_renotif_entero);
+                            if (estado != -1){
+                                servidor.cambiaHistorial(dni_renotif_entero, estado);
+                                servidor.mandaMonitor(dni_renotif, this.numeroInstancia);
+                            }
+                        }catch (InterruptedException e){
+                            JOptionPane.showMessageDialog(null,"No se pudo renovar la notificacion","Error", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                     case PING ->{
                         servidor.mandaMonitorServidor();
+                    }
+                    case ESTADO_INTERNO ->{
+                        String snapshot = servidor.obtenerSnapshot();
+                        this.enviarMensaje(snapshot);
+                    }
+                    case SNAPSHOT_OK ->{
+                        String logResidual = servidor.obtenerLogYPausar();
+                        out.println(logResidual);
+                        servidor.reanudar();
                     }
                 }
             }

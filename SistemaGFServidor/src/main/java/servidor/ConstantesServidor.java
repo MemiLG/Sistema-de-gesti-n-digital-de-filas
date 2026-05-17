@@ -14,5 +14,6 @@ public class ConstantesServidor {
     public static final String PING = "PING";
     public static final String ECHO = "ECHO";
     public static final String ESTADO_INTERNO = "ESTADO_INTERNO";
+    public static final String SNAPSHOT_OK = "SNAPSHOT_OK";
     
 }
