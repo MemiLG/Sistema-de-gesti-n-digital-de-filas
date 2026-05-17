@@ -130,7 +130,7 @@ public class TerminalApp {
                 this.cantidadFallos++;
                 if (!reintentodeEnvio("TERMINAL") )
                 {
-                    SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null,"No se pudo enviar el mensaje.","Error de envío", JOptionPane.ERROR_MESSAGE));
+                    outMonitor.println("SERVIDOR_CAIDO");
                     return;
                 } 
             }
@@ -194,7 +194,7 @@ public class TerminalApp {
             this.cantidadFallos++;
             if (!reintentodeEnvio(CARGA_NUEVO_CLIENTE) )
             {
-                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null,"No se pudo enviar el turno.","Error de envío", JOptionPane.ERROR_MESSAGE));
+               outMonitor.println("SERVIDOR_CAIDO");
                 return;
             } 
         }
@@ -203,7 +203,7 @@ public class TerminalApp {
             this.cantidadFallos++;
             if (!reintentodeEnvio(dni) )
             {
-                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null,"No se pudo enviar el turno.","Error de envío", JOptionPane.ERROR_MESSAGE));
+                outMonitor.println("SERVIDOR_CAIDO");
                 return;
             } 
         }
@@ -236,14 +236,10 @@ public class TerminalApp {
                 }
                 this.cantidadFallos++;
                 
-            }else{
+            }else
 
-                JOptionPane.showMessageDialog(null,
-                    "No se pudo enviar el turno.",
-                    "No hay conexión", JOptionPane.ERROR_MESSAGE);
-                return false;
-
-            }
+                 return false;
+            
         }
         return false;
     }

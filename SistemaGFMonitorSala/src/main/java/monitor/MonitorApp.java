@@ -110,7 +110,7 @@ public class MonitorApp {
                 this.cantidadFallos++;
                 if (!reintentodeEnvio("MONITOR") )
                 {
-                    SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null,"No se pudo enviar el turno.","Error de envío", JOptionPane.ERROR_MESSAGE));
+                    outMonitor.println("SERVIDOR_CAIDO");
                     return;
                 } 
             }
@@ -178,14 +178,9 @@ public class MonitorApp {
                 }
                 this.cantidadFallos++;
                 
-            }else{
-
-                JOptionPane.showMessageDialog(null,
-                    "No se pudo enviar el mensaje.",
-                    "No hay conexión", JOptionPane.ERROR_MESSAGE);
+            }else
                 return false;
 
-            }
         }
         return false;
     }

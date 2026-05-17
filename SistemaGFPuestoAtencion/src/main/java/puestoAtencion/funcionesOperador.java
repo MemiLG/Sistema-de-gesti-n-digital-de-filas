@@ -114,7 +114,7 @@ public class funcionesOperador
                 this.cantidadFallos++;
                 if (!reintentodeEnvio("ATENCION") )
                 {
-                    SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null,"No se pudo enviar el turno.","Error de envío", JOptionPane.ERROR_MESSAGE));
+                    outMonitor.println("SERVIDOR_CAIDO");
                     return;
                 } 
             }
@@ -189,7 +189,7 @@ public class funcionesOperador
             this.cantidadFallos++;
             if (!reintentodeEnvio("LLAMAR_SIGUIENTE") )
             {
-                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null,"No se pudo enviar el mensaje.","Error de envío", JOptionPane.ERROR_MESSAGE));
+                outMonitor.println("SERVIDOR_CAIDO");
                 return;
             } 
         }
@@ -215,7 +215,7 @@ public class funcionesOperador
             this.cantidadFallos++;
             if (!reintentodeEnvio("RENOVAR_NOTIFICACION") )
             {
-                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null,"No se pudo enviar el mensaje.","Error de envío", JOptionPane.ERROR_MESSAGE));
+                outMonitor.println("SERVIDOR_CAIDO");
                 return;
             } 
         }
@@ -225,7 +225,7 @@ public class funcionesOperador
             this.cantidadFallos++;
             if (!reintentodeEnvio(dniActual) )
             {
-                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null,"No se pudo enviar el mensaje.","Error de envío", JOptionPane.ERROR_MESSAGE));
+                outMonitor.println("SERVIDOR_CAIDO");
                 return;
             } 
         }
@@ -276,14 +276,10 @@ public class funcionesOperador
                 }
                 this.cantidadFallos++;
                 
-            }else{
+            }else
 
-                JOptionPane.showMessageDialog(null,
-                    "No se pudo enviar el mensaje.",
-                    "No hay conexión", JOptionPane.ERROR_MESSAGE);
                 return false;
 
-            }
         }
         return false;
     }
