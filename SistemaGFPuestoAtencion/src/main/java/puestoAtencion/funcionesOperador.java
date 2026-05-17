@@ -121,6 +121,15 @@ public class funcionesOperador
             return;
         }
 
+        if (mensaje.startsWith(PREFIJO_TAMANO_COLA)) {
+            try {
+                int cantidad = Integer.parseInt(mensaje.substring(PREFIJO_TAMANO_COLA.length()));
+                vistaOperador.actualizarEstadoFila(cantidad);
+            } catch (NumberFormatException ignored) {
+            }
+            return;
+        }
+
         if (mensaje.equals(COLA_VACIA)) {
             JOptionPane.showMessageDialog(vistaOperador,
                 "No hay clientes esperando atencion.", "Cola vacía", JOptionPane.INFORMATION_MESSAGE);
@@ -190,7 +199,8 @@ public class funcionesOperador
     {
 
         try {
-            socket.close();
+            if (socketServidor != null) socketServidor.close();
+            if (socketMonitor != null) socketMonitor.close();
         } catch (Exception e) {
             e.printStackTrace();
     

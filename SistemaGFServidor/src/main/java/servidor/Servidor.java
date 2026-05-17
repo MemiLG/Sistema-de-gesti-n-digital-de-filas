@@ -162,6 +162,17 @@ public class Servidor extends Thread{
         GestorComunicacion g = this.puestosAtencion.get(numeroPuesto);
         if (g != null) g.enviarMensaje(mensaje);
     }
+
+    public synchronized int tamanoColaEspera() {
+        return colaIng.getColaIng().size();
+    }
+
+    public synchronized void notificarTamanoColaATodosLosPuestos() {
+        String mensaje = PREFIJO_TAMANO_COLA + tamanoColaEspera();
+        for (GestorComunicacion gestor : puestosAtencion.values()) {
+            gestor.enviarMensaje(mensaje);
+        }
+    }
     
     public synchronized void mandaMonitorServidor(){
         if (this.monitorServidor != null)

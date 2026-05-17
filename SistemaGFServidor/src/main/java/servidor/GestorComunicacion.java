@@ -41,7 +41,7 @@ public class GestorComunicacion implements Runnable {
                     String id = servidor.registrarPuestoAtencion(this);
                     this.numeroInstancia = id;
                     enviarMensaje("ID|" + id);
-                    
+                    servidor.notificarTamanoColaATodosLosPuestos();
                 }
                 case "TERMINAL" ->{
                     String id = servidor.registrarTerminal(this);
@@ -69,6 +69,7 @@ public class GestorComunicacion implements Runnable {
                             if (estado.equals(CLIENTE_VERIFICADO)){
                                 servidor.cargarNuevoCliente(dni);
                                 servidor.mandaTerminal(CLIENTE_CARGADO, this.numeroInstancia);
+                                servidor.notificarTamanoColaATodosLosPuestos();
                             }
                         }
                     }
@@ -83,7 +84,7 @@ public class GestorComunicacion implements Runnable {
                         else {
                            servidor.mandaPuestoAtencion(COLA_VACIA, this.numeroInstancia);
                         }
-                        
+                        servidor.notificarTamanoColaATodosLosPuestos();
                     }
                     case RENOVAR_NOTIFICACION ->{
                         String dni_renotif = in.readLine(); 
