@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import javax.swing.JOptionPane;
@@ -13,6 +15,9 @@ import javax.swing.JOptionPane;
 
 public class Monitor {
     private HashMap<Integer,ConexionServidor> servidores;
+    private ArrayList<ComunicacionMonitor> puestosdeAtencion;
+    private ArrayList<ComunicacionMonitor> terminales;
+    private ComunicacionMonitor monitordeSala;
     private String IP;
     private PrintWriter out;
     private BufferedReader in;
@@ -20,9 +25,13 @@ public class Monitor {
     private Ping hiloPing;
     private Echo hiloEcho;
     private int puertoActivo;
+    private ServerSocket serverSocket;
+    private int puertoMonitor = 2345;
     
     public Monitor(){
         this.servidores = new HashMap<>();
+        this.puestosdeAtencion = new ArrayList<>();
+        this.terminales = new ArrayList<>();
         try{
             IP = InetAddress.getLocalHost().getHostAddress();
         }
@@ -31,6 +40,8 @@ public class Monitor {
         }
     }
 
+    // --- Setters, Getters y Adds ---
+    
     public int getPuertoActivo() {
         return puertoActivo;
     }
@@ -42,6 +53,38 @@ public class Monitor {
     public HashMap<Integer,ConexionServidor> getServidores(){
         return this.servidores;
     }
+
+    public ArrayList<ComunicacionMonitor> getPuestosdeAtencion() {
+        return puestosdeAtencion;
+    }
+
+    public ArrayList<ComunicacionMonitor> getTerminales() {
+        return terminales;
+    }
+
+    public ComunicacionMonitor getMonitordeSala() {
+        return monitordeSala;
+    }
+
+    public void setMonitordeSala(ComunicacionMonitor MonitordeSala) {
+        this.monitordeSala = MonitordeSala;
+    }
+    
+    
+    public synchronized void agregarPuestoAtencion(ComunicacionMonitor puesto){
+        this.puestosdeAtencion.add(puesto);
+    }
+    
+    public synchronized void agregarTerminal(ComunicacionMonitor terminal){
+        this.terminales.add(terminal);
+    }
+    
+    public synchronized void agregarMonitordeSala(ComunicacionMonitor monitor){
+        this.monitordeSala = monitor;
+    }
+    
+    // --- Conexiones ---
+    
     
     public synchronized void agregarServidor(int puerto, int estado){
         try{
@@ -56,7 +99,25 @@ public class Monitor {
         }
     }
     
-    public void iniciaConexion(int puerto){
+    public void iniciaConexionApliaciones(){
+        new Thread(()->{
+            try{
+                this.serverSocket = new ServerSocket(this.puertoMonitor);
+                System.out.println("Monitor iniciado");
+                while(true){ 
+                   Socket clienteSocket = serverSocket.accept();
+                   ComunicacionMonitor gestor = new ComunicacionMonitor(clienteSocket,this);
+                   new Thread(gestor).start();
+                }
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        
+        }).start();
+    }
+    
+    public void iniciaConexionServidor(int puerto){
         
         try {
             ConexionServidor conexion = this.servidores.get(puerto);
@@ -104,8 +165,14 @@ public class Monitor {
             this.puertoActivo = otroPuerto;
             ConexionServidor con2 = this.servidores.get(this.puertoActivo);
             con2.setEstado(1);
-            //Tiene que avisarle a las apliaciones que se tienen que cambiar de servidor
-            this.iniciaConexion(this.puertoActivo);
+            this.iniciaConexionServidor(this.puertoActivo);
+            for(int i=0; i<this.puestosdeAtencion.size(); i+=1){
+                this.puestosdeAtencion.get(i).enviarPuerto(this.puertoActivo);
+            }
+            for (int i = 0; i<this.terminales.size(); i+=1){
+                this.terminales.get(i).enviarPuerto(this.puertoActivo);
+            }
+            this.monitordeSala.enviarPuerto(this.puertoActivo);
             //Hay que salvar al servidor para que se pueda volver pasivo y resincronizarlo
             
         }
@@ -125,6 +192,8 @@ public class Monitor {
 
     }*/
     
+    //--- Main de ejecucion ---
+    
     public static void main(String[] args){
         Monitor monitor = new Monitor();
         int puerto1 = Integer.parseInt(args[0]);
@@ -134,7 +203,8 @@ public class Monitor {
         monitor.agregarServidor(puerto2,2);
         
         monitor.setPuertoActivo(puerto1);
-        monitor.iniciaConexion(puerto1);
+        monitor.iniciaConexionServidor(puerto1);
+        monitor.iniciaConexionApliaciones();
         
         
     }
