@@ -60,6 +60,10 @@ public class GestorComunicacion implements Runnable {
                     servidor.agregarMonitorServidor(this);
                     this.rol=1;
                 }
+                case "MONITORSINCRO" ->{
+                    servidor.agregarMonitorServidor(this);
+                    this.rol = 0;
+                }
             }
             while (ejecutando){
                 String funcion = in.readLine();
@@ -67,16 +71,20 @@ public class GestorComunicacion implements Runnable {
                     switch (funcion){
                         case CARGA_NUEVO_CLIENTE ->{
                             try{
+                                if (servidor.getEstado() == 1)
+                                    servidor.mandaFuncionesMonitor(funcion);
                                 String num = in.readLine();
                                 int dni = Integer.parseInt(num);
                                 String estado = servidor.verificarCliente(dni);
-                                if (estado.equals(CLIENTE_YA_EXISTE)){
+                                if (estado.equals(CLIENTE_YA_EXISTE) && servidor.getEstado() == 1){
                                     servidor.mandaTerminal(CLIENTE_YA_EXISTE, this.numeroInstancia);
                                 } else{
                                     if (estado.equals(CLIENTE_VERIFICADO)){
                                         servidor.cargarNuevoCliente(dni);
-                                        servidor.mandaTerminal(CLIENTE_CARGADO, this.numeroInstancia);
-                                        servidor.notificarTamanoColaATodosLosPuestos();
+                                        if (servidor.getEstado() == 1){
+                                            servidor.mandaTerminal(CLIENTE_CARGADO, this.numeroInstancia);
+                                            servidor.notificarTamanoColaATodosLosPuestos();
+                                        }
                                     }
                                 }
                             }catch (InterruptedException e){
@@ -85,29 +93,37 @@ public class GestorComunicacion implements Runnable {
                         }
                         case LLAMAR_SIGUIENTE ->{
                             try{
+                                if (servidor.getEstado() == 1)
+                                    servidor.mandaFuncionesMonitor(funcion);
                                 int siguiente_dni = servidor.siguienteEnCola();
                                 if (siguiente_dni != 0){
                                     out.println(siguiente_dni); 
                                     String clienteHistorial = Integer.toString(siguiente_dni)+" "+this.numeroInstancia;
                                     servidor.cargaHistorial(clienteHistorial);
-                                    servidor.mandaMonitor(Integer.toString(siguiente_dni), this.numeroInstancia);
+                                    if (servidor.getEstado() == 1)
+                                        servidor.mandaMonitor(Integer.toString(siguiente_dni), this.numeroInstancia);
                                 }
                                 else {
-                                    servidor.mandaPuestoAtencion(COLA_VACIA, this.numeroInstancia);
+                                    if (servidor.getEstado() == 1)
+                                        servidor.mandaPuestoAtencion(COLA_VACIA, this.numeroInstancia);
                                 }
-                                servidor.notificarTamanoColaATodosLosPuestos();
+                                if (servidor.getEstado() == 1)
+                                    servidor.notificarTamanoColaATodosLosPuestos();
                             }catch (InterruptedException e){
                                 JOptionPane.showMessageDialog(null,"No se pudo llamar al siguiente","Error", JOptionPane.ERROR_MESSAGE);
                             }
                         }
                         case RENOVAR_NOTIFICACION ->{
                             try{
+                                if (servidor.getEstado() == 1)
+                                    servidor.mandaFuncionesMonitor(funcion);
                                 String dni_renotif = in.readLine(); 
                                 String dni_renotif_entero = dni_renotif + " " + this.numeroInstancia;
                                 int estado = servidor.verificaHistorial(dni_renotif_entero);
                                 if (estado != -1){
                                     servidor.cambiaHistorial(dni_renotif_entero, estado);
-                                    servidor.mandaMonitor(dni_renotif, this.numeroInstancia);
+                                    if (servidor.getEstado() == 1)
+                                        servidor.mandaMonitor(dni_renotif, this.numeroInstancia);
                                 }
                             }catch (InterruptedException e){
                                 JOptionPane.showMessageDialog(null,"No se pudo renovar la notificacion","Error", JOptionPane.ERROR_MESSAGE);
@@ -124,6 +140,15 @@ public class GestorComunicacion implements Runnable {
                             String logResidual = servidor.obtenerLogYPausar();
                             out.println(logResidual);
                             servidor.reanudar();
+                        }
+                        case CAMBIA_ESTADO_CAIDO ->{
+                            servidor.setEstado(0);
+                        }
+                        case CAMBIA_ESTADO_PASIVO ->{
+                            servidor.setEstado(2);
+                        }
+                        case CAMBIA_ESTADO_ACTIVO ->{
+                            servidor.setEstado(1);
                         }
                     }
                 } else{

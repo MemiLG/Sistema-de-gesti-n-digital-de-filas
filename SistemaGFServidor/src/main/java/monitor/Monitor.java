@@ -15,6 +15,7 @@ import negocio.ColaIngreso;
 import negocio.Historial;
 import servidor.ConstantesServidor;
 import servidor.Servidor;
+import static servidor.ConstantesServidor.*;
 
 
 public class Monitor {
@@ -26,6 +27,7 @@ public class Monitor {
     private PrintWriter out;
     private BufferedReader in;
     private int contFallos = 0;
+    private Sincronizacion sincro;
     private Ping hiloPing;
     private Echo hiloEcho;
     private int puertoActivo;
@@ -102,8 +104,15 @@ public class Monitor {
         try{
             Socket socket = new Socket(IP,puerto);
             ConexionServidor conexion = new ConexionServidor(puerto,socket);
+            BufferedReader inConexion = new BufferedReader(new InputStreamReader(conexion.getSocket().getInputStream()));
+            PrintWriter outConexion = new PrintWriter(conexion.getSocket().getOutputStream(), true);
+            conexion.setIn(inConexion);
+            conexion.setOut(outConexion);
             conexion.setEstado(estado);
             this.servidores.put(puerto,conexion);
+            
+            outConexion.println("MONITORSERVIDOR");
+            
         } catch(IOException e){
             JOptionPane.showMessageDialog(null,
                 "No se pudo conectar al servidor en " + IP + ":" + puerto + ".\nVerifique que el servidor esté iniciado.",
@@ -139,6 +148,9 @@ public class Monitor {
             // identificarse ante el servidor
             out.println("MONITORSERVIDOR");
             
+            this.sincro = new Sincronizacion(in,this);
+            this.sincro.start();
+            
             this.hiloPing = new Ping(out);
             this.hiloEcho = new Echo(in, this);
             this.hiloPing.start();
@@ -165,6 +177,7 @@ public class Monitor {
         } else {
             ConexionServidor conect = this.servidores.get(this.puertoActivo);
             conect.setEstado(0);
+            out.println(CAMBIA_ESTADO_CAIDO);
             int puertoIt = this.puertoActivo;
             Iterator<Integer> it = servidores.keySet().iterator();
             int otroPuerto = -1;
@@ -179,6 +192,7 @@ public class Monitor {
             ConexionServidor con2 = this.servidores.get(this.puertoActivo);
             con2.setEstado(1);
             this.iniciaConexionServidor(this.puertoActivo);
+            out.println(CAMBIA_ESTADO_ACTIVO);
             for(int i=0; i<this.puestosdeAtencion.size(); i+=1){
                 this.puestosdeAtencion.get(i).enviarPuerto(this.puertoActivo);
             }
@@ -196,7 +210,7 @@ public class Monitor {
     
     public void salvarServidorCaido(int puertoCaido){
         try{
-            Servidor server = new Servidor(puertoCaido);
+            Servidor server = new Servidor(puertoCaido,2);
             ConexionServidor conexion = this.servidores.get(puertoCaido);
             out.println(ConstantesServidor.ESTADO_INTERNO);
             String snapshot = in.readLine();
@@ -233,6 +247,7 @@ public class Monitor {
                 }
             }
             conexion.setEstado(2);
+            server.start();
         }catch(InterruptedException | IOException e){
             JOptionPane.showMessageDialog(null,"Error al recuperar al servidor caido","Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -245,6 +260,7 @@ public class Monitor {
         try {
             this.hiloEcho.interrupt();
             this.hiloPing.interrupt();
+            this.sincro.interrupt();
             for (ConexionServidor conexion : servidores.values()) {
                 Socket socket = conexion.getSocket();
                 if (socket != null && !socket.isClosed()) {
@@ -263,6 +279,17 @@ public class Monitor {
             logger.log(java.util.logging.Level.SEVERE, "Error al cerrar conexion con servidor", e);
         }
 
+    }
+    
+    public synchronized void sincronizar(String funcion){
+        
+            for (ConexionServidor conexion : servidores.values()) {
+                if (conexion.getEstado() == 2){
+                    PrintWriter outInterno = conexion.getOut();
+                    
+                    outInterno.println(funcion);
+                }
+            }
     }
     
     //--- Main de ejecucion ---

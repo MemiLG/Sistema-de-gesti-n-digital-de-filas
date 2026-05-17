@@ -15,5 +15,7 @@ public class ConstantesServidor {
     public static final String ECHO = "ECHO";
     public static final String ESTADO_INTERNO = "ESTADO_INTERNO";
     public static final String SNAPSHOT_OK = "SNAPSHOT_OK";
-    
+    public static final String CAMBIA_ESTADO_CAIDO = "CAMBIA_ESTADO_CAIDO";
+    public static final String CAMBIA_ESTADO_PASIVO = "CAMBIA_ESTADO_PASIVO";
+    public static final String CAMBIA_ESTADO_ACTIVO = "CAMBIA_ESTADO_ACTIVO";
 }

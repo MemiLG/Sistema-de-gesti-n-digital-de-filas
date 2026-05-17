@@ -12,7 +12,7 @@ public class InterfazServidor extends javax.swing.JFrame {
     
     public InterfazServidor() {
         initComponents();
-        servidor = new Servidor(1234);
+        //servidor = new Servidor(1234);
         
         jButton1.addActionListener(e -> {
             servidor.iniciar();

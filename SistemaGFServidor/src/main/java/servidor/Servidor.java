@@ -20,6 +20,7 @@ public class Servidor extends Thread{
     private ColaIngreso colaIng;
     private Historial historial;
     private ServerSocket serverSocket;
+    private int estado;
     private boolean escuchando = false;
     private String ip = "";
     private int puerto;
@@ -32,17 +33,19 @@ public class Servidor extends Thread{
     private HashMap<String,GestorComunicacion> terminales;          //referencias a los diferentes puestos de registro (terminales) concurrentes que se están comunicando
     private GestorComunicacion monitor;                             //referencia a la comunicacion con el monitor
     private GestorComunicacion monitorServidor;
+    private GestorComunicacion monitorSincronizacion;
     
     private boolean pausado = false;
     private boolean logActivo = false;
     private ArrayList<String> logOperaciones = new ArrayList<>();
     
-    public Servidor(int puerto){
+    public Servidor(int puerto, int estado){
         this.puerto = puerto;
         colaIng = new ColaIngreso();
         historial = new Historial();
         puestosAtencion = new HashMap<>();
         terminales = new HashMap<>();
+        this.estado = estado;
         try {
             ip = InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {}
@@ -69,7 +72,14 @@ public class Servidor extends Thread{
     public void setHistorial(Historial historial) {
         this.historial = historial;
     }
-    
+
+    public int getEstado() {
+        return estado;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
+    }
     
     //--- Conexion ---
     public void iniciar(){
@@ -161,6 +171,10 @@ public class Servidor extends Thread{
         this.monitorServidor = socket;
     }
     
+    public void agregaMonitorSincronizacion(GestorComunicacion socket){
+        this.monitorSincronizacion = socket;
+    }
+    
     public synchronized String verificarCliente(int dni){
         if (colaIng.getColaIng().contains(dni)){
             return CLIENTE_YA_EXISTE;
@@ -235,7 +249,12 @@ public class Servidor extends Thread{
         if (this.monitorServidor != null)
             this.monitorServidor.enviarMensaje(ECHO);
     }
-
+    
+    public synchronized void mandaFuncionesMonitor(String funcion){
+        if (this.monitorSincronizacion != null)
+            this.monitorSincronizacion.enviarMensaje(funcion);
+    }
+    
     @Override
     public void run() {
         this.iniciar();
