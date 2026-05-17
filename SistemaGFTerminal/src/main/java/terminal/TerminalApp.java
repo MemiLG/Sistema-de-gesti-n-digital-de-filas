@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
+
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import vistas.IngresoTotem;
@@ -25,6 +27,7 @@ public class TerminalApp {
     private BufferedReader inMonitor;
     private String idTerminal = "";
     private IngresoTotem vistaActual;
+    private int cantidadFallos = 0;
 
     
     public TerminalApp()
@@ -123,6 +126,14 @@ public class TerminalApp {
 
             // identificarse ante el servidor
             out.println("TERMINAL");
+            if(out.checkError()){
+                this.cantidadFallos++;
+                if (!reintentodeEnvio("TERMINAL") )
+                {
+                    SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null,"No se pudo enviar el mensaje.","Error de envío", JOptionPane.ERROR_MESSAGE));
+                    return;
+                } 
+            }
 
             // hilo que escucha respuestas del servidor
             new Thread(() -> {
@@ -133,7 +144,8 @@ public class TerminalApp {
                         SwingUtilities.invokeLater(() -> procesarMensaje(msg));
                     }
                     cerrarConexionServidor();
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     e.printStackTrace();
                 }
             }).start();
@@ -164,6 +176,10 @@ public class TerminalApp {
         }
     }
 
+    public void resetearFallos()
+    {
+        this.cantidadFallos = 0;
+    }
 
     public void enviarTurno(IngresoTotem vistaTotem)
     {
@@ -174,8 +190,62 @@ public class TerminalApp {
         String dni = vistaTotem.getDNI();
         
         out.println(CARGA_NUEVO_CLIENTE);
+        if(out.checkError()){
+            this.cantidadFallos++;
+            if (!reintentodeEnvio(CARGA_NUEVO_CLIENTE) )
+            {
+                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null,"No se pudo enviar el turno.","Error de envío", JOptionPane.ERROR_MESSAGE));
+                return;
+            } 
+        }
         out.println(dni);
-    
+        if(out.checkError()){
+            this.cantidadFallos++;
+            if (!reintentodeEnvio(dni) )
+            {
+                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null,"No se pudo enviar el turno.","Error de envío", JOptionPane.ERROR_MESSAGE));
+                return;
+            } 
+        }
+        resetearFallos();
+
+    }
+
+    private boolean reintentodeEnvio(String mensaje)
+    {
+        
+        while (this.cantidadFallos < 3)
+        {
+            if (out != null)
+            {
+
+                out.println(mensaje);
+                if (!out.checkError())
+                {
+                    return true;
+                }
+            
+                if (this.cantidadFallos < 3)
+                {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt(); 
+                        return false;
+                    }
+                }
+                this.cantidadFallos++;
+                
+            }else{
+
+                JOptionPane.showMessageDialog(null,
+                    "No se pudo enviar el turno.",
+                    "No hay conexión", JOptionPane.ERROR_MESSAGE);
+                return false;
+
+            }
+        }
+        return false;
     }
 
     public void cerrarConexionServidor()

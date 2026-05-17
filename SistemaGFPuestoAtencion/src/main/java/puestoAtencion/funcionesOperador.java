@@ -35,6 +35,7 @@ public class funcionesOperador
     private Thread timerThread;
     private boolean timerActivo = false;
     private PanelPuestodeOperacion vistaOperador;
+    private int cantidadFallos = 0;
 
     public funcionesOperador(PanelPuestodeOperacion vista)
     {
@@ -50,6 +51,11 @@ public class funcionesOperador
     public String getDNI()
     {
         return mensaje;
+    }
+
+    public void resetearFallos()
+    {
+        this.cantidadFallos = 0;
     }
 
     public void iniciaConexionMonitor(){
@@ -104,6 +110,15 @@ public class funcionesOperador
 
             // identificarse ante el servidor
             out.println("ATENCION");
+            if(out.checkError()){
+                this.cantidadFallos++;
+                if (!reintentodeEnvio("ATENCION") )
+                {
+                    SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null,"No se pudo enviar el turno.","Error de envío", JOptionPane.ERROR_MESSAGE));
+                    return;
+                } 
+            }
+            resetearFallos();
 
             // hilo que escucha respuestas del servidor
             new Thread(() -> {
@@ -169,6 +184,15 @@ public class funcionesOperador
     public void llamarSiguiente()
     {
         out.println("LLAMAR_SIGUIENTE");
+
+        if(out.checkError()){
+            this.cantidadFallos++;
+            if (!reintentodeEnvio("LLAMAR_SIGUIENTE") )
+            {
+                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null,"No se pudo enviar el mensaje.","Error de envío", JOptionPane.ERROR_MESSAGE));
+                return;
+            } 
+        }
     
         SwingUtilities.invokeLater(() -> {
             vistaOperador.actualizarContador(intentosRenotificacion);
@@ -186,7 +210,28 @@ public class funcionesOperador
         }
         
         out.println(RENOVAR_NOTIFICACION);
+        //Reintento de envío de mensaje.
+        if(out.checkError()){
+            this.cantidadFallos++;
+            if (!reintentodeEnvio("RENOVAR_NOTIFICACION") )
+            {
+                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null,"No se pudo enviar el mensaje.","Error de envío", JOptionPane.ERROR_MESSAGE));
+                return;
+            } 
+        }
         out.println(dniActual);
+        //Reintento de envío de mensaje.
+        if(out.checkError()){
+            this.cantidadFallos++;
+            if (!reintentodeEnvio(dniActual) )
+            {
+                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null,"No se pudo enviar el mensaje.","Error de envío", JOptionPane.ERROR_MESSAGE));
+                return;
+            } 
+        }
+
+        //Se logro envíar los dos mensajes se vuelve a 0 los fallos
+        resetearFallos();
         estadoCliente += 1;
         
         // Incrementar intento de renotificación
@@ -204,6 +249,43 @@ public class funcionesOperador
             // Bloquear ambos botones por 30 segundos
             vistaOperador.iniciarTimer();
         });
+    }
+
+    private boolean reintentodeEnvio(String mensaje)
+    {
+        
+        while (this.cantidadFallos < 3)
+        {
+            if (out != null)
+            {
+
+                out.println(mensaje);
+                if (!out.checkError())
+                {
+                    return true;
+                }
+            
+                if (this.cantidadFallos < 3)
+                {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt(); 
+                        return false;
+                    }
+                }
+                this.cantidadFallos++;
+                
+            }else{
+
+                JOptionPane.showMessageDialog(null,
+                    "No se pudo enviar el mensaje.",
+                    "No hay conexión", JOptionPane.ERROR_MESSAGE);
+                return false;
+
+            }
+        }
+        return false;
     }
 
     // Cierra la conexión del socket de envio al finalizar el puesto de atención

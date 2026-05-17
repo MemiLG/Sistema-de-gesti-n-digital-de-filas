@@ -27,6 +27,7 @@ public class MonitorApp {
     private PrintWriter out;
     private PrintWriter outMonitor;
     private SonidoApp sonidoRenotificacion = new SonidoApp();
+    private int cantidadFallos = 0;
 
 
     public MonitorApp(){
@@ -47,6 +48,11 @@ public class MonitorApp {
     }
     public Historial getHistorial() {
         return this.historialVentana;
+    }
+
+    public void resetearFallos()
+    {
+        this.cantidadFallos = 0;
     }
 
     public void iniciaConexionMonitor(PanelMonitordeSala vistaMonitor){
@@ -100,6 +106,15 @@ public class MonitorApp {
             in = new BufferedReader(new InputStreamReader(socketServidor.getInputStream()));
         
             out.println("MONITOR");
+            if(out.checkError()){
+                this.cantidadFallos++;
+                if (!reintentodeEnvio("MONITOR") )
+                {
+                    SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null,"No se pudo enviar el turno.","Error de envío", JOptionPane.ERROR_MESSAGE));
+                    return;
+                } 
+            }
+            resetearFallos();
         
             Thread thread = new Thread(() -> {
                 try {
@@ -136,6 +151,43 @@ public class MonitorApp {
                 "No se pudo conectar al servidor en " + IP + ":" + puerto + ".\nVerifique que el servidor esté iniciado.",
                 "Error de conexión", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private boolean reintentodeEnvio(String mensaje)
+    {
+        
+        while (this.cantidadFallos < 3)
+        {
+            if (out != null)
+            {
+
+                out.println(mensaje);
+                if (!out.checkError())
+                {
+                    return true;
+                }
+            
+                if (this.cantidadFallos < 3)
+                {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt(); 
+                        return false;
+                    }
+                }
+                this.cantidadFallos++;
+                
+            }else{
+
+                JOptionPane.showMessageDialog(null,
+                    "No se pudo enviar el mensaje.",
+                    "No hay conexión", JOptionPane.ERROR_MESSAGE);
+                return false;
+
+            }
+        }
+        return false;
     }
 
 
