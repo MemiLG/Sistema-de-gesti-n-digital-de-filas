@@ -126,6 +126,14 @@ public class TerminalApp {
 
             // identificarse ante el servidor
             out.println("TERMINAL");
+            if(out.checkError()){
+                this.cantidadFallos++;
+                if (!reintentodeEnvio("TERMINAL") )
+                {
+                    SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null,"No se pudo enviar el mensaje.","Error de envío", JOptionPane.ERROR_MESSAGE));
+                    return;
+                } 
+            }
 
             // hilo que escucha respuestas del servidor
             new Thread(() -> {
@@ -234,7 +242,7 @@ public class TerminalApp {
                     "No se pudo enviar el turno.",
                     "No hay conexión", JOptionPane.ERROR_MESSAGE);
                 return false;
-                
+
             }
         }
         return false;
