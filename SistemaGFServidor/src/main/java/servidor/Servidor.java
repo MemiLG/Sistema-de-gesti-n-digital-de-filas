@@ -95,10 +95,13 @@ public class Servidor extends Thread{
             if (puestosAtencion != null) puestosAtencion.values().forEach(GestorComunicacion::detener);
             if (terminales != null) terminales.values().forEach(GestorComunicacion::detener);
             if (monitor != null) monitor.detener();
+            if (monitorServidor != null) monitorServidor.detener();
             if (serverSocket != null && !serverSocket.isClosed()) serverSocket.close();
             System.out.println("Servidor con puerto "+this.puerto+" apagado");
         } catch (IOException e) {
             logger.log(java.util.logging.Level.SEVERE, "Error al detener el servidor", e);
+        } finally {
+            Thread.currentThread().interrupt();
         }
     }
 
