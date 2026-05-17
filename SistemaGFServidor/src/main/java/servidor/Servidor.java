@@ -41,6 +41,8 @@ public class Servidor extends Thread{
         } catch (Exception e) {}
     }
     
+    //--- Getters y Setters ---
+    
     public ColaIngreso getColaIng(){
         return this.colaIng;
     }
@@ -52,8 +54,17 @@ public class Servidor extends Thread{
     public void setPuerto(int puertoNuevo){
         this.puerto = puertoNuevo;
     }
+
+    public void setColaIng(ColaIngreso colaIng) {
+        this.colaIng = colaIng;
+    }
+
+    public void setHistorial(Historial historial) {
+        this.historial = historial;
+    }
     
     
+    //--- Conexion ---
     public void iniciar(){
         new Thread(()->{
             try{
@@ -84,6 +95,8 @@ public class Servidor extends Thread{
         }
     }
 
+    //--- Funciones de recursos compartidos ---
+    
     public synchronized String registrarTerminal(GestorComunicacion gestor) {
         String id = String.valueOf(contadorTerminales.incrementAndGet());
         this.terminales.put(id, gestor);

@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import javax.swing.JOptionPane;
+import servidor.ConstantesServidor;
+import servidor.Servidor;
 
 
 public class Monitor {
@@ -162,6 +164,7 @@ public class Monitor {
                     otroPuerto = puerto;
                 }
             }
+            this.salvarServidorCaido(this.puertoActivo);
             this.puertoActivo = otroPuerto;
             ConexionServidor con2 = this.servidores.get(this.puertoActivo);
             con2.setEstado(1);
@@ -180,6 +183,14 @@ public class Monitor {
     
     public void aumentarFallos(){
         this.contFallos += 1;
+    }
+    
+    public void salvarServidorCaido(int puertoCaido){
+        Servidor server = new Servidor(puertoCaido);
+        ConexionServidor conexion = this.servidores.get(puertoCaido);
+        conexion.setEstado(2);
+        out.println(ConstantesServidor.ESTADO_INTERNO);
+        
     }
     
     /*public void cerrarConexion(){ //Hay que revisar de cerrar la conexion con cada servidor para cerrar bien el sistema

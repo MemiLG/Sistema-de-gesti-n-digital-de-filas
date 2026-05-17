@@ -57,7 +57,7 @@ public class GestorComunicacion implements Runnable {
             }
             while (ejecutando){
                 String funcion = in.readLine();
-                if (funcion == null) break;
+                if (funcion == null) break; //Aca falla el servidor y tiene que automatarse
                 switch (funcion){
                     case CARGA_NUEVO_CLIENTE ->{
                         String num = in.readLine();
@@ -100,7 +100,7 @@ public class GestorComunicacion implements Runnable {
                 }
             }
                         
-        } catch (IOException ex) {
+        } catch (IOException ex) { //depende si esta excepcion aparece en el gestor del monitor, ahi tiene que mandar al servidor a automatarse
             if (ejecutando){
                 System.getLogger(GestorComunicacion.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
             }
