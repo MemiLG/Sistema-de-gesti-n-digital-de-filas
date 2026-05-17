@@ -78,7 +78,7 @@ public class TerminalApp {
             new Thread(() -> {
                 try {
                     String mensaje;
-                    if ((mensaje = inMonitor.readline()) != null)
+                    if ((mensaje = inMonitor.readLine()) != null)
                     {
 
                         final String msg = mensaje;
@@ -86,13 +86,17 @@ public class TerminalApp {
                         iniciaConexion(puertoServidor);
 
                     }
-                    while ((mensaje = inMonitor.readLine()) != null) {
+                    while ((mensaje = inMonitor.readLine()) != null) 
+                    {
+
                         final String msg = mensaje;
                         int puertoServidor = Integer.parseInt(msg);
                         cerrarConexionMonitor();
                         iniciaConexion(puertoServidor);
+                        
                     }
                     cerrarConexionMonitor();
+
                 } catch (IOException e) {
                     e.printStackTrace();
 
@@ -100,9 +104,11 @@ public class TerminalApp {
             }).start();
             
         }catch(IOException e){
+
             JOptionPane.showMessageDialog(null,
                 "No se pudo conectar al monitor en " + IP + ":" + puertoMonitor + ".\nVerifique que el monitor esté iniciado.",
                 "Error de conexión", JOptionPane.ERROR_MESSAGE);
+                
         }
 
     }

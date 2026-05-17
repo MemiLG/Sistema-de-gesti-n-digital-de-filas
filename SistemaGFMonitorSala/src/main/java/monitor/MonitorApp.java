@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import negocio.Historial;
@@ -16,11 +17,15 @@ import vistas.PanelMonitordeSala;
 //Aca va lo que motraria el monitor de sala
 public class MonitorApp {
     private static final int puerto = 1234;
+    private static final int puertoMonitor = 2345;
     private String IP = "";
     private Historial historialVentana = new Historial(); //este sera el historial ventana que se mostrará en la ventana
-    private Socket socket;
+    private Socket socketServidor;
+    private Socket socketMonitor;
     private BufferedReader in;
+    private BufferedReader inMonitor;
     private PrintWriter out;
+    private PrintWriter outMonitor;
     private SonidoApp sonidoRenotificacion = new SonidoApp();
 
 
@@ -43,14 +48,56 @@ public class MonitorApp {
     public Historial getHistorial() {
         return this.historialVentana;
     }
+
+    public void iniciaConexionMonitor(PanelMonitordeSala vistaMonitor){
+
+        try{
+            socketMonitor = new Socket(IP, puertoMonitor);
+            outMonitor = new PrintWriter(socketMonitor.getOutputStream(), true);
+            inMonitor = new BufferedReader(new InputStreamReader(socketMonitor.getInputStream()));
+
+            new Thread(() -> {
+                try {
+                    String mensaje;
+                    if ((mensaje = inMonitor.readLine()) != null)
+                    {
+
+                        final String msg = mensaje;
+                        int puertoServidor = Integer.parseInt(msg);
+                        conectar(vistaMonitor, puertoServidor);
+
+                    }
+                    while ((mensaje = inMonitor.readLine()) != null) 
+                    {
+
+                        final String msg = mensaje;
+                        int puertoServidor = Integer.parseInt(msg);
+                        cerrarConexionMonitor();
+                        conectar(vistaMonitor, puertoServidor);
+                        
+                    }
+                    cerrarConexionMonitor();
+                    
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+            
+        }catch(IOException e){
+            JOptionPane.showMessageDialog(null,
+                "No se pudo conectar al monitor en " + IP + ":" + puertoMonitor + ".\nVerifique que el monitor esté iniciado.",
+                "Error de conexión", JOptionPane.ERROR_MESSAGE);
+        }
+
+    }
     
     
 
-    public void conectar(PanelMonitordeSala vistaMonitor) {
+    public void conectar(PanelMonitordeSala vistaMonitor, int puertoServidor) {
         try {
-            socket = new Socket(IP, puerto);
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            socketServidor = new Socket(IP, puertoServidor);
+            out = new PrintWriter(socketServidor.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(socketServidor.getInputStream()));
         
             out.println("MONITOR");
         
@@ -75,7 +122,8 @@ public class MonitorApp {
                             vistaMonitor.visualizarHistorial();
                         });
                     }
-                    cerrarConexion();
+                    cerrarConexionServidor();
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -91,12 +139,41 @@ public class MonitorApp {
     }
 
 
-    public void cerrarConexion(){
-        try {
-            socket.close();
+    public void cerrarConexionServidor()
+    {
+
+        try 
+        {
+
+            if (in!= null)
+                in.close();
+            
+            if (out != null)
+                out.close();
+            
+            if (socketServidor != null && !socketServidor.isClosed())
+                socketServidor.close();
+
         } catch (Exception e) {
             e.printStackTrace();
+    
         }
+
+    }
+
+    public void cerrarConexionMonitor()
+    {
+
+        try {
+          
+            socketMonitor.close();
+        
+        } catch (Exception e) {
+    
+            e.printStackTrace();
+    
+        }
+
     }
 
 }

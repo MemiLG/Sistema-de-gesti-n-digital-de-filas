@@ -62,12 +62,24 @@ public class funcionesOperador
             new Thread(() -> {
                 try {
                     String mensaje;
-                    while ((mensaje = inMonitor.readLine()) != null) {
+                    if ((mensaje = inMonitor.readLine()) != null)
+                    {
+
                         final String msg = mensaje;
                         int puertoServidor = Integer.parseInt(msg);
                         iniciaConexion(puertoServidor);
+
                     }
-                    cerrarConexion();
+                    while ((mensaje = inMonitor.readLine()) != null) 
+                    {
+
+                        final String msg = mensaje;
+                        int puertoServidor = Integer.parseInt(msg);
+                        cerrarConexionMonitor();
+                        iniciaConexion(puertoServidor);
+                        
+                    }
+                    cerrarConexionMonitor();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -101,7 +113,7 @@ public class funcionesOperador
                         final String msg = mensaje;
                         SwingUtilities.invokeLater(() -> procesarMensaje(msg));
                     }
-                    cerrarConexion();
+                    cerrarConexionServidor();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -195,13 +207,37 @@ public class funcionesOperador
     }
 
     // Cierra la conexión del socket de envio al finalizar el puesto de atención
-    public void cerrarConexion()
+    public void cerrarConexionServidor()
+    {
+
+        try 
+        {
+
+            if (in!= null)
+                in.close();
+            
+            if (out != null)
+                out.close();
+            
+            if (socketServidor != null && !socketServidor.isClosed())
+                socketServidor.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+    
+        }
+
+    }
+
+    public void cerrarConexionMonitor()
     {
 
         try {
-            if (socketServidor != null) socketServidor.close();
-            if (socketMonitor != null) socketMonitor.close();
+          
+            socketMonitor.close();
+        
         } catch (Exception e) {
+    
             e.printStackTrace();
     
         }
