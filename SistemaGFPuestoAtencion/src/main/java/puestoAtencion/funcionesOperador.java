@@ -220,10 +220,11 @@ public class funcionesOperador
             } 
         }
         out.println(dniActual);
+        String dniActualString = String.valueOf(dniActual);
         //Reintento de envío de mensaje.
         if(out.checkError()){
             this.cantidadFallos++;
-            if (!reintentodeEnvio(dniActual) )
+            if (!reintentodeEnvio(dniActualString) )
             {
                 outMonitor.println("SERVIDOR_CAIDO");
                 return;
