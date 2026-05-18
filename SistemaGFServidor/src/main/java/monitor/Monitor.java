@@ -16,6 +16,7 @@ import negocio.Historial;
 import servidor.ConstantesServidor;
 import servidor.Servidor;
 import static servidor.ConstantesServidor.*;
+import vistas.InterfazServidor;
 
 
 public class Monitor {
@@ -298,6 +299,10 @@ public class Monitor {
         Monitor monitor = new Monitor();
         int puerto1 = Integer.parseInt(args[0]);
         int puerto2 = Integer.parseInt(args[1]);
+        
+        java.awt.EventQueue.invokeLater(() -> {
+            new InterfazServidor(monitor).setVisible(true);
+        });
         
         monitor.agregarServidor(puerto1,1);
         monitor.agregarServidor(puerto2,2);

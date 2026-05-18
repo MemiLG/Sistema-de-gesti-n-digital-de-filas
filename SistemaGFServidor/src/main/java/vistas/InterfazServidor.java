@@ -1,26 +1,21 @@
 
 package vistas;
 
-import servidor.Servidor;
+import monitor.Monitor;
 
 
 
 public class InterfazServidor extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(InterfazServidor.class.getName());
-    private Servidor servidor;
+    private Monitor monitor;
     
-    public InterfazServidor() {
-        initComponents();
-        //servidor = new Servidor(1234);
-        
-        jButton1.addActionListener(e -> {
-            servidor.iniciar();
-            jButton1.setEnabled(false);
-        });
+    public InterfazServidor(Monitor monitor) {
+        initComponents();  
+        this.monitor = monitor;
         
         jButton2.addActionListener(e -> {
-            servidor.detener();
+            monitor.cerrarConexion();
         });
         
         // por si cierran con la X sin presionar Apagar
@@ -28,7 +23,7 @@ public class InterfazServidor extends javax.swing.JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
-                servidor.detener();
+                monitor.cerrarConexion();
                 dispose();
             }
         });
@@ -47,7 +42,6 @@ public class InterfazServidor extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -66,11 +60,6 @@ public class InterfazServidor extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(245, 240, 233));
 
-        jButton1.setBackground(new java.awt.Color(91, 136, 178));
-        jButton1.setForeground(new java.awt.Color(245, 240, 233));
-        jButton1.setText("Iniciar");
-        jPanel3.add(jButton1);
-
         jButton2.setBackground(new java.awt.Color(91, 136, 178));
         jButton2.setForeground(new java.awt.Color(245, 240, 233));
         jButton2.setText("Apagar");
@@ -85,7 +74,6 @@ public class InterfazServidor extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;

@@ -9,11 +9,6 @@ import vistas.InterfazServidor;
 public class Main {
     public static void main(String[] args) {
 
-        // Abrir la interfaz visual del servidor
-        java.awt.EventQueue.invokeLater(() -> {
-            new InterfazServidor().setVisible(true);
-        });
-
         // Iniciar los dos hilos de servidores
         Servidor servidorPrincipal = new Servidor(1234,1);
         Servidor servidorRespaldo  = new Servidor(1235,2);
