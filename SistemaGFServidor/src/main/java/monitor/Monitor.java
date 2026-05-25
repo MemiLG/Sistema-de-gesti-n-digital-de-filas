@@ -130,6 +130,7 @@ public class Monitor {
                    Socket clienteSocket = serverSocket.accept();
                    ComunicacionMonitor gestor = new ComunicacionMonitor(clienteSocket,this);
                    new Thread(gestor).start();
+                   System.out.println("Nueva apliacion conectada al monitor");
                 }
             }
             catch(Exception e){
@@ -259,16 +260,17 @@ public class Monitor {
     public void cerrarConexion(){ 
 
         try {
-            this.hiloEcho.interrupt();
+            
             this.hiloPing.interrupt();
+            this.hiloEcho.interrupt();
             this.sincro.interrupt();
+            out.println(CERRAR_SERVIDOR);
             for (ConexionServidor conexion : servidores.values()) {
                 Socket socket = conexion.getSocket();
                 if (socket != null && !socket.isClosed()) {
                     socket.close();
                 }
             }
-            this.serverSocket.close();
             for (ComunicacionMonitor puesto : puestosdeAtencion) {
                 puesto.detener();
             }
@@ -276,6 +278,7 @@ public class Monitor {
                 terminal.detener();
             }
             this.monitordeSala.detener();
+            this.serverSocket.close();
         } catch (IOException e) {
             logger.log(java.util.logging.Level.SEVERE, "Error al cerrar conexion con servidor", e);
         }

@@ -90,6 +90,7 @@ public class Servidor extends Thread{
                 while(true){ 
                    Socket clienteSocket = serverSocket.accept();
                    GestorComunicacion gestor = new GestorComunicacion(clienteSocket,this);
+                   System.out.println("Servidor: nueva apliacion conectada");
                    new Thread(gestor).start();
                 }
             }

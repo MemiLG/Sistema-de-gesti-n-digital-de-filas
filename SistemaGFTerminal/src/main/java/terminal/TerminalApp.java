@@ -77,6 +77,8 @@ public class TerminalApp {
             socketMonitor = new Socket(IP, puertoMonitor);
             outMonitor = new PrintWriter(socketMonitor.getOutputStream(), true);
             inMonitor = new BufferedReader(new InputStreamReader(socketMonitor.getInputStream()));
+            
+            outMonitor.println("TERMINAL");
 
             new Thread(() -> {
                 try {

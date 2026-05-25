@@ -25,14 +25,16 @@ public class Echo extends Thread {
             }
         }catch(SocketTimeoutException e){
             if(!Thread.currentThread().isInterrupted()){
-                System.out.println("Echo cierra");
+                System.out.println("Echo cierra por servidor caido");
                 monitor.servidorCaido();
             }
+            System.out.println("Echo cierra por llamado del monitor(para cerrar normalmente)");
         }catch(IOException e){
             if (!Thread.currentThread().isInterrupted()){
-                System.out.println("Echo cierra");
+                System.out.println("Echo cierra por servidor caido");
                 monitor.servidorCaido();
             }
+            System.out.println("Echo cierra por llamado del monitor(para cerrar normalmente)");
         }
     }
     

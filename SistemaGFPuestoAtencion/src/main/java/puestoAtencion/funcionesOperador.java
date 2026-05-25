@@ -64,13 +64,15 @@ public class funcionesOperador
             socketMonitor = new Socket(IP, puertoMonitor);
             outMonitor = new PrintWriter(socketMonitor.getOutputStream(), true);
             inMonitor = new BufferedReader(new InputStreamReader(socketMonitor.getInputStream()));
+            
+            outMonitor.println("ATENCION");
 
             new Thread(() -> {
                 try {
                     String mensaje;
                     if ((mensaje = inMonitor.readLine()) != null)
                     {
-
+                        System.out.println("PuestoAtencion: mensaje mandado por el monitor: "+ mensaje);
                         final String msg = mensaje;
                         int puertoServidor = Integer.parseInt(msg);
                         iniciaConexion(puertoServidor);
@@ -104,6 +106,7 @@ public class funcionesOperador
     {
         
         try {
+            System.out.println("PuestoAtencion: ejecuta iniciaConexion con el servidor "+ puertoServidor);
             socketServidor = new Socket(IP, puertoServidor);
             out = new PrintWriter(socketServidor.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socketServidor.getInputStream()));

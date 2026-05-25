@@ -16,6 +16,7 @@ public class InterfazServidor extends javax.swing.JFrame {
         
         jButton2.addActionListener(e -> {
             monitor.cerrarConexion();
+            
         });
         
         // por si cierran con la X sin presionar Apagar

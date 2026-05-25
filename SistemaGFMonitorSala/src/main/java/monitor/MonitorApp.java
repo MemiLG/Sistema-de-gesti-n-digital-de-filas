@@ -61,6 +61,8 @@ public class MonitorApp {
             socketMonitor = new Socket(IP, puertoMonitor);
             outMonitor = new PrintWriter(socketMonitor.getOutputStream(), true);
             inMonitor = new BufferedReader(new InputStreamReader(socketMonitor.getInputStream()));
+            
+            outMonitor.println("MONITOR");
 
             new Thread(() -> {
                 try {

@@ -150,6 +150,10 @@ public class GestorComunicacion implements Runnable {
                         case CAMBIA_ESTADO_ACTIVO ->{
                             servidor.setEstado(1);
                         }
+                        case CERRAR_SERVIDOR ->{
+                            System.out.println("Llego el mensaje de cerrar el servidor");
+                            servidor.detener();
+                        }
                     }
                 } else{
                     ejecutando = false;

@@ -40,7 +40,7 @@ public class Sincronizacion extends Thread{
                 monitor.sincronizar(mensaje);
             }
         }catch(IOException e){
-            if (!Thread.currentThread().isInterrupted()){
+            if (Thread.currentThread().isInterrupted()){
                 System.out.println("Sincronizacion cierra");
             }else {
                 System.getLogger(Sincronizacion.class.getName()).log(System.Logger.Level.ERROR, (String) null, e);

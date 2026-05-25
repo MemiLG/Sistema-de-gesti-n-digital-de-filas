@@ -17,4 +17,5 @@ public class ConstantesServidor {
     public static final String CAMBIA_ESTADO_CAIDO = "CAMBIA_ESTADO_CAIDO";
     public static final String CAMBIA_ESTADO_PASIVO = "CAMBIA_ESTADO_PASIVO";
     public static final String CAMBIA_ESTADO_ACTIVO = "CAMBIA_ESTADO_ACTIVO";
+    public static final String CERRAR_SERVIDOR = "CERRAR_SERVIDOR";
 }
