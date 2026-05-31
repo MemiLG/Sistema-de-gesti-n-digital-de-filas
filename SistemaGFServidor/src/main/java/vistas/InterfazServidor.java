@@ -1,4 +1,3 @@
-
 package vistas;
 
 import monitor.Monitor;
@@ -13,19 +12,25 @@ public class InterfazServidor extends javax.swing.JFrame {
     public InterfazServidor(Monitor monitor) {
         initComponents();  
         this.monitor = monitor;
-        
+    
         jButton2.addActionListener(e -> {
-            monitor.cerrarConexion();
-            
+            jButton2.setEnabled(false); // evitar doble click
+            new Thread(() -> {
+                monitor.cerrarConexion();
+                javax.swing.SwingUtilities.invokeLater(() -> dispose());
+            }).start();
         });
-        
+    
         // por si cierran con la X sin presionar Apagar
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
-                monitor.cerrarConexion();
-                dispose();
+                jButton2.setEnabled(false); // evitar doble click si aprietan X y botón
+                new Thread(() -> {
+                    monitor.cerrarConexion();
+                    javax.swing.SwingUtilities.invokeLater(() -> dispose());
+                }).start();
             }
         });
     }

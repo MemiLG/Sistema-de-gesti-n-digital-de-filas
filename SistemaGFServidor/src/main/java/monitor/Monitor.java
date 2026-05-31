@@ -34,6 +34,7 @@ public class Monitor {
     private int puertoActivo;
     private ServerSocket serverSocket;
     private int puertoMonitor = 2345;
+    private boolean cerrando = true;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Servidor.class.getName());
     
     public Monitor(){
@@ -97,6 +98,10 @@ public class Monitor {
 
     public void setContFallos(int contFallos) {
         this.contFallos = contFallos;
+    }
+    
+    public boolean estaCerrando(){
+        return this.cerrando;
     }
     
     // --- Conexiones ---
@@ -260,7 +265,7 @@ public class Monitor {
     public void cerrarConexion(){ 
 
         try {
-            
+            this.cerrando = true;
             this.hiloPing.interrupt();
             this.hiloEcho.interrupt();
             this.sincro.interrupt();
@@ -277,7 +282,8 @@ public class Monitor {
             for (ComunicacionMonitor terminal : terminales) {
                 terminal.detener();
             }
-            this.monitordeSala.detener();
+            if (this.monitordeSala != null)
+                this.monitordeSala.detener();
             this.serverSocket.close();
         } catch (IOException e) {
             logger.log(java.util.logging.Level.SEVERE, "Error al cerrar conexion con servidor", e);

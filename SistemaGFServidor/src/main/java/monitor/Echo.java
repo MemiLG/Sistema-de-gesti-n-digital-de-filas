@@ -24,17 +24,19 @@ public class Echo extends Thread {
                 }
             }
         }catch(SocketTimeoutException e){
-            if(!Thread.currentThread().isInterrupted()){
+            if(!Thread.currentThread().isInterrupted() && monitor.estaCerrando()){
                 System.out.println("Echo cierra por servidor caido");
                 monitor.servidorCaido();
             }
-            System.out.println("Echo cierra por llamado del monitor(para cerrar normalmente)");
+            else 
+                System.out.println("Echo cierra por llamado del monitor(para cerrar normalmente)");
         }catch(IOException e){
-            if (!Thread.currentThread().isInterrupted()){
+            if (!Thread.currentThread().isInterrupted()&& monitor.estaCerrando()){
                 System.out.println("Echo cierra por servidor caido");
                 monitor.servidorCaido();
             }
-            System.out.println("Echo cierra por llamado del monitor(para cerrar normalmente)");
+            else 
+                System.out.println("Echo cierra por llamado del monitor(para cerrar normalmente)");
         }
     }
     
