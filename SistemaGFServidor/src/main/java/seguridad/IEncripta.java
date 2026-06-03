@@ -2,8 +2,10 @@ package seguridad;
 
 public interface IEncripta {
     
-    public void encriptar(String mensaje);
-    public void desencriptar(String mensaje);
+    public String encriptar(String mensaje);
+    public String desencriptar(String mensaje);
+    public void mandarLlave();
+    public void recibirLlave();
     
     
 }
