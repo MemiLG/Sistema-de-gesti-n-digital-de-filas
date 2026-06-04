@@ -1,4 +1,4 @@
-package factory;
+package absfactory;
 
 import archivo.GestorArchivo;
 import archivo.GestorTextoPlano;

@@ -1,8 +1,8 @@
 package persistencia;
 
+import absfactory.TextoPlanoFactory;
+import absfactory.TipoAlmacenamientoFactory;
 import archivo.GestorArchivo;
-import factory.TextoPlanoFactory;
-import factory.TipoAlmacenamientoFactory;
 
 public class AdministradorPersistencia {
 
