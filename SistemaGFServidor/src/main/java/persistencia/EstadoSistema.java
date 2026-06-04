@@ -21,6 +21,7 @@ public class EstadoSistema {
 
     }
 
+    public List<Integer> getColaEspera()
     {
         return colaEspera;
     }
