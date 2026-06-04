@@ -13,15 +13,16 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
-public class CifradoAES implements IEncripta {
-    
+
+public class CifradoDES implements IEncripta{
+
     private Cipher cifrado = null;
     private SecretKey llave;
     IvParameterSpec ivFijo;
     
-    public CifradoAES(SecretKey llave){
+    public CifradoDES (SecretKey llave){
         try {
-            cifrado = Cipher.getInstance("AES/CBC/NoPadding");
+            cifrado = Cipher.getInstance("DES/CBC/NoPadding");
             this.llave = llave;
             byte[] ivBytes = Arrays.copyOf(this.llave.getEncoded(), 16);
             this.ivFijo = new IvParameterSpec(ivBytes);
@@ -29,7 +30,7 @@ public class CifradoAES implements IEncripta {
             System.getLogger(CifradoAES.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
     }
-
+    
     @Override
     public String encriptar(String mensaje) {
         try {
@@ -44,7 +45,7 @@ public class CifradoAES implements IEncripta {
 
     @Override
     public String desencriptar(String mensaje) {
-       try{
+        try{
            byte[] mensaje_decript = Base64.getDecoder().decode(mensaje);
            this.cifrado.init(Cipher.DECRYPT_MODE, this.llave, this.ivFijo);
            return new String (this.cifrado.doFinal(mensaje_decript), "UTF-8");    
