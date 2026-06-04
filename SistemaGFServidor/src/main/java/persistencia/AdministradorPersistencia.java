@@ -25,5 +25,32 @@ public class AdministradorPersistencia {
                 throw new IllegalArgumentException("Tipo de almacenamiento no soportado");
         }
     }
+
+    public void guardarEstadoSistema(EstadoSistema estado) 
+    {
+        try
+        {
+            gestorArchivo.guardarArchivo(estado);
+        
+            } catch (Exception e) {
+            
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, "Error al guardar el estado del sistema", e);
+        
+        }
+    
+    }
+
+    public EstadoSistema cargarEstadoSistema()
+    {
+        try
+        {
+            return gestorArchivo.leerArchivo();
+        
+        } catch (Exception e) {
+            
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, "Error al cargar el estado del sistema", e);
+        
+        }
+    }
         */
 }

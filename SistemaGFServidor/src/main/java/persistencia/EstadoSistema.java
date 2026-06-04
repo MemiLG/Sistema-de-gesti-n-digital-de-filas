@@ -9,7 +9,7 @@ import java.util.Map;
 public class EstadoSistema {
 
     private ArrayList<String> historialLlamados;
-    private List<String> colaEspera;
+    private List<Integer> colaEspera;
     private Map<String, Integer> intentosRenotificacion;
 
     public EstadoSistema() 
@@ -21,7 +21,6 @@ public class EstadoSistema {
 
     }
 
-    public List<String> getColaEspera()
     {
         return colaEspera;
     }
