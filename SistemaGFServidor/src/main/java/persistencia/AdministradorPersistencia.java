@@ -1,6 +1,7 @@
 package persistencia;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 import absfactory.JsonFactory;
 import absfactory.TextoPlanoFactory;
@@ -18,7 +19,9 @@ public class AdministradorPersistencia {
     public AdministradorPersistencia() 
     {
         TipoAlmacenamientoFactory fabrica = crearFactory();
-        this.gestorArchivo = fabrica.crearGestor();
+        if (fabrica != null) {
+            this.gestorArchivo = fabrica.crearGestor();
+        }
     }
 
     private TipoAlmacenamientoFactory crearFactory() 
@@ -33,11 +36,18 @@ public class AdministradorPersistencia {
             
             case "XML":
                 return new XMLFactory();
+            
+            default:
+                return new TextoPlanoFactory();
         }
     }
 
     private void guardarEstadoSistema(EstadoSistema estadoSistema) 
     {
+        if (gestorArchivo == null) {
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.WARNING, "GestorArchivo no inicializado");
+            return;
+        }
         try
         {
             gestorArchivo.guardarArchivo(estadoSistema);
@@ -52,10 +62,17 @@ public class AdministradorPersistencia {
 
     public EstadoSistema cargarEstadoSistema()
     {
+        if (gestorArchivo == null) {
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.WARNING, "GestorArchivo no inicializado");
+            return new EstadoSistema();
+        }
         try
         {   
 
-            this.estadoSistema = gestorArchivo.leerArchivo(); 
+            EstadoSistema estadoCargado = gestorArchivo.leerArchivo();
+            if (estadoCargado != null) {
+                this.estadoSistema = estadoCargado;
+            }
         
         } catch (Exception e) {
             

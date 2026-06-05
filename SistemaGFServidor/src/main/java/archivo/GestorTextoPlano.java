@@ -64,26 +64,38 @@ public class GestorTextoPlano implements GestorArchivo {
     @Override
     public synchronized void guardarArchivo(EstadoSistema estado) throws IOException 
     {
+        if (estado == null) {
+            System.getLogger(GestorTextoPlano.class.getName()).log(System.Logger.Level.WARNING, "Intento de guardar EstadoSistema nulo");
+            return;
+        }
         // Implementación para guardar el estado del sistema en un archivo de texto plano
         // Usar try-with-resources para garantizar cierre del archivo
         try (BufferedWriter w_arch = new BufferedWriter(new FileWriter(archivotxt))) {
 
             for (Integer dni: estado.getColaEspera())
             {
-                w_arch.write("COLA|" + dni);
-                w_arch.newLine();
+                if (dni != null) {
+                    w_arch.write("COLA|" + dni);
+                    w_arch.newLine();
+                }
             }
 
             for (String llamado: estado.getHistorialLlamados())
             {
-                w_arch.write("HISTORIAL|" + llamado);
-                w_arch.newLine();
+                if (llamado != null) {
+                    w_arch.write("HISTORIAL|" + llamado);
+                    w_arch.newLine();
+                }
             }
 
-            for (Map.Entry<String, Integer> entry : estado.getIntentosRenotificacion().entrySet()) 
-            {
-                w_arch.write("INTENTOS|" + entry.getKey() + "|" + entry.getValue());
-                w_arch.newLine();
+            if (estado.getIntentosRenotificacion() != null) {
+                for (Map.Entry<String, Integer> entry : estado.getIntentosRenotificacion().entrySet()) 
+                {
+                    if (entry.getKey() != null && entry.getValue() != null) {
+                        w_arch.write("INTENTOS|" + entry.getKey() + "|" + entry.getValue());
+                        w_arch.newLine();
+                    }
+                }
             }
         }
     }

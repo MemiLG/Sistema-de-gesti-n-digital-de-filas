@@ -42,6 +42,7 @@ public class Servidor extends Thread{
     private boolean logActivo = false;
     private ArrayList<String> logOperaciones = new ArrayList<>();
     private AdministradorPersistencia adminPersistencia = new AdministradorPersistencia();
+    private java.util.Map<String, Integer> intentosRenotificacion = new java.util.HashMap<>();
     
     public Servidor(int puerto, int estado){
         this.puerto = puerto;
@@ -279,19 +280,32 @@ public class Servidor extends Thread{
             EstadoSistema estado = adminPersistencia.cargarEstadoSistema();
 
             // Reconstruye la cola
-            for (Integer dni : estado.getColaEspera()) {
-                colaIng.nuevoIngreso(dni);
+            if (estado.getColaEspera() != null) {
+                for (Integer dni : estado.getColaEspera()) {
+                    if (dni != null) {
+                        colaIng.nuevoIngreso(dni);
+                    }
+                }
             }
 
             // Reconstruye el historial
-            for (String entrada : estado.getHistorialLlamados()) {
-                historial.IngresoHistorial(entrada);
+            if (estado.getHistorialLlamados() != null) {
+                for (String entrada : estado.getHistorialLlamados()) {
+                    if (entrada != null) {
+                        historial.IngresoHistorial(entrada);
+                    }
+                }
+            }
+            
+            // Carga los intentos de renotificación
+            if (estado.getIntentosRenotificacion() != null) {
+                this.intentosRenotificacion.putAll(estado.getIntentosRenotificacion());
             }
 
             System.out.println("Estado recuperado correctamente");
 
         } catch (Exception e) {
-            System.out.println("Sin estado previo");
+            System.out.println("Sin estado previo: " + e.getMessage());
         }
     }
     
