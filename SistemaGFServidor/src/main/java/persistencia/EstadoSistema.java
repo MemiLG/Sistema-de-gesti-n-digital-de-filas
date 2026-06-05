@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import negocio.ColaIngreso;
+
 public class EstadoSistema {
 
     private ArrayList<String> historialLlamados;
@@ -35,5 +37,7 @@ public class EstadoSistema {
     {
         return intentosRenotificacion;
     }
+
+    
 
 }

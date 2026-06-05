@@ -12,6 +12,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import negocio.ColaIngreso;
 import negocio.Historial;
+import persistencia.AdministradorPersistencia;
+import persistencia.EstadoSistema;
+
 import static servidor.ConstantesServidor.*;
 
 
@@ -38,6 +41,7 @@ public class Servidor extends Thread{
     private boolean pausado = false;
     private boolean logActivo = false;
     private ArrayList<String> logOperaciones = new ArrayList<>();
+    private AdministradorPersistencia adminPersistencia = new AdministradorPersistencia();
     
     public Servidor(int puerto, int estado){
         this.puerto = puerto;
@@ -49,6 +53,8 @@ public class Servidor extends Thread{
         try {
             ip = InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {}
+
+        cargaEstadoInicial();
     }
     
     //--- Getters y Setters ---
@@ -188,6 +194,7 @@ public class Servidor extends Thread{
         while(pausado)
             wait();
         this.colaIng.nuevoIngreso(dni);
+        adminPersistencia.guardarColaIngreso(colaIng);
         loggear("AGREGAR_COLA:" + dni);
     }
     
@@ -205,6 +212,7 @@ public class Servidor extends Thread{
             wait();
         historial.IngresoHistorial(cliente);
         loggear("AGREGAR_HISTORIAL:" + cliente);
+        adminPersistencia.guardarHistorial(historial);
     }
     
     public synchronized int verificaHistorial (String cliente){
@@ -216,6 +224,7 @@ public class Servidor extends Thread{
              wait();
          historial.eliminaClienteHistorial(pos);
          historial.IngresoHistorial(cliente);
+         adminPersistencia.guardarHistorial(historial);
          loggear("CAMBIAR_HISTORIAL:" + cliente + " " + pos);
      }
     
@@ -261,5 +270,29 @@ public class Servidor extends Thread{
         this.iniciar();
     }
     
+    //PERSISTENCIA
+
+    private void cargaEstadoInicial() 
+    {
+        try 
+        {
+            EstadoSistema estado = adminPersistencia.cargarEstadoSistema();
+
+            // Reconstruye la cola
+            for (Integer dni : estado.getColaEspera()) {
+                colaIng.nuevoIngreso(dni);
+            }
+
+            // Reconstruye el historial
+            for (String entrada : estado.getHistorialLlamados()) {
+                historial.IngresoHistorial(entrada);
+            }
+
+            System.out.println("Estado recuperado correctamente");
+
+        } catch (Exception e) {
+            System.out.println("Sin estado previo");
+        }
+    }
     
 }
