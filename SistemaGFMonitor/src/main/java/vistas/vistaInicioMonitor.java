@@ -8,6 +8,7 @@ package vistas;
  *
  * @author emila
  */
+@SuppressWarnings({"serial", "this-escape"})
 public class vistaInicioMonitor extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(vistaInicioMonitor.class.getName());
@@ -28,21 +29,86 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        jPanel1 = new javax.swing.JPanel();
+        jLabelTitulo = new javax.swing.JLabel();
+        jLabelEncriptacion = new javax.swing.JLabel();
+        jComboBoxEncriptacion = new javax.swing.JComboBox<>();
+        jLabelPersistencia = new javax.swing.JLabel();
+        jComboBoxPersistencia = new javax.swing.JComboBox<>();
+        jButtonIniciar = new javax.swing.JButton();
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Monitor");
+        setMinimumSize(new java.awt.Dimension(450, 350));
+        setResizable(false);
+        setLocationRelativeTo(null);
+
+        jPanel1.setBackground(new java.awt.Color(20, 20, 20));
+        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
+
+        jLabelTitulo.setFont(new java.awt.Font("Hind Siliguri SemiBold", 0, 28));
+        jLabelTitulo.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelTitulo.setText("Monitor");
+        jLabelTitulo.setAlignmentX(0.5F);
+        jLabelTitulo.setMaximumSize(new java.awt.Dimension(400, 50));
+        jLabelTitulo.setPreferredSize(new java.awt.Dimension(400, 50));
+        jPanel1.add(jLabelTitulo);
+
+        jPanel1.add(new javax.swing.Box.Filler(new java.awt.Dimension(0, 20), new java.awt.Dimension(0, 20), new java.awt.Dimension(0, 20)));
+
+        jLabelEncriptacion.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 16));
+        jLabelEncriptacion.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelEncriptacion.setText("Método de encriptacion");
+        jLabelEncriptacion.setMaximumSize(new java.awt.Dimension(350, 25));
+        jLabelEncriptacion.setPreferredSize(new java.awt.Dimension(350, 25));
+        jPanel1.add(jLabelEncriptacion);
+
+        jComboBoxEncriptacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"AES", "DES", "Blowfish"}));
+        jComboBoxEncriptacion.setBackground(new java.awt.Color(60, 60, 60));
+        jComboBoxEncriptacion.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 14));
+        jComboBoxEncriptacion.setForeground(new java.awt.Color(255, 255, 255));
+        jComboBoxEncriptacion.setMaximumSize(new java.awt.Dimension(300, 40));
+        jComboBoxEncriptacion.setPreferredSize(new java.awt.Dimension(300, 40));
+        jPanel1.add(jComboBoxEncriptacion);
+
+        jPanel1.add(new javax.swing.Box.Filler(new java.awt.Dimension(0, 20), new java.awt.Dimension(0, 20), new java.awt.Dimension(0, 20)));
+
+        jLabelPersistencia.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 16));
+        jLabelPersistencia.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelPersistencia.setText("Método de persistencia");
+        jLabelPersistencia.setMaximumSize(new java.awt.Dimension(350, 25));
+        jLabelPersistencia.setPreferredSize(new java.awt.Dimension(350, 25));
+        jPanel1.add(jLabelPersistencia);
+
+        jComboBoxPersistencia.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"XML", "txt", "JSON"}));
+        jComboBoxPersistencia.setBackground(new java.awt.Color(60, 60, 60));
+        jComboBoxPersistencia.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 14));
+        jComboBoxPersistencia.setForeground(new java.awt.Color(255, 255, 255));
+        jComboBoxPersistencia.setMaximumSize(new java.awt.Dimension(300, 40));
+        jComboBoxPersistencia.setPreferredSize(new java.awt.Dimension(300, 40));
+        jPanel1.add(jComboBoxPersistencia);
+
+        jPanel1.add(new javax.swing.Box.Filler(new java.awt.Dimension(0, 30), new java.awt.Dimension(0, 30), new java.awt.Dimension(0, 30)));
+
+        jButtonIniciar.setBackground(new java.awt.Color(91, 136, 178));
+        jButtonIniciar.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 16));
+        jButtonIniciar.setForeground(new java.awt.Color(245, 240, 233));
+        jButtonIniciar.setText("Iniciar");
+        jButtonIniciar.setAlignmentX(0.5F);
+        jButtonIniciar.setMaximumSize(new java.awt.Dimension(150, 45));
+        jButtonIniciar.setPreferredSize(new java.awt.Dimension(150, 45));
+        jButtonIniciar.addActionListener(this::jButtonIniciarActionPerformed);
+        jPanel1.add(jButtonIniciar);
+
+        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonIniciarActionPerformed(java.awt.event.ActionEvent evt) {
+        // Por ahora no hace nada
+    }
 
     /**
      * @param args the command line arguments
@@ -70,5 +136,12 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel jLabelTitulo;
+    private javax.swing.JLabel jLabelEncriptacion;
+    private javax.swing.JComboBox<String> jComboBoxEncriptacion;
+    private javax.swing.JLabel jLabelPersistencia;
+    private javax.swing.JComboBox<String> jComboBoxPersistencia;
+    private javax.swing.JButton jButtonIniciar;
     // End of variables declaration//GEN-END:variables
 }

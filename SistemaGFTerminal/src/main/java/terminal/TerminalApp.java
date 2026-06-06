@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import vistas.IngresoTotem;
 import static servidor.ConstantesServidor.*;
+import seguridad.IEncripta;
 
 public class TerminalApp {
 
@@ -28,6 +29,7 @@ public class TerminalApp {
     private String idTerminal = "";
     private IngresoTotem vistaActual;
     private int cantidadFallos = 0;
+    private IEncripta encriptador;
 
     
     public TerminalApp()
@@ -190,6 +192,7 @@ public class TerminalApp {
             return;
         this.vistaActual = vistaTotem;
         String dni = vistaTotem.getDNI();
+        dni = this.encriptador.encriptar(dni);
         
         out.println(CARGA_NUEVO_CLIENTE);
         if(out.checkError()){

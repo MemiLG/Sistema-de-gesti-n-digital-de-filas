@@ -13,6 +13,7 @@ import javax.swing.SwingUtilities;
 import negocio.GestorPS;
 import vistas.PanelPuestodeOperacion;
 import static servidor.ConstantesServidor.*;
+import seguridad.IEncripta;
 
 public class funcionesOperador 
 {
@@ -38,6 +39,7 @@ public class funcionesOperador
     private boolean timerActivo = false;
     private PanelPuestodeOperacion vistaOperador;
     private int cantidadFallos = 0;
+    private IEncripta encriptador;
 
     public funcionesOperador(PanelPuestodeOperacion vista)
     {
@@ -171,10 +173,11 @@ public class funcionesOperador
         }
 
         try {
-            dniActual = Integer.parseInt(mensaje);
+            String dni_decript = this.encriptador.desencriptar(mensaje);
+            dniActual = Integer.parseInt(dni_decript);
             estadoCliente = 1;
             intentosRenotificacion = 1;
-            this.mensaje = String.valueOf(dniActual);
+            this.mensaje = String.valueOf(dniActual); 
             gestorPS.ReintentosRenotificacion(intentosRenotificacion, dniActual); 
             SwingUtilities.invokeLater(() -> {
                 vistaOperador.muestraDni(String.valueOf(dniActual));
@@ -228,8 +231,10 @@ public class funcionesOperador
                 return;
             } 
         }
-        out.println(dniActual);
+        
         String dniActualString = String.valueOf(dniActual);
+        dniActualString = this.encriptador.encriptar(dniActualString);
+        out.println(dniActual);
         //Reintento de envío de mensaje.
         if(out.checkError()){
             this.cantidadFallos++;

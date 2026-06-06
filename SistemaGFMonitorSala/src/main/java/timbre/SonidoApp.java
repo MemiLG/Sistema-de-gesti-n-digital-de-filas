@@ -4,7 +4,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
-import monitor.MonitorApp;
+import monitorSala.MonitorApp;
 
 public class SonidoApp {
 
