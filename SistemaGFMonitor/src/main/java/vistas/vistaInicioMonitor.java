@@ -4,6 +4,9 @@
  */
 package vistas;
 
+import servidor.Servidor;
+import vistas.IControladorMonitor;
+
 /**
  *
  * @author emila
@@ -81,7 +84,7 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
         jLabelPersistencia.setPreferredSize(new java.awt.Dimension(350, 25));
         jPanel1.add(jLabelPersistencia);
 
-        jComboBoxPersistencia.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"XML", "txt", "JSON"}));
+        jComboBoxPersistencia.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"XML", "TXT", "JSON"}));
         jComboBoxPersistencia.setBackground(new java.awt.Color(60, 60, 60));
         jComboBoxPersistencia.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 14));
         jComboBoxPersistencia.setForeground(new java.awt.Color(255, 255, 255));
@@ -107,7 +110,39 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonIniciarActionPerformed(java.awt.event.ActionEvent evt) {
-        // Por ahora no hace nada
+        jButtonIniciar.setEnabled(false); // Evita múltiples clics
+        
+        new Thread(() -> {
+            try {
+                // Iniciar los dos hilos de servidores
+                Servidor servidorPrincipal = new Servidor(1234, 1);
+                Servidor servidorRespaldo = new Servidor(1235, 2);
+
+                new Thread(servidorPrincipal).start();
+                new Thread(servidorRespaldo).start();
+
+                // Crear un controlador que implemente IControladorMonitor
+                IControladorMonitor controlador = new IControladorMonitor() {
+                    @Override
+                    public void cerrarConexion() {
+                        // Cerrar los servidores
+                        System.exit(0);
+                    }
+                };
+
+                // Crear y mostrar la ventana de apagado en el EDT
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    vistaApagarMonitor ventana = new vistaApagarMonitor(controlador);
+                    ventana.setVisible(true);
+                    dispose(); // Cerrar la ventana de configuración
+                });
+            } catch (Exception e) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Error al iniciar los servidores: " + e.getMessage(),
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                jButtonIniciar.setEnabled(true);
+            }
+        }).start();
     }
 
     /**
