@@ -17,7 +17,7 @@ import servidor.ConstantesServidor;
 import servidor.Servidor;
 import static servidor.ConstantesServidor.*;
 import vistas.IControladorMonitor;
-import vistas.InterfazServidor;
+import vistas.vistaApagarMonitor;
 
 
 public class Monitor implements IControladorMonitor {
@@ -311,7 +311,7 @@ public class Monitor implements IControladorMonitor {
         int puerto2 = 1235;
         
         java.awt.EventQueue.invokeLater(() -> {
-            new InterfazServidor(monitor).setVisible(true);
+            new vistaApagarMonitor(monitor).setVisible(true);
         });
         
         monitor.agregarServidor(puerto1,1);
