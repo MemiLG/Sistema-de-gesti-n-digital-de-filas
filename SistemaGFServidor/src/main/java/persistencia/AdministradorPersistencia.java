@@ -113,6 +113,29 @@ public class AdministradorPersistencia {
         }
     }
 
-    //Falta guardar intentos de renotificacion
+
+    public void guardarIntentosRenotificacion(int intentos, int dni) 
+    {
+        try
+        {
+            estadoSistema.getIntentosRenotificacion().put(String.valueOf(dni), intentos);
+            guardarEstadoSistema(estadoSistema);
+
+        } catch (Exception e) {
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, "Error al guardar los intentos de renotificación", e);
+        }
+    }
+
+    public void SacarIntentosRenotificacion(int dni) 
+    {
+        try
+        {
+            estadoSistema.getIntentosRenotificacion().remove(String.valueOf(dni));
+            guardarEstadoSistema(estadoSistema);
+
+        } catch (Exception e) {
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, "Error al eliminar los intentos de renotificación", e);
+        }
+    }
         
 }

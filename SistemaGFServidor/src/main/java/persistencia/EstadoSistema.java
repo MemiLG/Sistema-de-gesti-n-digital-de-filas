@@ -2,7 +2,6 @@ package persistencia;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +9,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
-import negocio.ColaIngreso;
 
 @XmlRootElement(name = "estadoSistema")
 public class EstadoSistema {
@@ -21,7 +19,7 @@ public class EstadoSistema {
     @XmlElement
     private List<Integer> colaEspera;
     
-    @XmlTransient
+    @XmlElement
     private Map<String, Integer> intentosRenotificacion;
 
     public EstadoSistema() 

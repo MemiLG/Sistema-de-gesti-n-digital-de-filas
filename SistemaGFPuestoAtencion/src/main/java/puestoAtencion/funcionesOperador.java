@@ -10,7 +10,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import negocio.ColaIngreso;
+import negocio.GestorPS;
 import vistas.PanelPuestodeOperacion;
 import static servidor.ConstantesServidor.*;
 
@@ -30,6 +30,8 @@ public class funcionesOperador
     private String idPuesto = "";
     
     // Control de reintentos y timer
+    private GestorPS gestorPS = new GestorPS();
+    private java.util.Map<String, Integer> intentosRenotificacionMap = new java.util.HashMap<>();
     private int intentosRenotificacion = 0;
     private int dniActual = 0;
     private Thread timerThread;
@@ -46,6 +48,8 @@ public class funcionesOperador
             IP = "localhost";
         }
         
+        // Cargar el estado persistido de reintentos de renotificación
+        gestorPS.cargaEstadoRenotificacion(intentosRenotificacionMap);
     }
 
     public String getDNI()
@@ -171,6 +175,7 @@ public class funcionesOperador
             estadoCliente = 1;
             intentosRenotificacion = 1;
             this.mensaje = String.valueOf(dniActual);
+            gestorPS.ReintentosRenotificacion(intentosRenotificacion, dniActual); 
             SwingUtilities.invokeLater(() -> {
                 vistaOperador.muestraDni(String.valueOf(dniActual));
                 vistaOperador.actualizarContador(intentosRenotificacion);
@@ -206,6 +211,7 @@ public class funcionesOperador
     {
         // Verificar que no haya excedido intentos
         if (intentosRenotificacion >= 3) {
+            gestorPS.SacarDNIRenotificacion(intentosRenotificacion, dniActual);
             JOptionPane.showMessageDialog(vistaOperador, 
                 "Ya se alcanzó el máximo de 3 llamadas para este cliente.",
                 "Límite alcanzado", JOptionPane.WARNING_MESSAGE);
@@ -241,6 +247,8 @@ public class funcionesOperador
         // Incrementar intento de renotificación
         intentosRenotificacion++;
         
+        gestorPS.ReintentosRenotificacion(intentosRenotificacion, dniActual);
+
         // Actualizar vista
         SwingUtilities.invokeLater(() -> {
             vistaOperador.actualizarContador(intentosRenotificacion);
