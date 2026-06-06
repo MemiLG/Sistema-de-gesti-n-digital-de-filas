@@ -41,26 +41,6 @@ public class GestorPS {
     }
 
 
-    public void ReintentosRenotificacion(int intentos, int dni) 
-    {
-        try {
-            adminPersistencia.guardarIntentosRenotificacion(intentos, dni);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException( e);
-        }
-    }
-    
-    public void SacarDNIRenotificacion(int dni) 
-    {
-        try {
-            adminPersistencia.SacarIntentosRenotificacion(dni);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException( e);
-        }
-    }
-
     public void cargaEstadoInicial(ColaIngreso colaIng, Historial historial) 
     {
         if (colaIng == null) 
@@ -138,5 +118,16 @@ public class GestorPS {
             System.out.println( e.getMessage());
         }
 
+    }
+
+    public void tipoArchivo(String tipo) 
+    {
+        try 
+        {
+            adminPersistencia.setTipoArchivo(tipo);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException( e);
+        }
     }
 }

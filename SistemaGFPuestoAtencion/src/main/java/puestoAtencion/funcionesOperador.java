@@ -211,7 +211,7 @@ public class funcionesOperador
     {
         // Verificar que no haya excedido intentos
         if (intentosRenotificacion >= 3) {
-            gestorPS.SacarDNIRenotificacion(intentosRenotificacion, dniActual);
+            gestorPS.SacarDNIRenotificacion(intentosRenotificacion);
             JOptionPane.showMessageDialog(vistaOperador, 
                 "Ya se alcanzó el máximo de 3 llamadas para este cliente.",
                 "Límite alcanzado", JOptionPane.WARNING_MESSAGE);

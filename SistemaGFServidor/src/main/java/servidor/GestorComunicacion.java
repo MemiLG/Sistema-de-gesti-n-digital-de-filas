@@ -100,6 +100,7 @@ public class GestorComunicacion implements Runnable {
                                     out.println(siguiente_dni); 
                                     String clienteHistorial = Integer.toString(siguiente_dni)+" "+this.numeroInstancia;
                                     servidor.cargaHistorial(clienteHistorial);
+                                    servidor.modificaEstructurasRenotificacion(siguiente_dni, this.numeroInstancia,cantReintentos);
                                     if (servidor.getEstado() == 1)
                                         servidor.mandaMonitor(Integer.toString(siguiente_dni), this.numeroInstancia);
                                 }

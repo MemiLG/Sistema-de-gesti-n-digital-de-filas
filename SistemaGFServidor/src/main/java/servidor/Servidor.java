@@ -41,7 +41,11 @@ public class Servidor extends Thread{
     private boolean pausado = false;
     private boolean logActivo = false;
     private ArrayList<String> logOperaciones = new ArrayList<>();
-    private GestorPS gestorServidor = new GestorPS();
+    private GestorPS gestorps = new GestorPS();
+
+    private HashMap<Integer, Integer> Intentos;     //referencias a los diferentes puestos de atencion concurrentes que se están comunicando 
+    private HashMap<Integer,String> puestoEnRenotificacion;          //referencias a los diferentes puestos de registro (terminales) concurrentes que se están comunicando
+    
     
     public Servidor(int puerto, int estado){
         this.puerto = puerto;
@@ -49,12 +53,15 @@ public class Servidor extends Thread{
         historial = new Historial();
         puestosAtencion = new HashMap<>();
         terminales = new HashMap<>();
+        puestoEnRenotificacion = new HashMap<>();
+        Intentos = new HashMap<>();
+        
         this.estado = estado;
         try {
             ip = InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {}
 
-        gestorServidor.cargaEstadoInicial(colaIng, historial);
+        gestorps.cargaEstadoInicial(colaIng, historial);
     }
     
     //--- Getters y Setters ---
@@ -194,7 +201,7 @@ public class Servidor extends Thread{
         while(pausado)
             wait();
         this.colaIng.nuevoIngreso(dni);
-        gestorServidor.RCPersistencia(colaIng);
+        gestorps.RCPersistencia(colaIng);
         loggear("AGREGAR_COLA:" + dni);
     }
     
@@ -212,7 +219,7 @@ public class Servidor extends Thread{
             wait();
         historial.IngresoHistorial(cliente);
         loggear("AGREGAR_HISTORIAL:" + cliente);
-        gestorServidor.GHPersistencia(historial);
+        gestorps.GHPersistencia(historial);
     }
     
     public synchronized int verificaHistorial (String cliente){
@@ -224,7 +231,7 @@ public class Servidor extends Thread{
              wait();
          historial.eliminaClienteHistorial(pos);
          historial.IngresoHistorial(cliente);
-         gestorServidor.GHPersistencia(historial);
+         gestorps.GHPersistencia(historial);
          loggear("CAMBIAR_HISTORIAL:" + cliente + " " + pos);
      }
     
@@ -270,7 +277,20 @@ public class Servidor extends Thread{
         this.iniciar();
     }
     
-    //PERSISTENCIA
+    private void modificarEstructurasRenotificacion(int dni, String numeroInstancia, Integer intentos) 
+    {
+        if (intentos >= 3) {
+            puestoEnRenotificacion.remove(dni);
+            Intentos.remove(dni);
+        } else {
+            puestoEnRenotificacion.put(dni, numeroInstancia);
+            Intentos.put(dni, intentos);
+        }
+
+        gestorps.guardarIntentosRenotificacion(Intentos, puestoEnRenotificacion);
+    }
+
+
 
     
     
