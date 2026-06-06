@@ -41,6 +41,12 @@
     <packaging>jar</packaging>
 
     <dependencies>
+    <!-- Librería de layouts de NetBeans (usada por InterfazServidor.form) -->
+        <dependency>
+            <groupId>org.netbeans.external</groupId>
+            <artifactId>AbsoluteLayout</artifactId>
+            <version>RELEASE290</version>
+        </dependency>
         <dependency>
             <groupId>org.netbeans.external</groupId>
             <artifactId>AbsoluteLayout</artifactId>
@@ -68,15 +74,6 @@
         <maven.compiler.release>25</maven.compiler.release>
         <exec.mainClass>main.Main</exec.mainClass>
     </properties>
-
-    <dependencies>
-        <!-- Librería de layouts de NetBeans (usada por InterfazServidor.form) -->
-        <dependency>
-            <groupId>org.netbeans.external</groupId>
-            <artifactId>AbsoluteLayout</artifactId>
-            <version>RELEASE290</version>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>
