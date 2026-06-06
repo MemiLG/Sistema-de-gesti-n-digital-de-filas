@@ -11,8 +11,8 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import negocio.ColaIngreso;
+import negocio.GestorPS;
 import negocio.Historial;
-import persistencia.AdministradorPersistencia;
 import persistencia.EstadoSistema;
 
 import static servidor.ConstantesServidor.*;
@@ -41,8 +41,7 @@ public class Servidor extends Thread{
     private boolean pausado = false;
     private boolean logActivo = false;
     private ArrayList<String> logOperaciones = new ArrayList<>();
-    private AdministradorPersistencia adminPersistencia = new AdministradorPersistencia();
-    private java.util.Map<String, Integer> intentosRenotificacion = new java.util.HashMap<>();
+    private GestorPS gestorServidor = new GestorPS();
     
     public Servidor(int puerto, int estado){
         this.puerto = puerto;
@@ -55,7 +54,7 @@ public class Servidor extends Thread{
             ip = InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {}
 
-        cargaEstadoInicial();
+        gestorServidor.cargaEstadoInicial(colaIng, historial);
     }
     
     //--- Getters y Setters ---
@@ -195,7 +194,7 @@ public class Servidor extends Thread{
         while(pausado)
             wait();
         this.colaIng.nuevoIngreso(dni);
-        adminPersistencia.guardarColaIngreso(colaIng);
+        gestorServidor.RCPersistencia(colaIng);
         loggear("AGREGAR_COLA:" + dni);
     }
     
@@ -213,7 +212,7 @@ public class Servidor extends Thread{
             wait();
         historial.IngresoHistorial(cliente);
         loggear("AGREGAR_HISTORIAL:" + cliente);
-        adminPersistencia.guardarHistorial(historial);
+        gestorServidor.GHPersistencia(historial);
     }
     
     public synchronized int verificaHistorial (String cliente){
@@ -225,7 +224,7 @@ public class Servidor extends Thread{
              wait();
          historial.eliminaClienteHistorial(pos);
          historial.IngresoHistorial(cliente);
-         adminPersistencia.guardarHistorial(historial);
+         gestorServidor.GHPersistencia(historial);
          loggear("CAMBIAR_HISTORIAL:" + cliente + " " + pos);
      }
     
@@ -273,40 +272,6 @@ public class Servidor extends Thread{
     
     //PERSISTENCIA
 
-    private void cargaEstadoInicial() 
-    {
-        try 
-        {
-            EstadoSistema estado = adminPersistencia.cargarEstadoSistema();
-
-            // Reconstruye la cola
-            if (estado.getColaEspera() != null) {
-                for (Integer dni : estado.getColaEspera()) {
-                    if (dni != null) {
-                        colaIng.nuevoIngreso(dni);
-                    }
-                }
-            }
-
-            // Reconstruye el historial
-            if (estado.getHistorialLlamados() != null) {
-                for (String entrada : estado.getHistorialLlamados()) {
-                    if (entrada != null) {
-                        historial.IngresoHistorial(entrada);
-                    }
-                }
-            }
-            
-            // Carga los intentos de renotificación
-            if (estado.getIntentosRenotificacion() != null) {
-                this.intentosRenotificacion.putAll(estado.getIntentosRenotificacion());
-            }
-
-            System.out.println("Estado recuperado correctamente");
-
-        } catch (Exception e) {
-            System.out.println("Sin estado previo: " + e.getMessage());
-        }
-    }
+    
     
 }
