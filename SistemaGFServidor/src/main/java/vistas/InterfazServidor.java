@@ -1,15 +1,14 @@
 package vistas;
 
-import monitor.Monitor;
 
 
 
 public class InterfazServidor extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(InterfazServidor.class.getName());
-    private Monitor monitor;
+    private IControladorMonitor monitor;
     
-    public InterfazServidor(Monitor monitor) {
+    public InterfazServidor(IControladorMonitor monitor) {
         initComponents();  
         this.monitor = monitor;
     

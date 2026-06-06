@@ -1,22 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+    POM del proyecto: SistemaGFServidor
+    Ruta: SistemaGFServidor/pom.xml
+
+    Contiene los paquetes:
+      - servidor
+      - negocio
+      - vistas
+      - persistencia
+      - absfactory
+      - archivo
+
+    Punto de entrada: servidor.MainServidor (nuevo main)
+
+    Este artefacto se publica en el repositorio local con `mvn install`
+    para que SistemaGFMonitor pueda declararlo como dependencia.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!--
+        Si usás el POM padre, activá el bloque <parent> y eliminá
+        groupId/version de acá (los hereda).
+    -->
+    <!--
+    <parent>
+        <groupId>grupo1</groupId>
+        <artifactId>SistemaGF</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    -->
+
     <groupId>grupo1</groupId>
     <artifactId>SistemaGFServidor</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.netbeans.external</groupId>
-            <artifactId>AbsoluteLayout</artifactId>
-            <version>RELEASE290</version>
-        </dependency>
-    </dependencies>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,29 +46,53 @@
         <exec.mainClass>main.Main</exec.mainClass>
     </properties>
 
+    <dependencies>
+        <!-- Librería de layouts de NetBeans (usada por InterfazServidor.form) -->
+        <dependency>
+            <groupId>org.netbeans.external</groupId>
+            <artifactId>AbsoluteLayout</artifactId>
+            <version>RELEASE290</version>
+        </dependency>
+    </dependencies>
+
     <build>
-    <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-shade-plugin</artifactId>
-            <version>3.5.0</version>
-            <executions>
-                <execution>
-                    <phase>package</phase>
-                    <goals>
-                        <goal>shade</goal>
-                    </goals>
-                    <configuration>
-                        <transformers>
-                            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                <mainClass>main.Main</mainClass>
-                            </transformer>
-                        </transformers>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
-    </plugins>
-</build>
+        <plugins>
+            <!--
+                maven-shade-plugin: genera un JAR ejecutable que incluye todas
+                las dependencias ("fat jar" / "uber jar").
+                Ejecutar:  mvn package  → produce SistemaGFServidor-1.0-SNAPSHOT.jar
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>shaded</shadedClassifierName>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>main.Main</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--
+                maven-install-plugin: instala el JAR principal (sin shade)
+                en el repositorio local para que Monitor pueda importarlo.
+                Nota: el shade plugin ya incluye el install del jar original
+                cuando shadedArtifactAttached=true, por lo que esta
+                configuración es sólo documental.
+            -->
+        </plugins>
+    </build>
 
 </project>

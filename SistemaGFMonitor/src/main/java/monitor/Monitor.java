@@ -16,10 +16,11 @@ import negocio.Historial;
 import servidor.ConstantesServidor;
 import servidor.Servidor;
 import static servidor.ConstantesServidor.*;
+import vistas.IControladorMonitor;
 import vistas.InterfazServidor;
 
 
-public class Monitor {
+public class Monitor implements IControladorMonitor {
     private HashMap<Integer,ConexionServidor> servidores;
     private ArrayList<ComunicacionMonitor> puestosdeAtencion;
     private ArrayList<ComunicacionMonitor> terminales;
@@ -304,10 +305,10 @@ public class Monitor {
     
     //--- Main de ejecucion ---
     
-    public static void main(String[] args){
+    public static void main(){
         Monitor monitor = new Monitor();
-        int puerto1 = Integer.parseInt(args[0]);
-        int puerto2 = Integer.parseInt(args[1]);
+        int puerto1 = 1234;
+        int puerto2 = 1235;
         
         java.awt.EventQueue.invokeLater(() -> {
             new InterfazServidor(monitor).setVisible(true);
