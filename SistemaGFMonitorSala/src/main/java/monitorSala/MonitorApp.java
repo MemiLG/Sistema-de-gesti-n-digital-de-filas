@@ -1,4 +1,4 @@
-package monitor;
+package monitorSala;
 
 import java.net.InetAddress;
 import java.io.BufferedReader;
@@ -13,6 +13,7 @@ import javax.swing.SwingUtilities;
 import negocio.Historial;
 import timbre.SonidoApp;
 import vistas.PanelMonitordeSala;
+import seguridad.IEncripta;
 
 //Aca va lo que motraria el monitor de sala
 public class MonitorApp {
@@ -28,6 +29,7 @@ public class MonitorApp {
     private PrintWriter outMonitor;
     private SonidoApp sonidoRenotificacion = new SonidoApp();
     private int cantidadFallos = 0;
+    private IEncripta encriptador;
 
 
     public MonitorApp(){
@@ -43,11 +45,17 @@ public class MonitorApp {
             return null;
         }
         else{
-            return historialVentana.getPosHistorial(0);
+            String cliente_desencript = this.encriptador.desencriptar(historialVentana.getPosHistorial(0));
+            return cliente_desencript;
         }
     }
     public Historial getHistorial() {
-        return this.historialVentana;
+        Historial histo_decript = new Historial();
+        for (int i=0;i<historialVentana.getHistorialSize();i++){
+            String cliente_decript = this.encriptador.desencriptar(historialVentana.getPosHistorial(i));
+            histo_decript.pasaHistorial(cliente_decript);
+        }
+        return histo_decript;
     }
 
     public void resetearFallos()

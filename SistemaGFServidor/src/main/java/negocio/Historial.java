@@ -2,6 +2,7 @@ package negocio;
 
 //Aca va la logica del historial
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Historial {
     private final ArrayList<String> historial;
@@ -32,5 +33,9 @@ public class Historial {
     
     public void eliminaClienteHistorial(int pos){
         historial.remove(pos);
+    }
+    
+    public void pasaHistorial(String cliente){
+        historial.add(cliente);
     }
 }

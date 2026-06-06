@@ -9,7 +9,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 
-import monitor.MonitorApp;
+import monitorSala.MonitorApp;
 import negocio.Historial;
 
 /**
