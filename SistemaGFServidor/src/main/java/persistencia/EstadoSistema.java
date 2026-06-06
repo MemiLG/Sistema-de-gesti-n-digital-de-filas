@@ -6,22 +6,32 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlTransient;
+
+import negocio.ColaIngreso;
+
+@XmlRootElement(name = "estadoSistema")
 public class EstadoSistema {
 
+    @XmlElement
     private ArrayList<String> historialLlamados;
-    private List<String> colaEspera;
+    
+    @XmlElement
+    private List<Integer> colaEspera;
+    
+    @XmlTransient
     private Map<String, Integer> intentosRenotificacion;
 
     public EstadoSistema() 
     {
-
-        this.colaEspera = new LinkedList<>();
+        this.colaEspera = new ArrayList<>();
         this.historialLlamados = new ArrayList<>();
         this.intentosRenotificacion = new HashMap<>();
-
     }
 
-    public List<String> getColaEspera()
+    public List<Integer> getColaEspera()
     {
         return colaEspera;
     }
@@ -35,5 +45,7 @@ public class EstadoSistema {
     {
         return intentosRenotificacion;
     }
+
+    
 
 }

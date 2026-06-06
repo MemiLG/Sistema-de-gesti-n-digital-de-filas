@@ -1,22 +1,103 @@
 package archivo;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
 
 import persistencia.EstadoSistema;
 
 public class GestorTextoPlano implements GestorArchivo {
 
+    private static final String archivotxt = "estadoSistema.txt"; //"estador_Sistema" + id_Servidor + ".txt";
+    private EstadoSistema estadoSistema = new EstadoSistema();
+
+
     @Override
-    public EstadoSistema leerArchivo() throws IOException 
+    public synchronized EstadoSistema leerArchivo() throws IOException 
     {
         // Implementación para leer el estado del sistema desde un archivo de texto plano
-        return null; // Reemplazar con la lógica real
+        File archivo = new File(archivotxt);
+
+        if (!archivo.exists()) 
+            return new EstadoSistema(); // Retorna un estado vacío si el archivo no existe
+
+        EstadoSistema estadoLeido = new EstadoSistema();
+        
+        try (BufferedReader r_arch = new BufferedReader(new FileReader(archivo))) {
+            String linea;
+
+            while ((linea = r_arch.readLine()) != null) 
+            {
+
+                String[] partes = linea.split("\\|");
+                if (partes.length < 2) continue; 
+                
+                String tipo = partes[0];
+
+                switch (tipo) 
+                {
+                    case "COLA":
+                        int dni = Integer.parseInt(partes[1]); 
+                        estadoLeido.getColaEspera().add(dni);
+                        break;
+                    case "HISTORIAL":
+                        String llamado = partes[1]; 
+                        estadoLeido.getHistorialLlamados().add(llamado);
+                        break;
+                    case "INTENTOS":
+                        String key = partes[1];
+                        int intentos = Integer.parseInt(partes[2]);
+                        estadoLeido.getIntentosRenotificacion().put(key, intentos);
+                        break;
+                }
+
+            }
+        }
+
+        return estadoLeido;
     }
 
     @Override
-    public void guardarArchivo(EstadoSistema estado) throws IOException 
+    public synchronized void guardarArchivo(EstadoSistema estado) throws IOException 
     {
+        if (estado == null) {
+            System.getLogger(GestorTextoPlano.class.getName()).log(System.Logger.Level.WARNING, "Intento de guardar EstadoSistema nulo");
+            return;
+        }
         // Implementación para guardar el estado del sistema en un archivo de texto plano
+        // Usar try-with-resources para garantizar cierre del archivo
+        try (BufferedWriter w_arch = new BufferedWriter(new FileWriter(archivotxt))) {
+
+            for (Integer dni: estado.getColaEspera())
+            {
+                if (dni != null) {
+                    w_arch.write("COLA|" + dni);
+                    w_arch.newLine();
+                }
+            }
+
+            for (String llamado: estado.getHistorialLlamados())
+            {
+                if (llamado != null) {
+                    w_arch.write("HISTORIAL|" + llamado);
+                    w_arch.newLine();
+                }
+            }
+
+            if (estado.getIntentosRenotificacion() != null) {
+                for (Map.Entry<String, Integer> entry : estado.getIntentosRenotificacion().entrySet()) 
+                {
+                    if (entry.getKey() != null && entry.getValue() != null) {
+                        w_arch.write("INTENTOS|" + entry.getKey() + "|" + entry.getValue());
+                        w_arch.newLine();
+                    }
+                }
+            }
+        }
     }
 
 }

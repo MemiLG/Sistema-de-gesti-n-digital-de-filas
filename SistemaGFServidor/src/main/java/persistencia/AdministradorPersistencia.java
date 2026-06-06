@@ -1,17 +1,27 @@
 package persistencia;
 
+import java.util.LinkedList;
+import java.util.Map;
+
+import absfactory.JsonFactory;
 import absfactory.TextoPlanoFactory;
 import absfactory.TipoAlmacenamientoFactory;
+import absfactory.XMLFactory;
 import archivo.GestorArchivo;
+import negocio.ColaIngreso;
+import negocio.Historial;
 
 public class AdministradorPersistencia {
 
     private GestorArchivo gestorArchivo;
+    private EstadoSistema estadoSistema = new EstadoSistema();
 
-  /*  public AdministradorPersistencia() 
+    public AdministradorPersistencia() 
     {
         TipoAlmacenamientoFactory fabrica = crearFactory();
-        this.gestorArchivo = fabrica.crearGestor();
+        if (fabrica != null) {
+            this.gestorArchivo = fabrica.crearGestor();
+        }
     }
 
     private TipoAlmacenamientoFactory crearFactory() 
@@ -20,10 +30,89 @@ public class AdministradorPersistencia {
         switch (tipoAlmacenamiento) {
             case "TEXTO PLANO":
                 return new TextoPlanoFactory();
-            // Agregar más casos para otros tipos de almacenamiento si es necesario
+            
+            case "JSON":
+                return new JsonFactory();
+            
+            case "XML":
+                return new XMLFactory();
+            
             default:
-                throw new IllegalArgumentException("Tipo de almacenamiento no soportado");
+                return new TextoPlanoFactory();
         }
     }
-        */
+
+    private void guardarEstadoSistema(EstadoSistema estadoSistema) 
+    {
+        if (gestorArchivo == null) {
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.WARNING, "GestorArchivo no inicializado");
+            return;
+        }
+        try
+        {
+            gestorArchivo.guardarArchivo(estadoSistema);
+        
+            } catch (Exception e) {
+            
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, "Error al guardar el estado del sistema", e);
+        
+        }
+    
+    }
+
+    public EstadoSistema cargarEstadoSistema()
+    {
+        if (gestorArchivo == null) {
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.WARNING, "GestorArchivo no inicializado");
+            return new EstadoSistema();
+        }
+        try
+        {   
+
+            EstadoSistema estadoCargado = gestorArchivo.leerArchivo();
+            if (estadoCargado != null) {
+                this.estadoSistema = estadoCargado;
+            }
+        
+        } catch (Exception e) {
+            
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, "Error al cargar el estado del sistema", e);
+        
+        }
+        return estadoSistema;
+    }
+
+    
+
+    public void guardarColaIngreso(ColaIngreso cola) 
+    {
+        try
+        {
+            
+            estadoSistema.getColaEspera().clear();
+            estadoSistema.getColaEspera().addAll(cola.getColaIng());
+            guardarEstadoSistema(estadoSistema);
+
+        } catch (Exception e) {
+            
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, "Error al guardar la cola de ingreso", e);
+        
+        }
+    }
+
+    public void guardarHistorial(Historial historial) 
+    {
+        try
+        {
+            estadoSistema.getHistorialLlamados().clear();
+            estadoSistema.getHistorialLlamados().addAll(historial.getHistorial());
+            guardarEstadoSistema(estadoSistema);
+
+        } catch (Exception e) {
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, "Error al guardar el historial", e);
+        }
+    }
+
+    //Falta guardar intentos de renotificacion
+        
 }
