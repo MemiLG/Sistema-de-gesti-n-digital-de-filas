@@ -122,7 +122,7 @@ public class GestorComunicacion implements Runnable {
                                 int estado = servidor.verificaHistorial(dni_renotif_entero);
                                 if (estado != -1){
                                     servidor.cambiaHistorial(dni_renotif_entero, estado);
-                                    servidor.modificarEstructurasRenotificacion(Integer.parseInt(dni_renotif), this.numeroInstancia);
+                                    servidor.modificarEstructurasRenotificacion(dni_renotif, this.numeroInstancia);
                                     if (servidor.getEstado() == 1)
                                         servidor.mandaMonitor(dni_renotif, this.numeroInstancia);
                                 }

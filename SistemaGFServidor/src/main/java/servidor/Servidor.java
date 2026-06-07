@@ -315,7 +315,18 @@ public class Servidor extends Thread{
     public synchronized void inicioRenotificacion(String dni, String numeroInstancia){
         puestoEnRenotificacion.put(dni, numeroInstancia);
         Intentos.put(dni, "1");
-        gestorps.guardarEstadoRenotificacion(Intentos, puestoEnRenotificacion);
+        
+        HashMap <String, String> puesto_img = new HashMap<>();
+        puestoEnRenotificacion.forEach((String dni_encript, String num)->{
+            String dni_decript = this.encriptador.desencriptar(dni_encript);
+            puesto_img.put(dni_decript, num);
+        });
+        HashMap <String, String> intentos_img = new HashMap<>();
+        Intentos.forEach((String dni_encript, String num)->{
+            String dni_decript = this.encriptador.desencriptar(dni_encript);
+            intentos_img.put(dni_decript, num);
+        });
+        gestorps.guardarEstadoRenotificacion(intentos_img, puesto_img);
     }
 
     public synchronized void modificarEstructurasRenotificacion(String dni, String numeroInstancia) 
@@ -337,9 +348,18 @@ public class Servidor extends Thread{
                 puestoEnRenotificacion.put(dni, numeroInstancia);
             }
             
-            Intentos.forEach((String dni_enc, String intentos)->{});
+            HashMap<String,String> intentos_img = new HashMap<>();
+            Intentos.forEach((String dni_enc, String intentos)->{
+                String dni_decript = this.encriptador.desencriptar(dni_enc);
+                intentos_img.put(dni_decript, intentos);
+            });
 
-            gestorps.guardarEstadoRenotificacion(Intentos, puestoEnRenotificacion);
+            HashMap<String, String> puestos_img = new HashMap<>();
+            puestoEnRenotificacion.forEach((String dni_enc, String intentos)->{
+                String dni_decript = this.encriptador.desencriptar(dni_enc);
+                puestos_img.put(dni_decript, intentos);
+            });
+            gestorps.guardarEstadoRenotificacion(intentos_img, puestos_img);
         }
     }
     
