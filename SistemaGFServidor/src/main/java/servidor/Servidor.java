@@ -284,17 +284,31 @@ public class Servidor extends Thread{
         this.iniciar();
     }
     
-    private void modificarEstructurasRenotificacion(int dni, String numeroInstancia, Integer intentos) 
-    {
-        if (intentos >= 3) {
-            puestoEnRenotificacion.remove(dni);
-            Intentos.remove(dni);
-        } else {
-            puestoEnRenotificacion.put(dni, numeroInstancia);
-            Intentos.put(dni, intentos);
-        }
-
+    public synchronized void inicioRenotificacion(int dni, String numeroInstancia){
+        puestoEnRenotificacion.put(dni, numeroInstancia);
+        Intentos.put(dni, 1);
         gestorps.guardarEstadoRenotificacion(Intentos, puestoEnRenotificacion);
+    }
+
+    public synchronized void modificarEstructurasRenotificacion(int dni, String numeroInstancia) 
+    {
+        Integer nuevosIntentos = Intentos.get(dni);
+
+        if (nuevosIntentos != null){
+                
+            nuevosIntentos = nuevosIntentos + 1;
+            
+            if(nuevosIntentos > 3)
+            {
+                Intentos.remove(dni);
+                puestoEnRenotificacion.remove(dni);
+            } else {
+                Intentos.put(dni, nuevosIntentos);
+                puestoEnRenotificacion.put(dni, numeroInstancia);
+            }
+
+            gestorps.guardarEstadoRenotificacion(Intentos, puestoEnRenotificacion);
+        }
     }
     
     public static void main(String[] args) {
