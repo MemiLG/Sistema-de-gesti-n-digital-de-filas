@@ -44,7 +44,7 @@ public class GestorTextoPlano implements GestorArchivo {
                 switch (tipo) 
                 {
                     case "COLA":
-                        int dni = Integer.parseInt(partes[1]); 
+                        String dni =partes[1]; 
                         estadoLeido.getColaEspera().add(dni);
                         break;
                     case "HISTORIAL":
@@ -53,14 +53,14 @@ public class GestorTextoPlano implements GestorArchivo {
                         break;
                     case "INTENTOS":
                         if (partes.length >= 3) {
-                            int dniIntentos = Integer.parseInt(partes[1]);
-                            int intentos = Integer.parseInt(partes[2]);
+                            String dniIntentos = partes[1];
+                            String intentos = partes[2];
                             estadoLeido.getIntentosRenotificacion().put(dniIntentos, intentos);
                         }
                         break;
                     case "PUESTO_RENOTIFICACION":
                         if (partes.length >= 3) {             
-                            int dniPuesto = Integer.parseInt(partes[1]);
+                            String dniPuesto = partes[1];
                             String puesto = partes[2];
                             estadoLeido.getPuestoEnRenotificacion().put(dniPuesto, puesto);
                         }
@@ -84,7 +84,7 @@ public class GestorTextoPlano implements GestorArchivo {
         // Usar try-with-resources para garantizar cierre del archivo
         try (BufferedWriter w_arch = new BufferedWriter(new FileWriter(archivotxt))) {
 
-            for (Integer dni: estado.getColaEspera())
+            for (String dni: estado.getColaEspera())
             {
                 if (dni != null) {
                     w_arch.write("COLA|" + dni);
@@ -101,7 +101,7 @@ public class GestorTextoPlano implements GestorArchivo {
             }
 
             if (estado.getIntentosRenotificacion() != null) {
-                for (Entry<Integer, Integer> entry : estado.getIntentosRenotificacion().entrySet()) 
+                for (Entry<String, String> entry : estado.getIntentosRenotificacion().entrySet()) 
                 {
                     if (entry.getKey() != null && entry.getValue() != null) {
                         w_arch.write("INTENTOS|" + entry.getKey() + "|" + entry.getValue());
@@ -111,7 +111,7 @@ public class GestorTextoPlano implements GestorArchivo {
             }
 
             if (estado.getPuestoEnRenotificacion() != null) {
-                for (Entry<Integer, String> entry : estado.getPuestoEnRenotificacion().entrySet()) 
+                for (Entry<String, String> entry : estado.getPuestoEnRenotificacion().entrySet()) 
                 {
                     if (entry.getKey() != null && entry.getValue() != null) {
                         w_arch.write("PUESTO_RENOTIFICACION|" + entry.getKey() + "|" + entry.getValue());
