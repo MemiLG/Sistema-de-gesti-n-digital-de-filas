@@ -1,6 +1,6 @@
 package vistas;
 
-
+@SuppressWarnings({"serial", "this-escape"})
 public class vistaApagarMonitor extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(vistaApagarMonitor.class.getName());

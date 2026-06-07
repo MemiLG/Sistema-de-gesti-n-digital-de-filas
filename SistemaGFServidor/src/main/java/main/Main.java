@@ -3,7 +3,6 @@ package main;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 import servidor.Servidor;
-import vistas.InterfazServidor;
 
 
 public class Main {

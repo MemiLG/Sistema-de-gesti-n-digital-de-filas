@@ -33,6 +33,8 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
         jLabelTitulo = new javax.swing.JLabel();
         jLabelEncriptacion = new javax.swing.JLabel();
         jComboBoxEncriptacion = new javax.swing.JComboBox<>();
@@ -42,67 +44,77 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Monitor");
-        setMinimumSize(new java.awt.Dimension(450, 350));
+        setPreferredSize(new java.awt.Dimension(500, 400));
         setResizable(false);
         setLocationRelativeTo(null);
 
-        jPanel1.setBackground(new java.awt.Color(20, 20, 20));
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
+        jPanel1.setLayout(new java.awt.GridLayout(2, 0));
 
-        jLabelTitulo.setFont(new java.awt.Font("Hind Siliguri SemiBold", 0, 28));
-        jLabelTitulo.setForeground(new java.awt.Color(255, 255, 255));
-        jLabelTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jPanel2.setBackground(new java.awt.Color(245, 240, 233));
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+        java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        gbc.insets = new java.awt.Insets(10, 20, 10, 20);
+
+        jLabelTitulo.setFont(new java.awt.Font("Segoe UI", 0, 32));
         jLabelTitulo.setText("Monitor");
-        jLabelTitulo.setAlignmentX(0.5F);
-        jLabelTitulo.setMaximumSize(new java.awt.Dimension(400, 50));
-        jLabelTitulo.setPreferredSize(new java.awt.Dimension(400, 50));
-        jPanel1.add(jLabelTitulo);
+        jLabelTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.anchor = java.awt.GridBagConstraints.CENTER;
+        jPanel2.add(jLabelTitulo, gbc);
 
-        jPanel1.add(new javax.swing.Box.Filler(new java.awt.Dimension(0, 20), new java.awt.Dimension(0, 20), new java.awt.Dimension(0, 20)));
-
-        jLabelEncriptacion.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 16));
-        jLabelEncriptacion.setForeground(new java.awt.Color(255, 255, 255));
-        jLabelEncriptacion.setText("Método de encriptacion");
-        jLabelEncriptacion.setMaximumSize(new java.awt.Dimension(350, 25));
-        jLabelEncriptacion.setPreferredSize(new java.awt.Dimension(350, 25));
-        jPanel1.add(jLabelEncriptacion);
+        jLabelEncriptacion.setFont(new java.awt.Font("Segoe UI", 0, 14));
+        jLabelEncriptacion.setText("Método de encriptación:");
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.anchor = java.awt.GridBagConstraints.WEST;
+        gbc.weightx = 0.3;
+        jPanel2.add(jLabelEncriptacion, gbc);
 
         jComboBoxEncriptacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"AES", "DES", "Blowfish"}));
-        jComboBoxEncriptacion.setBackground(new java.awt.Color(60, 60, 60));
-        jComboBoxEncriptacion.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 14));
-        jComboBoxEncriptacion.setForeground(new java.awt.Color(255, 255, 255));
-        jComboBoxEncriptacion.setMaximumSize(new java.awt.Dimension(300, 40));
-        jComboBoxEncriptacion.setPreferredSize(new java.awt.Dimension(300, 40));
-        jPanel1.add(jComboBoxEncriptacion);
+        jComboBoxEncriptacion.setFont(new java.awt.Font("Segoe UI", 0, 12));
+        jComboBoxEncriptacion.setPreferredSize(new java.awt.Dimension(150, 30));
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.anchor = java.awt.GridBagConstraints.EAST;
+        gbc.weightx = 0.7;
+        jPanel2.add(jComboBoxEncriptacion, gbc);
 
-        jPanel1.add(new javax.swing.Box.Filler(new java.awt.Dimension(0, 20), new java.awt.Dimension(0, 20), new java.awt.Dimension(0, 20)));
-
-        jLabelPersistencia.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 16));
-        jLabelPersistencia.setForeground(new java.awt.Color(255, 255, 255));
-        jLabelPersistencia.setText("Método de persistencia");
-        jLabelPersistencia.setMaximumSize(new java.awt.Dimension(350, 25));
-        jLabelPersistencia.setPreferredSize(new java.awt.Dimension(350, 25));
-        jPanel1.add(jLabelPersistencia);
+        jLabelPersistencia.setFont(new java.awt.Font("Segoe UI", 0, 14));
+        jLabelPersistencia.setText("Método de persistencia:");
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        gbc.anchor = java.awt.GridBagConstraints.WEST;
+        gbc.weightx = 0.3;
+        jPanel2.add(jLabelPersistencia, gbc);
 
         jComboBoxPersistencia.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"XML", "TXT", "JSON"}));
-        jComboBoxPersistencia.setBackground(new java.awt.Color(60, 60, 60));
-        jComboBoxPersistencia.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 14));
-        jComboBoxPersistencia.setForeground(new java.awt.Color(255, 255, 255));
-        jComboBoxPersistencia.setMaximumSize(new java.awt.Dimension(300, 40));
-        jComboBoxPersistencia.setPreferredSize(new java.awt.Dimension(300, 40));
-        jPanel1.add(jComboBoxPersistencia);
+        jComboBoxPersistencia.setFont(new java.awt.Font("Segoe UI", 0, 12));
+        jComboBoxPersistencia.setPreferredSize(new java.awt.Dimension(150, 30));
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.anchor = java.awt.GridBagConstraints.EAST;
+        gbc.weightx = 0.7;
+        jPanel2.add(jComboBoxPersistencia, gbc);
 
-        jPanel1.add(new javax.swing.Box.Filler(new java.awt.Dimension(0, 30), new java.awt.Dimension(0, 30), new java.awt.Dimension(0, 30)));
+        jPanel1.add(jPanel2);
+
+        jPanel3.setBackground(new java.awt.Color(245, 240, 233));
+        jPanel3.setLayout(new java.awt.GridBagLayout());
 
         jButtonIniciar.setBackground(new java.awt.Color(91, 136, 178));
-        jButtonIniciar.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 16));
         jButtonIniciar.setForeground(new java.awt.Color(245, 240, 233));
+        jButtonIniciar.setFont(new java.awt.Font("Segoe UI", 0, 14));
         jButtonIniciar.setText("Iniciar");
-        jButtonIniciar.setAlignmentX(0.5F);
-        jButtonIniciar.setMaximumSize(new java.awt.Dimension(150, 45));
-        jButtonIniciar.setPreferredSize(new java.awt.Dimension(150, 45));
+        jButtonIniciar.setMaximumSize(new java.awt.Dimension(120, 40));
+        jButtonIniciar.setPreferredSize(new java.awt.Dimension(120, 40));
         jButtonIniciar.addActionListener(this::jButtonIniciarActionPerformed);
-        jPanel1.add(jButtonIniciar);
+        jPanel3.add(jButtonIniciar, new java.awt.GridBagConstraints());
+
+        jPanel1.add(jPanel3);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
@@ -172,6 +184,8 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel jLabelTitulo;
     private javax.swing.JLabel jLabelEncriptacion;
     private javax.swing.JComboBox<String> jComboBoxEncriptacion;
