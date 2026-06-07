@@ -133,7 +133,7 @@ public class AdministradorPersistencia {
         }
     }
 
-    public void guardarIntentosRenotificacion(HashMap<Integer,Integer>  intentos, HashMap<Integer,String> puestoEnRenotificacion) 
+    public void guardarIntentosRenotificacion(HashMap<String, String>  intentos, HashMap<String,String> puestoEnRenotificacion) 
     {
         try
         {

@@ -42,7 +42,7 @@ public class GestorPS {
     }
 
 
-    public void cargaEstadoInicial(ColaIngreso colaIng, Historial historial, HashMap<Integer,Integer> intentosRenotificacion, HashMap<Integer,String> puestoEnRenotificacion) 
+    public void cargaEstadoInicial(ColaIngreso colaIng, Historial historial, HashMap<String,String> intentosRenotificacion, HashMap<String,String> puestoEnRenotificacion) 
     {
         if (colaIng == null) 
         {
@@ -62,7 +62,7 @@ public class GestorPS {
             // Reconstruye la cola
             if (estado.getColaEspera() != null) 
             {
-                for (Integer dni : estado.getColaEspera())
+                for (String dni : estado.getColaEspera())
                 {
                     if (dni != null) 
                     {
@@ -85,7 +85,7 @@ public class GestorPS {
 
             if (estado.getIntentosRenotificacion() != null) 
             {
-                for (HashMap.Entry<Integer, Integer> entry : estado.getIntentosRenotificacion().entrySet()) 
+                for (HashMap.Entry<String, String> entry : estado.getIntentosRenotificacion().entrySet()) 
                 {
                     if (entry.getKey() != null && entry.getValue() != null) 
                     {
@@ -96,7 +96,7 @@ public class GestorPS {
 
             if (estado.getPuestoEnRenotificacion() != null) 
             {
-                for (HashMap.Entry<Integer, String> entry : estado.getPuestoEnRenotificacion().entrySet()) 
+                for (HashMap.Entry<String, String> entry : estado.getPuestoEnRenotificacion().entrySet()) 
                 {
                     if (entry.getKey() != null && entry.getValue() != null) 
                     {
@@ -111,7 +111,7 @@ public class GestorPS {
     }
 
 
-    public void guardarEstadoRenotificacion(HashMap<Integer,Integer>  intentosRenotificacion, HashMap<Integer,String> puestoEnRenotificacion) 
+    public void guardarEstadoRenotificacion(HashMap<String,String>  intentosRenotificacion, HashMap<String,String> puestoEnRenotificacion) 
     {
         if (intentosRenotificacion == null) 
             throw new IllegalArgumentException();

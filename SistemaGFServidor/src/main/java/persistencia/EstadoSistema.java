@@ -15,13 +15,13 @@ public class EstadoSistema {
     private ArrayList<String> historialLlamados;
     
     @XmlElement
-    private List<Integer> colaEspera;
+    private List<String> colaEspera;
     
     @XmlElement
-    private HashMap<Integer, Integer> intentos;
+    private HashMap<String, String> intentos;
 
     @XmlElement
-    private HashMap<Integer,String> puestoEnRenotificacion; 
+    private HashMap<String,String> puestoEnRenotificacion; 
 
     public EstadoSistema() 
     {
@@ -31,7 +31,7 @@ public class EstadoSistema {
         this.puestoEnRenotificacion = new HashMap<>();
     }
 
-    public List<Integer> getColaEspera()
+    public List<String> getColaEspera()
     {
         return colaEspera;
     }
@@ -41,12 +41,12 @@ public class EstadoSistema {
         return historialLlamados;
     }
 
-    public Map<Integer, Integer> getIntentosRenotificacion() 
+    public Map<String, String> getIntentosRenotificacion() 
     {
         return intentos;
     }
 
-    public Map<Integer, String> getPuestoEnRenotificacion() 
+    public Map<String, String> getPuestoEnRenotificacion() 
     {
         return puestoEnRenotificacion;
     }

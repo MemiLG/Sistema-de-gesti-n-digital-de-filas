@@ -48,8 +48,8 @@ public class Servidor extends Thread{
     private ArrayList<String> logOperaciones = new ArrayList<>();
     private GestorPS gestorps;
 
-    private HashMap<Integer, Integer> Intentos;     //referencias a los diferentes puestos de atencion concurrentes que se están comunicando 
-    private HashMap<Integer,String> puestoEnRenotificacion;          //referencias a los diferentes puestos de registro (terminales) concurrentes que se están comunicando
+    private HashMap<String, String> Intentos;     //referencias a los diferentes puestos de atencion concurrentes que se están comunicando 
+    private HashMap<String,String> puestoEnRenotificacion;          //referencias a los diferentes puestos de registro (terminales) concurrentes que se están comunicando
     
     private String cifrado;
     private SecretKey llave;
@@ -314,13 +314,13 @@ public class Servidor extends Thread{
     
     public synchronized void inicioRenotificacion(String dni, String numeroInstancia){
         puestoEnRenotificacion.put(dni, numeroInstancia);
-        Intentos.put(dni, 1);
+        Intentos.put(dni, "1");
         gestorps.guardarEstadoRenotificacion(Intentos, puestoEnRenotificacion);
     }
 
-    public synchronized void modificarEstructurasRenotificacion(int dni, String numeroInstancia) 
+    public synchronized void modificarEstructurasRenotificacion(String dni, String numeroInstancia) 
     {
-        Integer nuevosIntentos = Intentos.get(dni);
+        Integer nuevosIntentos = Integer.parseInt(Intentos.get(dni));
 
         if (nuevosIntentos != null){
                 
@@ -331,13 +331,13 @@ public class Servidor extends Thread{
                 Intentos.remove(dni);
                 puestoEnRenotificacion.remove(dni);
             } else {
-                Intentos.put(dni, nuevosIntentos);
+                Intentos.remove(dni);
+                puestoEnRenotificacion.remove(dni);
+                Intentos.put(dni, String.valueOf(nuevosIntentos));
                 puestoEnRenotificacion.put(dni, numeroInstancia);
             }
             
-            Intentos.forEach((String dni_enc, Integer intentos)->{
-            
-            });
+            Intentos.forEach((String dni_enc, String intentos)->{});
 
             gestorps.guardarEstadoRenotificacion(Intentos, puestoEnRenotificacion);
         }
