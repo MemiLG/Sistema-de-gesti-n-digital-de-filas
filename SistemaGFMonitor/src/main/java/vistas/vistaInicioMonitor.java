@@ -4,7 +4,6 @@
  */
 package vistas;
 
-import servidor.Servidor;
 import vistas.IControladorMonitor;
 
 /**
@@ -126,19 +125,53 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
         
         new Thread(() -> {
             try {
-                // Iniciar los dos hilos de servidores
-                Servidor servidorPrincipal = new Servidor(1234, 1);
-                Servidor servidorRespaldo = new Servidor(1235, 2);
-
-                new Thread(servidorPrincipal).start();
-                new Thread(servidorRespaldo).start();
-
+                // Obtener el classpath dinámicamente
+                String classpath = System.getProperty("java.class.path");
+                String javaHome = System.getProperty("java.home");
+                String javaExe = javaHome + java.io.File.separator + "bin" + java.io.File.separator + "java";
+                
+                // Lanzar servidor principal en puerto 1234
+                ProcessBuilder pb1 = new ProcessBuilder(
+                    javaExe,
+                    "-cp", classpath,
+                    "servidor.Servidor",
+                    "1234",
+                    "PRINCIPAL"
+                );
+                pb1.inheritIO();
+                Process procesoPrincipal = pb1.start();
+                
+                // Lanzar servidor secundario en puerto 1235
+                ProcessBuilder pb2 = new ProcessBuilder(
+                    javaExe,
+                    "-cp", classpath,
+                    "servidor.Servidor",
+                    "1235",
+                    "SECUNDARIO"
+                );
+                pb2.inheritIO();
+                Process procesoSecundario = pb2.start();
+                
                 // Crear un controlador que implemente IControladorMonitor
                 IControladorMonitor controlador = new IControladorMonitor() {
+                    private Process proc1 = procesoPrincipal;
+                    private Process proc2 = procesoSecundario;
+                    
                     @Override
                     public void cerrarConexion() {
-                        // Cerrar los servidores
+                        // Destruir los procesos
+                        if (proc1 != null && proc1.isAlive()) {
+                            proc1.destroy();
+                        }
+                        if (proc2 != null && proc2.isAlive()) {
+                            proc2.destroy();
+                        }
                         System.exit(0);
+                    }
+                    
+                    @Override
+                    public void establecerProcesos(Process procesoPrincipal, Process procesoSecundario) {
+                        // No se necesita en esta implementación
                     }
                 };
 

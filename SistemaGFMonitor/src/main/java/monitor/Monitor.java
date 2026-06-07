@@ -342,4 +342,10 @@ public class Monitor implements IControladorMonitor {
         
         
     }
+
+    @Override
+    public void establecerProcesos(Process procesoPrincipal, Process procesoSecundario) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'establecerProcesos'");
+    }
 }

@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Monitor",
+            "request": "launch",
+            "mainClass": "monitor.Monitor",
+            "projectName": "SistemaGFMonitor"
+        },
+        {
+            "type": "java",
             "name": "vistaInicioMonitor",
             "request": "launch",
             "mainClass": "vistas.vistaInicioMonitor",

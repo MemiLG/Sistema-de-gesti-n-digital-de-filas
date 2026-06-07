@@ -297,5 +297,30 @@ public class Servidor extends Thread{
         gestorps.guardarEstadoRenotificacion(Intentos, puestoEnRenotificacion);
     }
     
+    public static void main(String[] args) {
+        if (args.length < 2) {
+            System.err.println("Uso: java servidor.Servidor <puerto> <rol>");
+            System.err.println("Ejemplo: java servidor.Servidor 1234 PRINCIPAL");
+            System.exit(1);
+        }
+        
+        try {
+            int puerto = Integer.parseInt(args[0]);
+            String rol = args[1];
+            int estado = rol.equalsIgnoreCase("PRINCIPAL") ? 1 : 2;
+            
+            Servidor servidor = new Servidor(puerto, estado);
+            servidor.start();
+            
+            System.out.println("Servidor " + rol + " iniciado en puerto " + puerto);
+        } catch (NumberFormatException e) {
+            System.err.println("Error: El puerto debe ser un número entero");
+            System.exit(1);
+        } catch (Exception e) {
+            System.err.println("Error al iniciar el servidor: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
     
 }
