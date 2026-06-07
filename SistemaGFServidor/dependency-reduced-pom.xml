@@ -20,7 +20,7 @@
               <shadedClassifierName>shaded</shadedClassifierName>
               <transformers>
                 <transformer>
-                  <mainClass>main.Main</mainClass>
+                  <mainClass>servidor.Servidor</mainClass>
                 </transformer>
               </transformers>
             </configuration>
@@ -32,6 +32,6 @@
   <properties>
     <maven.compiler.release>25</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <exec.mainClass>main.Main</exec.mainClass>
+    <exec.mainClass>servidor.servidor</exec.mainClass>
   </properties>
 </project>

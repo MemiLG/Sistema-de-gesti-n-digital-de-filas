@@ -253,7 +253,7 @@ public class Monitor implements IControladorMonitor {
             String[] historial = partes[1].replace("HISTORIAL:", "").split(",");
             ColaIngreso colaCopia = new ColaIngreso();
             for (int i=0; i< cola.length;i+=1){
-                colaCopia.nuevoIngreso(Integer.parseInt(cola[i]));
+                colaCopia.nuevoIngreso(cola[i]);
             }
             Historial historialCopia = new Historial();
             for (int i=0;i<historial.length;i+=1){
@@ -268,7 +268,7 @@ public class Monitor implements IControladorMonitor {
                 if (!op.isEmpty()){
                     String[] partesLogs = op.split(":");
                     switch (partesLogs[0]) {
-                        case "AGREGAR_COLA" -> server.cargarNuevoCliente(Integer.parseInt(partesLogs[1]));
+                        case "AGREGAR_COLA" -> server.cargarNuevoCliente(partesLogs[1]);
                         case "LLAMAR_SIGUIENTE" -> server.siguienteEnCola();
                         case "AGREGAR_HISTORIAL" -> server.cargaHistorial(partesLogs[1]);
                         case "CAMBIAR_HISTORIAL" -> {

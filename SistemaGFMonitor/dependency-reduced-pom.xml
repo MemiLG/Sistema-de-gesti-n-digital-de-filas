@@ -20,7 +20,7 @@
               <shadedClassifierName>shaded</shadedClassifierName>
               <transformers>
                 <transformer>
-                  <mainClass>monitor.Main</mainClass>
+                  <mainClass>vistas.vistaInicioMonitor</mainClass>
                 </transformer>
               </transformers>
             </configuration>
@@ -32,6 +32,6 @@
   <properties>
     <maven.compiler.release>25</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <exec.mainClass>monitor.Monitor</exec.mainClass>
+    <exec.mainClass>vistas.vistaInicioMonitor</exec.mainClass>
   </properties>
 </project>
