@@ -13,11 +13,15 @@ import persistencia.EstadoSistema;
 
 public class GestorJSON implements GestorArchivo {
 
-    private static final String archivojson = "estadoSistema.json"; //"estador_Sistema" + id_Servidor + ".json";
+    private final String archivojson;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
+    public GestorJSON(int id_servidor) {
+        this.archivojson = "estadoSistema_" + id_servidor + ".json";
+    }
+
     @Override
-    public EstadoSistema leerArchivo() throws IOException 
+    public synchronized EstadoSistema leerArchivo() throws IOException 
     {
         File archjson = new File(archivojson);
 
@@ -36,7 +40,7 @@ public class GestorJSON implements GestorArchivo {
 
 
     @Override
-    public void guardarArchivo(EstadoSistema estado) throws IOException 
+    public synchronized void guardarArchivo(EstadoSistema estado) throws IOException 
     {
         if (estado == null) {
             System.getLogger(GestorJSON.class.getName()).log(System.Logger.Level.WARNING, "Intento de guardar EstadoSistema nulo");

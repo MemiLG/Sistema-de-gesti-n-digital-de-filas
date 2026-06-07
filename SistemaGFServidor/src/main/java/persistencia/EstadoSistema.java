@@ -7,8 +7,6 @@ import java.util.Map;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlTransient;
-
 
 @XmlRootElement(name = "estadoSistema")
 public class EstadoSistema {
@@ -20,13 +18,17 @@ public class EstadoSistema {
     private List<Integer> colaEspera;
     
     @XmlElement
-    private Map<String, Integer> intentosRenotificacion;
+    private HashMap<Integer, Integer> intentos;
+
+    @XmlElement
+    private HashMap<Integer,String> puestoEnRenotificacion; 
 
     public EstadoSistema() 
     {
         this.colaEspera = new ArrayList<>();
         this.historialLlamados = new ArrayList<>();
-        this.intentosRenotificacion = new HashMap<>();
+        this.intentos = new HashMap<>();
+        this.puestoEnRenotificacion = new HashMap<>();
     }
 
     public List<Integer> getColaEspera()
@@ -39,11 +41,14 @@ public class EstadoSistema {
         return historialLlamados;
     }
 
-    public Map<String, Integer> getIntentosRenotificacion() 
+    public Map<Integer, Integer> getIntentosRenotificacion() 
     {
-        return intentosRenotificacion;
+        return intentos;
     }
 
-    
+    public Map<Integer, String> getPuestoEnRenotificacion() 
+    {
+        return puestoEnRenotificacion;
+    }
 
 }

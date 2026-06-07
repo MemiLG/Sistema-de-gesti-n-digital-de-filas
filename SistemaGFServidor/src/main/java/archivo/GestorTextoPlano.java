@@ -6,14 +6,17 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Map;
+import java.util.Map.Entry;
 
 import persistencia.EstadoSistema;
 
 public class GestorTextoPlano implements GestorArchivo {
 
-    private static final String archivotxt = "estadoSistema.txt"; //"estador_Sistema" + id_Servidor + ".txt";
-    private EstadoSistema estadoSistema = new EstadoSistema();
+    private final String archivotxt;
+
+    public GestorTextoPlano(int id_servidor) {
+        this.archivotxt = "estadoSistema_" + id_servidor + ".txt";
+    }
 
 
     @Override
@@ -49,10 +52,19 @@ public class GestorTextoPlano implements GestorArchivo {
                         estadoLeido.getHistorialLlamados().add(llamado);
                         break;
                     case "INTENTOS":
-                        String key = partes[1];
-                        int intentos = Integer.parseInt(partes[2]);
-                        estadoLeido.getIntentosRenotificacion().put(key, intentos);
+                        if (partes.length >= 3) {
+                            int dniIntentos = Integer.parseInt(partes[1]);
+                            int intentos = Integer.parseInt(partes[2]);
+                            estadoLeido.getIntentosRenotificacion().put(dniIntentos, intentos);
+                        }
                         break;
+                    case "PUESTO_RENOTIFICACION":
+                        if (partes.length >= 3) {             
+                            int dniPuesto = Integer.parseInt(partes[1]);
+                            String puesto = partes[2];
+                            estadoLeido.getPuestoEnRenotificacion().put(dniPuesto, puesto);
+                        }
+                    
                 }
 
             }
@@ -89,10 +101,20 @@ public class GestorTextoPlano implements GestorArchivo {
             }
 
             if (estado.getIntentosRenotificacion() != null) {
-                for (Map.Entry<String, Integer> entry : estado.getIntentosRenotificacion().entrySet()) 
+                for (Entry<Integer, Integer> entry : estado.getIntentosRenotificacion().entrySet()) 
                 {
                     if (entry.getKey() != null && entry.getValue() != null) {
                         w_arch.write("INTENTOS|" + entry.getKey() + "|" + entry.getValue());
+                        w_arch.newLine();
+                    }
+                }
+            }
+
+            if (estado.getPuestoEnRenotificacion() != null) {
+                for (Entry<Integer, String> entry : estado.getPuestoEnRenotificacion().entrySet()) 
+                {
+                    if (entry.getKey() != null && entry.getValue() != null) {
+                        w_arch.write("PUESTO_RENOTIFICACION|" + entry.getKey() + "|" + entry.getValue());
                         w_arch.newLine();
                     }
                 }

@@ -6,9 +6,9 @@ import archivo.GestorTextoPlano;
 public class TextoPlanoFactory implements TipoAlmacenamientoFactory {
 
     @Override
-    public GestorArchivo crearGestor() 
+    public GestorArchivo crearGestor(int puerto) 
     {
-        return new GestorTextoPlano();
+        return new GestorTextoPlano(puerto);
     }
 
 }

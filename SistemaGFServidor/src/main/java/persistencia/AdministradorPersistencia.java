@@ -1,7 +1,6 @@
 package persistencia;
 
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.HashMap;
 
 import absfactory.JsonFactory;
 import absfactory.TextoPlanoFactory;
@@ -14,19 +13,21 @@ import negocio.Historial;
 public class AdministradorPersistencia {
 
     private GestorArchivo gestorArchivo;
-    private EstadoSistema estadoSistema = new EstadoSistema();
+    private String tipoAlmacenamiento;
+    private int id_servidor;
 
-    public AdministradorPersistencia() 
+    public AdministradorPersistencia(String tipo, int id_servidor) 
     {
+        this.tipoAlmacenamiento = tipo;
+        this.id_servidor = id_servidor;
         TipoAlmacenamientoFactory fabrica = crearFactory();
         if (fabrica != null) {
-            this.gestorArchivo = fabrica.crearGestor();
+            this.gestorArchivo = fabrica.crearGestor(id_servidor);
         }
     }
 
     private TipoAlmacenamientoFactory crearFactory() 
     {
-        // Según el tipo de almacenamiento deseado, se puede cambiar la implementación aquí
         switch (tipoAlmacenamiento) {
             case "TEXTO PLANO":
                 return new TextoPlanoFactory();
@@ -45,7 +46,7 @@ public class AdministradorPersistencia {
     private void guardarEstadoSistema(EstadoSistema estadoSistema) 
     {
         if (gestorArchivo == null) {
-            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.WARNING, "GestorArchivo no inicializado");
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.WARNING, "GestorArchivo no inicializado, no se puede guardar el estado del sistema.");
             return;
         }
         try
@@ -54,32 +55,35 @@ public class AdministradorPersistencia {
         
             } catch (Exception e) {
             
-            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, "Error al guardar el estado del sistema", e);
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, e);
         
         }
     
     }
 
+    public Integer getIdServidor() {
+        return id_servidor;
+    }
+
     public EstadoSistema cargarEstadoSistema()
     {
         if (gestorArchivo == null) {
-            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.WARNING, "GestorArchivo no inicializado");
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.WARNING, "GestorArchivo no inicializado, no se puede cargar el estado del sistema.");
             return new EstadoSistema();
         }
-        try
-        {   
 
+        try        {   
             EstadoSistema estadoCargado = gestorArchivo.leerArchivo();
             if (estadoCargado != null) {
-                this.estadoSistema = estadoCargado;
+                return estadoCargado;
             }
         
         } catch (Exception e) {
-            
-            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, "Error al cargar el estado del sistema", e);
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, "Error cargando estado del sistema desde puerto " + id_servidor, e);
         
         }
-        return estadoSistema;
+        return new EstadoSistema();
+
     }
 
     
@@ -88,14 +92,21 @@ public class AdministradorPersistencia {
     {
         try
         {
-            
-            estadoSistema.getColaEspera().clear();
-            estadoSistema.getColaEspera().addAll(cola.getColaIng());
-            guardarEstadoSistema(estadoSistema);
+            if (cola == null) {
+                System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.WARNING, "Cola de ingreso nula");
+                return;
+            }
+            EstadoSistema estado = cargarEstadoSistema();
+            if (estado != null && estado.getColaEspera() != null) {
+                estado.getColaEspera().clear();
+                estado.getColaEspera().addAll(cola.getColaIng());
+                guardarEstadoSistema(estado);
+            } else {
+                System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.WARNING, "Estado del sistema o cola de espera nulos");
+            }
 
         } catch (Exception e) {
-            
-            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, "Error al guardar la cola de ingreso", e);
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, "Error guardando cola de ingreso", e);
         
         }
     }
@@ -104,38 +115,47 @@ public class AdministradorPersistencia {
     {
         try
         {
-            estadoSistema.getHistorialLlamados().clear();
-            estadoSistema.getHistorialLlamados().addAll(historial.getHistorial());
-            guardarEstadoSistema(estadoSistema);
+            if (historial == null) {
+                System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.WARNING, "Historial nulo");
+                return;
+            }
+            EstadoSistema estado = cargarEstadoSistema();
+            if (estado != null && estado.getHistorialLlamados() != null) {
+                estado.getHistorialLlamados().clear();
+                estado.getHistorialLlamados().addAll(historial.getHistorial());
+                guardarEstadoSistema(estado);
+            } else {
+                System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.WARNING, "Estado del sistema o historial nulos");
+            }
 
         } catch (Exception e) {
-            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, "Error al guardar el historial", e);
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, "Error guardando historial", e);
         }
     }
 
-
-    public void guardarIntentosRenotificacion(int intentos, int dni) 
+    public void guardarIntentosRenotificacion(HashMap<Integer,Integer>  intentos, HashMap<Integer,String> puestoEnRenotificacion) 
     {
         try
         {
-            estadoSistema.getIntentosRenotificacion().put(String.valueOf(dni), intentos);
-            guardarEstadoSistema(estadoSistema);
+            if (intentos == null || puestoEnRenotificacion == null) {
+                System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.WARNING, "Parámetros nulos en guardarIntentosRenotificacion");
+                return;
+            }
+            EstadoSistema estado = cargarEstadoSistema();
+            if (estado != null && estado.getIntentosRenotificacion() != null && estado.getPuestoEnRenotificacion() != null) {
+                estado.getIntentosRenotificacion().clear();
+                estado.getPuestoEnRenotificacion().clear();
+                estado.getIntentosRenotificacion().putAll(intentos);
+                estado.getPuestoEnRenotificacion().putAll(puestoEnRenotificacion);
+                guardarEstadoSistema(estado);
+            } else {
+                System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.WARNING, "Estado del sistema o mapas de renotificación nulos");
+            }
 
         } catch (Exception e) {
-            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, "Error al guardar los intentos de renotificación", e);
+            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, "Error guardando intentos de renotificación", e);
         }
     }
 
-    public void SacarIntentosRenotificacion(int dni) 
-    {
-        try
-        {
-            estadoSistema.getIntentosRenotificacion().remove(String.valueOf(dni));
-            guardarEstadoSistema(estadoSistema);
-
-        } catch (Exception e) {
-            System.getLogger(AdministradorPersistencia.class.getName()).log(System.Logger.Level.ERROR, "Error al eliminar los intentos de renotificación", e);
-        }
-    }
         
 }

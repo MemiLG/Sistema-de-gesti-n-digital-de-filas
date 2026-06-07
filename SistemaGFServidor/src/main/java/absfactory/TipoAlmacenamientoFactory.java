@@ -4,6 +4,6 @@ import archivo.GestorArchivo;
 
 public interface TipoAlmacenamientoFactory {
 
-    GestorArchivo crearGestor();
+    GestorArchivo crearGestor(int puerto);
 
 }

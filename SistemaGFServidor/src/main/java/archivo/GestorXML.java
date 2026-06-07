@@ -12,10 +12,14 @@ import persistencia.EstadoSistema;
 
 public class GestorXML implements GestorArchivo {
 
-    private static final String archivoxml = "estadoSistema.xml"; //"estador_Sistema" + id_Servidor + ".xml";
+    private final String archivoxml;
+
+    public GestorXML(int id_servidor) {
+        this.archivoxml = "estadoSistema_" + id_servidor + ".xml";
+    }
 
     @Override
-    public EstadoSistema leerArchivo() throws IOException 
+    public synchronized EstadoSistema leerArchivo() throws IOException 
     {
         File archivoXml = new File(archivoxml);
 
@@ -37,7 +41,7 @@ public class GestorXML implements GestorArchivo {
     }
 
     @Override
-    public void guardarArchivo(EstadoSistema estado) throws IOException 
+    public synchronized void guardarArchivo(EstadoSistema estado) throws IOException 
     {
         if (estado == null) {
             System.getLogger(GestorXML.class.getName()).log(System.Logger.Level.WARNING, "Intento de guardar EstadoSistema nulo");

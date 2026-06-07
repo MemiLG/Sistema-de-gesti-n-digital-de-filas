@@ -1,5 +1,7 @@
 package negocio;
 
+import java.util.HashMap;
+
 import persistencia.AdministradorPersistencia;
 import persistencia.EstadoSistema;
 
@@ -9,7 +11,6 @@ public class GestorPS {
 
     public GestorPS() 
     {
-        this.adminPersistencia = new AdministradorPersistencia();
     }
 
     public void RCPersistencia(ColaIngreso cola)
@@ -41,7 +42,7 @@ public class GestorPS {
     }
 
 
-    public void cargaEstadoInicial(ColaIngreso colaIng, Historial historial) 
+    public void cargaEstadoInicial(ColaIngreso colaIng, Historial historial, HashMap<Integer,Integer> intentosRenotificacion, HashMap<Integer,String> puestoEnRenotificacion) 
     {
         if (colaIng == null) 
         {
@@ -82,34 +83,24 @@ public class GestorPS {
                 }
             }
 
-        } catch (Exception e) {
-            System.out.println( e.getMessage());
-        }
-    }
-
-    //REINTENTOS DE NOTIFICACIÓN
-
-    public void cargaEstadoRenotificacion(java.util.Map<String, Integer> intentosRenotificacion)
-    {
-        if (intentosRenotificacion == null) 
-        {
-            throw new IllegalArgumentException();
-        }
-        
-        try 
-        {
-            EstadoSistema estado = adminPersistencia.cargarEstadoSistema();
-
-            // Reconstruye el mapa de intentos de renotificación
             if (estado.getIntentosRenotificacion() != null) 
             {
-                for (java.util.Map.Entry<String, Integer> entry : estado.getIntentosRenotificacion().entrySet()) 
+                for (HashMap.Entry<Integer, Integer> entry : estado.getIntentosRenotificacion().entrySet()) 
                 {
-                    String dni = entry.getKey();
-                    Integer intentos = entry.getValue();
-                    if (dni != null && intentos != null) 
+                    if (entry.getKey() != null && entry.getValue() != null) 
                     {
-                        intentosRenotificacion.put(dni, intentos);
+                        intentosRenotificacion.put(entry.getKey(), entry.getValue());
+                    }
+                }
+            }
+
+            if (estado.getPuestoEnRenotificacion() != null) 
+            {
+                for (HashMap.Entry<Integer, String> entry : estado.getPuestoEnRenotificacion().entrySet()) 
+                {
+                    if (entry.getKey() != null && entry.getValue() != null) 
+                    {
+                        puestoEnRenotificacion.put(entry.getKey(), entry.getValue());
                     }
                 }
             }
@@ -117,14 +108,31 @@ public class GestorPS {
         } catch (Exception e) {
             System.out.println( e.getMessage());
         }
+    }
 
+
+    public void guardarEstadoRenotificacion(HashMap<Integer,Integer>  intentosRenotificacion, HashMap<Integer,String> puestoEnRenotificacion) 
+    {
+        if (intentosRenotificacion == null) 
+            throw new IllegalArgumentException();
+
+        if (puestoEnRenotificacion == null) 
+            throw new IllegalArgumentException();
+        
+        try 
+        {
+            adminPersistencia.guardarIntentosRenotificacion(intentosRenotificacion, puestoEnRenotificacion);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            throw new RuntimeException( e);
+        }
     }
 
     public void tipoArchivo(String tipo) 
     {
         try 
         {
-            adminPersistencia.setTipoArchivo(tipo);
+            this.adminPersistencia = new AdministradorPersistencia(tipo, adminPersistencia.getIdServidor());
         } catch (Exception e) {
             System.err.println(e.getMessage());
             throw new RuntimeException( e);

@@ -41,7 +41,7 @@ public class Servidor extends Thread{
     private boolean pausado = false;
     private boolean logActivo = false;
     private ArrayList<String> logOperaciones = new ArrayList<>();
-    private GestorPS gestorps = new GestorPS();
+    private GestorPS gestorps;
 
     private HashMap<Integer, Integer> Intentos;     //referencias a los diferentes puestos de atencion concurrentes que se están comunicando 
     private HashMap<Integer,String> puestoEnRenotificacion;          //referencias a los diferentes puestos de registro (terminales) concurrentes que se están comunicando
@@ -55,13 +55,19 @@ public class Servidor extends Thread{
         terminales = new HashMap<>();
         puestoEnRenotificacion = new HashMap<>();
         Intentos = new HashMap<>();
+        gestorps = new GestorPS();
         
         this.estado = estado;
         try {
             ip = InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {}
 
-        gestorps.cargaEstadoInicial(colaIng, historial);
+        // Inicializar GestorPS con tipo de almacenamiento y puerto
+        try {
+            gestorps.cargaEstadoInicial(colaIng, historial, Intentos, puestoEnRenotificacion);
+        } catch (Exception e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error cargando estado inicial del servidor en puerto " + puerto, e);
+        }
     }
     
     //--- Getters y Setters ---
@@ -209,6 +215,7 @@ public class Servidor extends Thread{
         while (pausado) 
             wait();
         int dni = colaIng.sacarClienteColaIng();
+        
         loggear("LLAMAR_SIGUIENTE:" + dni);
         return dni;
     }
@@ -287,11 +294,8 @@ public class Servidor extends Thread{
             Intentos.put(dni, intentos);
         }
 
-        gestorps.guardarIntentosRenotificacion(Intentos, puestoEnRenotificacion);
+        gestorps.guardarEstadoRenotificacion(Intentos, puestoEnRenotificacion);
     }
-
-
-
     
     
 }
