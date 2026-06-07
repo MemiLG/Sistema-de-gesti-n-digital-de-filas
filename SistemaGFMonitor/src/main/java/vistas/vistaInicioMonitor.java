@@ -22,6 +22,7 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
      */
     public vistaInicioMonitor() {
         initComponents();
+        monitor = new Monitor();
     }
 
     /**
