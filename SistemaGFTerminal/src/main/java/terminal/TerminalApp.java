@@ -14,6 +14,10 @@ import javax.swing.SwingUtilities;
 import vistas.IngresoTotem;
 import static servidor.ConstantesServidor.*;
 import seguridad.IEncripta;
+import javax.crypto.SecretKey;
+import factorySeguridad.CifradoFactory;
+import java.util.Base64;
+import javax.crypto.spec.SecretKeySpec;
 
 public class TerminalApp {
 
@@ -30,6 +34,9 @@ public class TerminalApp {
     private IngresoTotem vistaActual;
     private int cantidadFallos = 0;
     private IEncripta encriptador;
+    private String cifrado;
+    private SecretKey llave;
+    private CifradoFactory factory;
 
     
     public TerminalApp()
@@ -89,7 +96,14 @@ public class TerminalApp {
                     {
 
                         final String msg = mensaje;
-                        int puertoServidor = Integer.parseInt(msg);
+                        String[] partes = msg.split("\\|");
+                        int puertoServidor = Integer.parseInt(partes[0]);
+                        this.cifrado = partes[1];
+                        String llave_str = partes[2];
+                        byte[] llave_bytes = Base64.getDecoder().decode(llave_str);
+                        this.llave = new SecretKeySpec(llave_bytes, this.cifrado);
+                        this.factory = new CifradoFactory (this.llave);
+                        this.encriptador = factory.getCifrado(cifrado);
                         iniciaConexion(puertoServidor);
 
                     }
@@ -97,7 +111,8 @@ public class TerminalApp {
                     {
 
                         final String msg = mensaje;
-                        int puertoServidor = Integer.parseInt(msg);
+                        String[] partes = msg.split("\\|");
+                        int puertoServidor = Integer.parseInt(partes[0]);
                         cerrarConexionMonitor();
                         iniciaConexion(puertoServidor);
                         

@@ -87,9 +87,9 @@ public class MonitorApp {
 
                         final String msg = mensaje;
                         String[] partes = msg.split("\\|");
-                        int puertoServidor = Integer.parseInt(partes[1]);
-                        this.cifrado = partes[2];
-                        String llave_str = partes[3];
+                        int puertoServidor = Integer.parseInt(partes[0]);
+                        this.cifrado = partes[1];
+                        String llave_str = partes[2];
                         byte[] llave_bytes = Base64.getDecoder().decode(llave_str);
                         this.llave = new SecretKeySpec(llave_bytes, this.cifrado);
                         this.factory = new CifradoFactory (this.llave);
@@ -102,7 +102,7 @@ public class MonitorApp {
 
                         final String msg = mensaje;
                         String[] partes = msg.split("\\|");
-                        int puertoServidor = Integer.parseInt(partes[1]);
+                        int puertoServidor = Integer.parseInt(partes[0]);
                         cerrarConexionMonitor();
                         conectar(vistaMonitor, puertoServidor);
                         

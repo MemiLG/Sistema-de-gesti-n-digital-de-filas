@@ -13,6 +13,10 @@ import javax.swing.SwingUtilities;
 import vistas.PanelPuestodeOperacion;
 import static servidor.ConstantesServidor.*;
 import seguridad.IEncripta;
+import factorySeguridad.CifradoFactory;
+import java.util.Base64;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 public class funcionesOperador 
 {
@@ -35,6 +39,9 @@ public class funcionesOperador
     private PanelPuestodeOperacion vistaOperador;
     private int cantidadFallos = 0;
     private IEncripta encriptador;
+    private SecretKey llave;
+    private CifradoFactory factory;
+    private String cifrado;
 
     public funcionesOperador(PanelPuestodeOperacion vista)
     {
@@ -73,7 +80,14 @@ public class funcionesOperador
                     {
                         System.out.println("PuestoAtencion: mensaje mandado por el monitor: "+ mensaje);
                         final String msg = mensaje;
-                        int puertoServidor = Integer.parseInt(msg);
+                        String[] partes = msg.split("\\|");
+                        int puertoServidor = Integer.parseInt(partes[0]);
+                        this.cifrado = partes[1];
+                        String llave_str = partes[2];
+                        byte[] llave_bytes = Base64.getDecoder().decode(llave_str);
+                        this.llave = new SecretKeySpec(llave_bytes, this.cifrado);
+                        this.factory = new CifradoFactory (this.llave);
+                        this.encriptador = factory.getCifrado(cifrado);
                         iniciaConexion(puertoServidor);
 
                     }
@@ -81,7 +95,8 @@ public class funcionesOperador
                     {
 
                         final String msg = mensaje;
-                        int puertoServidor = Integer.parseInt(msg);
+                        String[] partes = msg.split("\\|");
+                        int puertoServidor = Integer.parseInt(partes[0]);
                         cerrarConexionMonitor();
                         iniciaConexion(puertoServidor);
                         
