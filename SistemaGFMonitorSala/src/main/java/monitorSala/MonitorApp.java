@@ -14,6 +14,10 @@ import negocio.Historial;
 import timbre.SonidoApp;
 import vistas.PanelMonitordeSala;
 import seguridad.IEncripta;
+import factorySeguridad.CifradoFactory;
+import java.util.Base64;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 //Aca va lo que motraria el monitor de sala
 public class MonitorApp {
@@ -30,6 +34,9 @@ public class MonitorApp {
     private SonidoApp sonidoRenotificacion = new SonidoApp();
     private int cantidadFallos = 0;
     private IEncripta encriptador;
+    private SecretKey llave;
+    private String cifrado;
+    private CifradoFactory factory;
 
 
     public MonitorApp(){
@@ -64,7 +71,7 @@ public class MonitorApp {
     }
 
     public void iniciaConexionMonitor(PanelMonitordeSala vistaMonitor){
-
+        
         try{
             socketMonitor = new Socket(IP, puertoMonitor);
             outMonitor = new PrintWriter(socketMonitor.getOutputStream(), true);
@@ -79,7 +86,14 @@ public class MonitorApp {
                     {
 
                         final String msg = mensaje;
-                        int puertoServidor = Integer.parseInt(msg);
+                        String[] partes = msg.split("\\|");
+                        int puertoServidor = Integer.parseInt(partes[1]);
+                        this.cifrado = partes[2];
+                        String llave_str = partes[3];
+                        byte[] llave_bytes = Base64.getDecoder().decode(llave_str);
+                        this.llave = new SecretKeySpec(llave_bytes, this.cifrado);
+                        this.factory = new CifradoFactory (this.llave);
+                        this.encriptador = factory.getCifrado(cifrado);
                         conectar(vistaMonitor, puertoServidor);
 
                     }
@@ -87,7 +101,8 @@ public class MonitorApp {
                     {
 
                         final String msg = mensaje;
-                        int puertoServidor = Integer.parseInt(msg);
+                        String[] partes = msg.split("\\|");
+                        int puertoServidor = Integer.parseInt(partes[1]);
                         cerrarConexionMonitor();
                         conectar(vistaMonitor, puertoServidor);
                         

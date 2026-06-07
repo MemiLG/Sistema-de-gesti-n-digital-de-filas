@@ -18,6 +18,8 @@ import servidor.Servidor;
 import static servidor.ConstantesServidor.*;
 import vistas.IControladorMonitor;
 import vistas.vistaApagarMonitor;
+import factorySeguridad.LlaveFactory;
+import javax.crypto.SecretKey;
 
 
 public class Monitor implements IControladorMonitor {
@@ -37,6 +39,9 @@ public class Monitor implements IControladorMonitor {
     private int puertoMonitor = 2345;
     private boolean cerrando = true;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Servidor.class.getName());
+    private SecretKey llave_cifrado;
+    private String cifrado;
+    
     
     public Monitor(){
         this.servidores = new HashMap<>();
@@ -105,6 +110,19 @@ public class Monitor implements IControladorMonitor {
         return this.cerrando;
     }
     
+    public void iniciaLlave(String cifrado){
+        LlaveFactory factory = new LlaveFactory();
+        this.llave_cifrado = factory.getLlave(cifrado);
+    }
+
+    public String getCifrado() {
+        return cifrado;
+    }
+
+    public void setCifrado(String cifrado) {
+        this.cifrado = cifrado;
+    }
+    
     // --- Conexiones ---
     
     public synchronized void agregarServidor(int puerto, int estado){
@@ -134,7 +152,7 @@ public class Monitor implements IControladorMonitor {
                 System.out.println("Monitor iniciado");
                 while(true){ 
                    Socket clienteSocket = serverSocket.accept();
-                   ComunicacionMonitor gestor = new ComunicacionMonitor(clienteSocket,this);
+                   ComunicacionMonitor gestor = new ComunicacionMonitor(clienteSocket,this, this.llave_cifrado);
                    new Thread(gestor).start();
                    System.out.println("Nueva apliacion conectada al monitor");
                 }
@@ -202,12 +220,12 @@ public class Monitor implements IControladorMonitor {
             this.iniciaConexionServidor(this.puertoActivo);
             out.println(CAMBIA_ESTADO_ACTIVO);
             for(int i=0; i<this.puestosdeAtencion.size(); i+=1){
-                this.puestosdeAtencion.get(i).enviarPuerto(this.puertoActivo);
+                this.puestosdeAtencion.get(i).enviarPuertoYCifrado(this.puertoActivo,this.cifrado);
             }
             for (int i = 0; i<this.terminales.size(); i+=1){
-                this.terminales.get(i).enviarPuerto(this.puertoActivo);
+                this.terminales.get(i).enviarPuertoYCifrado(this.puertoActivo,this.cifrado);
             }
-            this.monitordeSala.enviarPuerto(this.puertoActivo);
+            this.monitordeSala.enviarPuertoYCifrado(this.puertoActivo,this.cifrado);
             
         }
     }
@@ -263,6 +281,7 @@ public class Monitor implements IControladorMonitor {
         
     }
     
+    @Override
     public void cerrarConexion(){ 
 
         try {

@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Base64;
+import javax.crypto.SecretKey;
 
 public class ComunicacionMonitor extends Thread {
     private Socket socket;
@@ -12,11 +14,13 @@ public class ComunicacionMonitor extends Thread {
     private PrintWriter out;
     private BufferedReader in;
     private boolean ejecutando = true;
+    private SecretKey llave;
     
     
-    public ComunicacionMonitor(Socket socket, Monitor monitor){
+    public ComunicacionMonitor(Socket socket, Monitor monitor, SecretKey llave){
         this.socket = socket;
         this.monitor = monitor;
+        this.llave = llave;
         try {
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.out = new PrintWriter(socket.getOutputStream(), true);
@@ -31,15 +35,15 @@ public class ComunicacionMonitor extends Thread {
             switch (mensaje){
                 case "ATENCION" ->{
                     monitor.agregarPuestoAtencion(this);
-                    enviarPuerto(monitor.getPuertoActivo());
+                    enviarPuertoYCifrado(monitor.getPuertoActivo(),monitor.getCifrado());
                 }
                 case "TERMINAL" ->{
                     monitor.agregarTerminal(this);
-                    enviarPuerto(monitor.getPuertoActivo());
+                    enviarPuertoYCifrado(monitor.getPuertoActivo(),monitor.getCifrado());
                 }
                 case "MONITOR" ->{
                     monitor.agregarMonitordeSala(this);
-                    enviarPuerto(monitor.getPuertoActivo());
+                    enviarPuertoYCifrado(monitor.getPuertoActivo(),monitor.getCifrado());
                 }
             }
             while(ejecutando){
@@ -52,8 +56,10 @@ public class ComunicacionMonitor extends Thread {
         } catch(IOException e){}
     }
     
-    public void enviarPuerto(int puerto){
-        String mensaje = Integer.toString(puerto);
+    public void enviarPuertoYCifrado(int puerto, String cifrado){
+        String puerto_str = Integer.toString(puerto);
+        String llave_str = Base64.getEncoder().encodeToString(this.llave.getEncoded());
+        String mensaje = puerto_str+"|"+cifrado+"|"+llave_str;
         out.println(mensaje);
     }
     
