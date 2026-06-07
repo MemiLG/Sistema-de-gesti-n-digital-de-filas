@@ -4,7 +4,8 @@
  */
 package vistas;
 
-import vistas.IControladorMonitor;
+import monitor.Monitor;
+
 
 /**
  *
@@ -14,6 +15,7 @@ import vistas.IControladorMonitor;
 public class vistaInicioMonitor extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(vistaInicioMonitor.class.getName());
+    private Monitor monitor;
 
     /**
      * Creates new form vistaInicioMonitor
@@ -136,7 +138,9 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
                     "-cp", classpath,
                     "servidor.Servidor",
                     "1234",
-                    "PRINCIPAL"
+                    "PRINCIPAL",
+                    monitor.getCifrado(),
+                    monitor.getLlaveString()
                 );
                 pb1.inheritIO();
                 Process procesoPrincipal = pb1.start();
@@ -147,7 +151,9 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
                     "-cp", classpath,
                     "servidor.Servidor",
                     "1235",
-                    "SECUNDARIO"
+                    "SECUNDARIO",
+                    monitor.getCifrado(),
+                    monitor.getLlaveString()
                 );
                 pb2.inheritIO();
                 Process procesoSecundario = pb2.start();

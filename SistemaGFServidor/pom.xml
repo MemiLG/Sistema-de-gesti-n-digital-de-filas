@@ -1,39 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-    POM del proyecto: SistemaGFServidor
-    Ruta: SistemaGFServidor/pom.xml
-
-    Contiene los paquetes:
-      - servidor
-      - negocio
-      - vistas
-      - persistencia
-      - absfactory
-      - archivo
-
-    Punto de entrada: servidor.MainServidor (nuevo main)
-
-    Este artefacto se publica en el repositorio local con `mvn install`
-    para que SistemaGFMonitor pueda declararlo como dependencia.
--->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <!--
-        Si usás el POM padre, activá el bloque <parent> y eliminá
-        groupId/version de acá (los hereda).
-    -->
-    <!--
-    <parent>
-        <groupId>grupo1</groupId>
-        <artifactId>SistemaGF</artifactId>
-        <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
-    -->
 
     <groupId>grupo1</groupId>
     <artifactId>SistemaGFServidor</artifactId>
@@ -67,12 +37,17 @@
             <artifactId>jaxb-impl</artifactId>
             <version>4.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>grupo1</groupId>
+            <artifactId>SistemaGFMonitor</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>25</maven.compiler.release>
-        <exec.mainClass>main.Main</exec.mainClass>
+        <exec.mainClass>servidor.servidor</exec.mainClass>
     </properties>
 
     <build>
@@ -97,7 +72,7 @@
                             <shadedClassifierName>shaded</shadedClassifierName>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>main.Main</mainClass>
+                                    <mainClass>servidor.Servidor</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

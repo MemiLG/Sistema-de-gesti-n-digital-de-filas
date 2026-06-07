@@ -74,13 +74,12 @@ public class GestorComunicacion implements Runnable {
                                 if (servidor.getEstado() == 1)
                                     servidor.mandaFuncionesMonitor(funcion);
                                 String num = in.readLine();
-                                int dni = Integer.parseInt(num);
-                                String estado = servidor.verificarCliente(dni);
+                                String estado = servidor.verificarCliente(num);
                                 if (estado.equals(CLIENTE_YA_EXISTE) && servidor.getEstado() == 1){
                                     servidor.mandaTerminal(CLIENTE_YA_EXISTE, this.numeroInstancia);
                                 } else{
                                     if (estado.equals(CLIENTE_VERIFICADO)){
-                                        servidor.cargarNuevoCliente(dni);
+                                        servidor.cargarNuevoCliente(num);
                                         if (servidor.getEstado() == 1){
                                             servidor.mandaTerminal(CLIENTE_CARGADO, this.numeroInstancia);
                                             servidor.notificarTamanoColaATodosLosPuestos();
@@ -95,14 +94,14 @@ public class GestorComunicacion implements Runnable {
                             try{
                                 if (servidor.getEstado() == 1)
                                     servidor.mandaFuncionesMonitor(funcion);
-                                int siguiente_dni = servidor.siguienteEnCola();
-                                if (siguiente_dni != 0){
+                                String siguiente_dni = servidor.siguienteEnCola();
+                                if (siguiente_dni != null){
                                     out.println(siguiente_dni); 
-                                    String clienteHistorial = Integer.toString(siguiente_dni)+" "+this.numeroInstancia;
+                                    String clienteHistorial = siguiente_dni+" "+this.numeroInstancia;
                                     servidor.cargaHistorial(clienteHistorial);
                                     servidor.inicioRenotificacion(siguiente_dni, this.numeroInstancia);
                                     if (servidor.getEstado() == 1)
-                                        servidor.mandaMonitor(Integer.toString(siguiente_dni), this.numeroInstancia);
+                                        servidor.mandaMonitor(siguiente_dni, this.numeroInstancia);
                                 }
                                 else {
                                     if (servidor.getEstado() == 1)

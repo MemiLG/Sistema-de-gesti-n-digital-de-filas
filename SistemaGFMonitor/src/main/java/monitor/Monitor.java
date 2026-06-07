@@ -19,6 +19,7 @@ import static servidor.ConstantesServidor.*;
 import vistas.IControladorMonitor;
 import vistas.vistaApagarMonitor;
 import factorySeguridad.LlaveFactory;
+import java.util.Base64;
 import javax.crypto.SecretKey;
 
 
@@ -121,6 +122,10 @@ public class Monitor implements IControladorMonitor {
 
     public void setCifrado(String cifrado) {
         this.cifrado = cifrado;
+    }
+    
+    public String getLlaveString(){
+        return Base64.getEncoder().encodeToString(this.llave_cifrado.getEncoded());
     }
     
     // --- Conexiones ---
@@ -236,7 +241,8 @@ public class Monitor implements IControladorMonitor {
     
     public void salvarServidorCaido(int puertoCaido){
         try{
-            Servidor server = new Servidor(puertoCaido,2);
+            Servidor server;
+            server = new Servidor(puertoCaido,2,this.cifrado,this.getLlaveString());
             ConexionServidor conexion = this.servidores.get(puertoCaido);
             out.println(ConstantesServidor.ESTADO_INTERNO);
             String snapshot = in.readLine();

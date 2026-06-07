@@ -14,6 +14,11 @@ import negocio.ColaIngreso;
 import negocio.GestorPS;
 import negocio.Historial;
 import persistencia.EstadoSistema;
+import seguridad.IEncripta;
+import factorySeguridad.CifradoFactory;
+import java.util.Base64;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import static servidor.ConstantesServidor.*;
 
@@ -46,8 +51,13 @@ public class Servidor extends Thread{
     private HashMap<Integer, Integer> Intentos;     //referencias a los diferentes puestos de atencion concurrentes que se están comunicando 
     private HashMap<Integer,String> puestoEnRenotificacion;          //referencias a los diferentes puestos de registro (terminales) concurrentes que se están comunicando
     
+    private String cifrado;
+    private SecretKey llave;
+    private CifradoFactory factory;
+    private IEncripta encriptador;
     
-    public Servidor(int puerto, int estado){
+    
+    public Servidor(int puerto, int estado, String cif, String llave_str){
         this.puerto = puerto;
         colaIng = new ColaIngreso();
         historial = new Historial();
@@ -56,6 +66,12 @@ public class Servidor extends Thread{
         puestoEnRenotificacion = new HashMap<>();
         Intentos = new HashMap<>();
         gestorps = new GestorPS();
+        this.cifrado = cif;
+        byte[] llave_bytes = Base64.getDecoder().decode(llave_str);
+        this.llave = new SecretKeySpec(llave_bytes, cif);
+        factory = new CifradoFactory(this.llave);
+        
+        encriptador = factory.getCifrado(cifrado);
         
         this.estado = estado;
         try {
@@ -139,7 +155,7 @@ public class Servidor extends Thread{
     
     public synchronized String obtenerSnapshot() {
     StringBuilder sbCola = new StringBuilder("COLA:");
-    Queue<Integer> colaActual = colaIng.getColaIng();
+    Queue<String> colaActual = colaIng.getColaIng();
     sbCola.append(colaActual.stream().map(String::valueOf).collect(Collectors.joining(",")));
     
     StringBuilder sbHistorial = new StringBuilder(";HISTORIAL:");
@@ -195,7 +211,7 @@ public class Servidor extends Thread{
         this.monitorSincronizacion = socket;
     }
     
-    public synchronized String verificarCliente(int dni){
+    public synchronized String verificarCliente(String dni){
         if (colaIng.getColaIng().contains(dni)){
             return CLIENTE_YA_EXISTE;
         } else{
@@ -203,19 +219,23 @@ public class Servidor extends Thread{
         }
     }
     
-    public synchronized void cargarNuevoCliente(int dni) throws InterruptedException{
+    public synchronized void cargarNuevoCliente(String dni) throws InterruptedException{
         while(pausado)
             wait();
         this.colaIng.nuevoIngreso(dni);
-        gestorps.RCPersistencia(colaIng);
+        ColaIngreso cola_img = new ColaIngreso();
+        for (String dni_enc: colaIng){
+            String dni_des = this.encriptador.desencriptar(dni_enc);
+            cola_img.addCliente(dni_des);
+        }
+        gestorps.RCPersistencia(cola_img);
         loggear("AGREGAR_COLA:" + dni);
     }
     
-    public synchronized int siguienteEnCola() throws InterruptedException{
+    public synchronized String siguienteEnCola() throws InterruptedException{
         while (pausado) 
             wait();
-        int dni = colaIng.sacarClienteColaIng();
-        
+        String dni = colaIng.sacarClienteColaIng();
         loggear("LLAMAR_SIGUIENTE:" + dni);
         return dni;
     }
@@ -226,7 +246,11 @@ public class Servidor extends Thread{
             wait();
         historial.IngresoHistorial(cliente);
         loggear("AGREGAR_HISTORIAL:" + cliente);
-        gestorps.GHPersistencia(historial);
+        Historial hist_img = new Historial();
+        for (int i=0; i<historial.getHistorialSize(); i++){
+            hist_img.pasaHistorial(this.encriptador.desencriptar(historial.getPosHistorial(i)));
+        }
+        gestorps.GHPersistencia(hist_img);
     }
     
     public synchronized int verificaHistorial (String cliente){
@@ -236,9 +260,13 @@ public class Servidor extends Thread{
      public synchronized void cambiaHistorial(String cliente, int pos) throws InterruptedException{
          while (pausado) 
              wait();
-         historial.eliminaClienteHistorial(pos);
-         historial.IngresoHistorial(cliente);
-         gestorps.GHPersistencia(historial);
+        historial.eliminaClienteHistorial(pos);
+        historial.IngresoHistorial(cliente);
+        Historial hist_img = new Historial();
+        for (int i=0; i<historial.getHistorialSize(); i++){
+            hist_img.pasaHistorial(this.encriptador.desencriptar(historial.getPosHistorial(i)));
+        }
+         gestorps.GHPersistencia(hist_img);
          loggear("CAMBIAR_HISTORIAL:" + cliente + " " + pos);
      }
     
@@ -284,7 +312,7 @@ public class Servidor extends Thread{
         this.iniciar();
     }
     
-    public synchronized void inicioRenotificacion(int dni, String numeroInstancia){
+    public synchronized void inicioRenotificacion(String dni, String numeroInstancia){
         puestoEnRenotificacion.put(dni, numeroInstancia);
         Intentos.put(dni, 1);
         gestorps.guardarEstadoRenotificacion(Intentos, puestoEnRenotificacion);
@@ -306,6 +334,10 @@ public class Servidor extends Thread{
                 Intentos.put(dni, nuevosIntentos);
                 puestoEnRenotificacion.put(dni, numeroInstancia);
             }
+            
+            Intentos.forEach((String dni_enc, Integer intentos)->{
+            
+            });
 
             gestorps.guardarEstadoRenotificacion(Intentos, puestoEnRenotificacion);
         }
@@ -322,8 +354,10 @@ public class Servidor extends Thread{
             int puerto = Integer.parseInt(args[0]);
             String rol = args[1];
             int estado = rol.equalsIgnoreCase("PRINCIPAL") ? 1 : 2;
+            String cifrado = args[2];
+            String llave_str = args[3];
             
-            Servidor servidor = new Servidor(puerto, estado);
+            Servidor servidor = new Servidor(puerto, estado, cifrado, llave_str);
             servidor.start();
             
             System.out.println("Servidor " + rol + " iniciado en puerto " + puerto);
