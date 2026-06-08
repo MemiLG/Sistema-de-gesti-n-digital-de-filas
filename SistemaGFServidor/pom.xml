@@ -5,18 +5,17 @@
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>grupo1</groupId>
+    <parent>
+        <groupId>grupo1</groupId>
+        <artifactId>SistemaGF</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
     <artifactId>SistemaGFServidor</artifactId>
-    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <dependencies>
-    <!-- Librería de layouts de NetBeans (usada por InterfazServidor.form) -->
-        <dependency>
-            <groupId>org.netbeans.external</groupId>
-            <artifactId>AbsoluteLayout</artifactId>
-            <version>RELEASE290</version>
-        </dependency>
         <dependency>
             <groupId>org.netbeans.external</groupId>
             <artifactId>AbsoluteLayout</artifactId>
@@ -37,26 +36,14 @@
             <artifactId>jaxb-impl</artifactId>
             <version>4.0.0</version>
         </dependency>
-        <dependency>
-            <groupId>grupo1</groupId>
-            <artifactId>SistemaGFMonitor</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>25</maven.compiler.release>
-        <exec.mainClass>servidor.servidor</exec.mainClass>
+        <exec.mainClass>servidor.Servidor</exec.mainClass>
     </properties>
 
     <build>
         <plugins>
-            <!--
-                maven-shade-plugin: genera un JAR ejecutable que incluye todas
-                las dependencias ("fat jar" / "uber jar").
-                Ejecutar:  mvn package  → produce SistemaGFServidor-1.0-SNAPSHOT.jar
-            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -79,14 +66,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!--
-                maven-install-plugin: instala el JAR principal (sin shade)
-                en el repositorio local para que Monitor pueda importarlo.
-                Nota: el shade plugin ya incluye el install del jar original
-                cuando shadedArtifactAttached=true, por lo que esta
-                configuración es sólo documental.
-            -->
         </plugins>
     </build>
 

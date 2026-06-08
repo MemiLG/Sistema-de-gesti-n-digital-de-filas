@@ -1,45 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>grupo1</groupId>
+    <parent>
+        <groupId>grupo1</groupId>
+        <artifactId>SistemaGF</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
     <artifactId>SistemaGFMonitor</artifactId>
-    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>25</maven.compiler.release>
         <exec.mainClass>vistas.vistaInicioMonitor</exec.mainClass>
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>grupo1</groupId>
             <artifactId>SistemaGFServidor</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
-
-        <!-- Layouts de NetBeans (transitiva desde Servidor, declarada aquí por si acaso) -->
         <dependency>
             <groupId>org.netbeans.external</groupId>
             <artifactId>AbsoluteLayout</artifactId>
             <version>RELEASE290</version>
         </dependency>
-
     </dependencies>
 
     <build>
         <plugins>
-            <!--
-                maven-shade-plugin: genera el fat jar ejecutable de Monitor.
-                Ejecutar:  mvn package  → produce SistemaGFMonitor-1.0-SNAPSHOT-shaded.jar
-            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
