@@ -98,6 +98,7 @@ public class TerminalApp {
                         final String msg = mensaje;
                         String[] partes = msg.split("\\|");
                         int puertoServidor = Integer.parseInt(partes[0]);
+                        System.out.println("Partes del mesnaje:"+partes[0]+" "+partes[1]+" "+partes[2]);
                         this.cifrado = partes[1];
                         String llave_str = partes[2];
                         byte[] llave_bytes = Base64.getDecoder().decode(llave_str);
