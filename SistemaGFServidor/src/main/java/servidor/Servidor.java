@@ -57,6 +57,29 @@ public class Servidor extends Thread{
     private IEncripta encriptador;
     
     
+    public Servidor(int puerto, int estado) {
+        this.puerto = puerto;
+        colaIng = new ColaIngreso();
+        historial = new Historial();
+        puestosAtencion = new HashMap<>();
+        terminales = new HashMap<>();
+        puestoEnRenotificacion = new HashMap<>();
+        Intentos = new HashMap<>();
+        gestorps = new GestorPS();
+        this.cifrado = "AES"; // Valor por defecto
+        this.estado = estado;
+        try {
+            ip = InetAddress.getLocalHost().getHostAddress();
+        } catch (Exception e) {}
+
+        // Inicializar GestorPS con tipo de almacenamiento y puerto
+        try {
+            gestorps.cargaEstadoInicial(colaIng, historial, Intentos, puestoEnRenotificacion);
+        } catch (Exception e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error cargando estado inicial del servidor en puerto " + puerto, e);
+        }
+    }
+    
     public Servidor(int puerto, int estado, String cif, String llave_str){
         this.puerto = puerto;
         colaIng = new ColaIngreso();
@@ -365,8 +388,8 @@ public class Servidor extends Thread{
     
     public static void main(String[] args) {
         if (args.length < 2) {
-            System.err.println("Uso: java servidor.Servidor <puerto> <rol>");
-            System.err.println("Ejemplo: java servidor.Servidor 1234 PRINCIPAL");
+            System.err.println("Uso: java servidor.Servidor <puerto> <rol> [cifrado] [llave] [persistencia]");
+            System.err.println("Ejemplo: java servidor.Servidor 1234 PRINCIPAL AES llave.key XML");
             System.exit(1);
         }
         
@@ -374,10 +397,24 @@ public class Servidor extends Thread{
             int puerto = Integer.parseInt(args[0]);
             String rol = args[1];
             int estado = rol.equalsIgnoreCase("PRINCIPAL") ? 1 : 2;
-            String cifrado = args[2];
-            String llave_str = args[3];
             
-            Servidor servidor = new Servidor(puerto, estado, cifrado, llave_str);
+            Servidor servidor;
+            
+            // Si se proporcionan cifrado y llave
+            if (args.length >= 4) {
+                String cifrado = args[2];
+                String llave_str = args[3];
+                servidor = new Servidor(puerto, estado, cifrado, llave_str);
+                
+                // Si también se proporciona persistencia, configurarla
+                if (args.length >= 5) {
+                    String persistencia = args[4];
+                    servidor.gestorps.tipoArchivo(persistencia);
+                }
+            } else {
+                servidor = new Servidor(puerto, estado);
+            }
+            
             servidor.start();
             
             System.out.println("Servidor " + rol + " iniciado en puerto " + puerto);

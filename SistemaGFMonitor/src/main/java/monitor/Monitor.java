@@ -42,6 +42,7 @@ public class Monitor implements IControladorMonitor {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Servidor.class.getName());
     private SecretKey llave_cifrado;
     private String cifrado;
+    private String tipoPersistencia;
     
     
     public Monitor(){
@@ -126,6 +127,14 @@ public class Monitor implements IControladorMonitor {
     
     public String getLlaveString(){
         return Base64.getEncoder().encodeToString(this.llave_cifrado.getEncoded());
+    }
+    
+    public String getTipoPersistencia() {
+        return tipoPersistencia;
+    }
+    
+    public void setTipoPersistencia(String tipo) {
+        this.tipoPersistencia = tipo;
     }
     
     // --- Conexiones ---

@@ -128,6 +128,15 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
         
         new Thread(() -> {
             try {
+                // Obtener selecciones del usuario
+                String cifrado = (String) jComboBoxEncriptacion.getSelectedItem();
+                String persistencia = (String) jComboBoxPersistencia.getSelectedItem();
+                
+                // Guardar datos en Monitor
+                monitor.setCifrado(cifrado);
+                monitor.iniciaLlave(cifrado);
+                monitor.setTipoPersistencia(persistencia);
+                
                 // Obtener el classpath dinámicamente
                 String classpath = System.getProperty("java.class.path");
                 String javaHome = System.getProperty("java.home");
@@ -141,7 +150,8 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
                     "1234",
                     "PRINCIPAL",
                     monitor.getCifrado(),
-                    monitor.getLlaveString()
+                    monitor.getLlaveString(),
+                    monitor.getTipoPersistencia()
                 );
                 pb1.inheritIO();
                 Process procesoPrincipal = pb1.start();
@@ -154,7 +164,8 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
                     "1235",
                     "SECUNDARIO",
                     monitor.getCifrado(),
-                    monitor.getLlaveString()
+                    monitor.getLlaveString(),
+                    monitor.getTipoPersistencia()
                 );
                 pb2.inheritIO();
                 Process procesoSecundario = pb2.start();
