@@ -11,6 +11,8 @@ public class GestorPS {
 
     public GestorPS() 
     {
+        this.adminPersistencia = new AdministradorPersistencia();
+
     }
 
     public void RCPersistencia(ColaIngreso cola)

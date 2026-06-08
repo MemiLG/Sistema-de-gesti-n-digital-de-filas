@@ -26,6 +26,10 @@ public class AdministradorPersistencia {
         }
     }
 
+    public AdministradorPersistencia() {
+        //TODO Auto-generated constructor stub
+    }
+
     private TipoAlmacenamientoFactory crearFactory() 
     {
         switch (tipoAlmacenamiento) {
