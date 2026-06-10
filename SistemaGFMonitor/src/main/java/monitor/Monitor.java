@@ -39,6 +39,8 @@ public class Monitor implements IControladorMonitor {
     private ServerSocket serverSocket;
     private int puertoMonitor = 2345;
     private boolean cerrando = true;
+    private Process procesoPrincipal;
+    private Process procesoSecundario;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Servidor.class.getName());
     private SecretKey llave_cifrado;
     private String cifrado;
@@ -297,7 +299,7 @@ public class Monitor implements IControladorMonitor {
     }
     
     @Override
-    public void cerrarConexion(){ 
+    public void cerrarConexion(){
 
         try {
             this.cerrando = true;
@@ -323,7 +325,11 @@ public class Monitor implements IControladorMonitor {
         } catch (IOException e) {
             logger.log(java.util.logging.Level.SEVERE, "Error al cerrar conexion con servidor", e);
         }
-
+        if (procesoPrincipal != null && procesoPrincipal.isAlive())
+            procesoPrincipal.destroy();
+        if (procesoSecundario != null && procesoSecundario.isAlive())
+            procesoSecundario.destroy();
+        System.exit(0);
     }
     
     public synchronized void sincronizar(String funcion){
@@ -360,7 +366,7 @@ public class Monitor implements IControladorMonitor {
 
     @Override
     public void establecerProcesos(Process procesoPrincipal, Process procesoSecundario) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'establecerProcesos'");
+        this.procesoPrincipal = procesoPrincipal;
+        this.procesoSecundario = procesoSecundario;
     }
 }

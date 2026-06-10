@@ -124,80 +124,58 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonIniciarActionPerformed(java.awt.event.ActionEvent evt) {
-        jButtonIniciar.setEnabled(false); // Evita múltiples clics
-        
+        jButtonIniciar.setEnabled(false);
+
         new Thread(() -> {
             try {
-                // Obtener selecciones del usuario
                 String cifrado = (String) jComboBoxEncriptacion.getSelectedItem();
                 String persistencia = (String) jComboBoxPersistencia.getSelectedItem();
-                
-                // Guardar datos en Monitor
+
                 monitor.setCifrado(cifrado);
                 monitor.iniciaLlave(cifrado);
                 monitor.setTipoPersistencia(persistencia);
-                
-                // Obtener el classpath dinámicamente
+
                 String classpath = System.getProperty("java.class.path");
                 String javaHome = System.getProperty("java.home");
                 String javaExe = javaHome + java.io.File.separator + "bin" + java.io.File.separator + "java";
-                
-                // Lanzar servidor principal en puerto 1234
+
                 ProcessBuilder pb1 = new ProcessBuilder(
-                    javaExe,
-                    "-cp", classpath,
+                    javaExe, "-cp", classpath,
                     "servidor.Servidor",
-                    "1234",
-                    "PRINCIPAL",
+                    "1234", "PRINCIPAL",
                     monitor.getCifrado(),
                     monitor.getLlaveString(),
                     monitor.getTipoPersistencia()
                 );
                 pb1.inheritIO();
                 Process procesoPrincipal = pb1.start();
-                
-                // Lanzar servidor secundario en puerto 1235
+
                 ProcessBuilder pb2 = new ProcessBuilder(
-                    javaExe,
-                    "-cp", classpath,
+                    javaExe, "-cp", classpath,
                     "servidor.Servidor",
-                    "1235",
-                    "SECUNDARIO",
+                    "1235", "SECUNDARIO",
                     monitor.getCifrado(),
                     monitor.getLlaveString(),
                     monitor.getTipoPersistencia()
                 );
                 pb2.inheritIO();
                 Process procesoSecundario = pb2.start();
-                
-                // Crear un controlador que implemente IControladorMonitor
-                IControladorMonitor controlador = new IControladorMonitor() {
-                    private Process proc1 = procesoPrincipal;
-                    private Process proc2 = procesoSecundario;
-                    
-                    @Override
-                    public void cerrarConexion() {
-                        // Destruir los procesos
-                        if (proc1 != null && proc1.isAlive()) {
-                            proc1.destroy();
-                        }
-                        if (proc2 != null && proc2.isAlive()) {
-                            proc2.destroy();
-                        }
-                        System.exit(0);
-                    }
-                    
-                    @Override
-                    public void establecerProcesos(Process procesoPrincipal, Process procesoSecundario) {
-                        // No se necesita en esta implementación
-                    }
-                };
 
-                // Crear y mostrar la ventana de apagado en el EDT
+                // Esperar a que los servidores levanten
+                Thread.sleep(2000);
+
+                // Conectar el monitor a los servidores y empezar a escuchar clientes
+                monitor.agregarServidor(1234, 1);
+                monitor.agregarServidor(1235, 2);
+                monitor.setPuertoActivo(1234);
+                monitor.iniciaConexionServidor(1234);
+                monitor.iniciaConexionApliaciones();
+                monitor.establecerProcesos(procesoPrincipal, procesoSecundario);
+
                 javax.swing.SwingUtilities.invokeLater(() -> {
-                    vistaApagarMonitor ventana = new vistaApagarMonitor(controlador);
+                    vistaApagarMonitor ventana = new vistaApagarMonitor(monitor);
                     ventana.setVisible(true);
-                    dispose(); // Cerrar la ventana de configuración
+                    dispose();
                 });
             } catch (Exception e) {
                 javax.swing.JOptionPane.showMessageDialog(this,
