@@ -72,12 +72,9 @@ public class Servidor extends Thread{
             ip = InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {}
 
-        // Inicializar GestorPS con tipo de almacenamiento y puerto
-        try {
-            gestorps.cargaEstadoInicial(colaIng, historial, Intentos, puestoEnRenotificacion);
-        } catch (Exception e) {
-            logger.log(java.util.logging.Level.SEVERE, "Error cargando estado inicial del servidor en puerto " + puerto, e);
-        }
+        gestorps.cargaEstadoInicial(colaIng, historial, Intentos, puestoEnRenotificacion, puerto);
+        
+        
     }
     
     public Servidor(int puerto, int estado, String cif, String llave_str){
@@ -101,12 +98,7 @@ public class Servidor extends Thread{
             ip = InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {}
 
-        // Inicializar GestorPS con tipo de almacenamiento y puerto
-        try {
-            gestorps.cargaEstadoInicial(colaIng, historial, Intentos, puestoEnRenotificacion);
-        } catch (Exception e) {
-            logger.log(java.util.logging.Level.SEVERE, "Error cargando estado inicial del servidor en puerto " + puerto, e);
-        }
+        gestorps.cargaEstadoInicial(colaIng, historial, Intentos, puestoEnRenotificacion, puerto);
     }
     
     //--- Getters y Setters ---
@@ -409,7 +401,7 @@ public class Servidor extends Thread{
                 // Si también se proporciona persistencia, configurarla
                 if (args.length >= 5) {
                     String persistencia = args[4];
-                    servidor.gestorps.tipoArchivo(persistencia);
+                    servidor.gestorps.tipoArchivo(persistencia,puerto);
                 }
             } else {
                 servidor = new Servidor(puerto, estado);

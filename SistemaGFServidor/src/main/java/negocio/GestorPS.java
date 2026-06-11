@@ -9,11 +9,7 @@ public class GestorPS {
 
     private AdministradorPersistencia adminPersistencia;
 
-    public GestorPS() 
-    {
-        this.adminPersistencia = new AdministradorPersistencia();
-
-    }
+    public GestorPS(){}
 
     public void RCPersistencia(ColaIngreso cola)
     {
@@ -44,7 +40,7 @@ public class GestorPS {
     }
 
 
-    public void cargaEstadoInicial(ColaIngreso colaIng, Historial historial, HashMap<String,String> intentosRenotificacion, HashMap<String,String> puestoEnRenotificacion) 
+    public void cargaEstadoInicial(ColaIngreso colaIng, Historial historial, HashMap<String,String> intentosRenotificacion, HashMap<String,String> puestoEnRenotificacion, Integer puerto) 
     {
         if (colaIng == null) 
         {
@@ -56,10 +52,12 @@ public class GestorPS {
             throw new IllegalArgumentException();
         }
         
-        
-        try 
-        {
-            EstadoSistema estado = adminPersistencia.cargarEstadoSistema();
+    
+        String tipoAlmacenamiento = Configuracion.getFormatoAlmacenamiento();
+        adminPersistencia = new AdministradorPersistencia(tipoAlmacenamiento, puerto);
+        EstadoSistema estado = adminPersistencia.cargarEstadoSistema();
+
+        if (estado != null){
 
             // Reconstruye la cola
             if (estado.getColaEspera() != null) 
@@ -106,10 +104,9 @@ public class GestorPS {
                     }
                 }
             }
-
-        } catch (Exception e) {
-            System.out.println( e.getMessage());
         }
+
+        
     }
 
 
@@ -130,14 +127,17 @@ public class GestorPS {
         }
     }
 
-    public void tipoArchivo(String tipo) 
+    public void tipoArchivo(String tipo, Integer puerto) 
     {
         try 
         {
-            this.adminPersistencia = new AdministradorPersistencia(tipo, adminPersistencia.getIdServidor());
+            this.adminPersistencia = new AdministradorPersistencia(tipo, puerto); 
+            Configuracion.setFormatoAlmacenamiento(tipo);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             throw new RuntimeException( e);
         }
     }
+
+
 }

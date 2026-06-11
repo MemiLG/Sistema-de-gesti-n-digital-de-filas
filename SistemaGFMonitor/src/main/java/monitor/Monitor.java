@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import javax.swing.JOptionPane;
 import negocio.ColaIngreso;
+import negocio.GestorPS;
 import negocio.Historial;
 import servidor.ConstantesServidor;
 import servidor.Servidor;
@@ -44,7 +45,7 @@ public class Monitor implements IControladorMonitor {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Servidor.class.getName());
     private SecretKey llave_cifrado;
     private String cifrado;
-    private String tipoPersistencia;
+    private GestorPS gestorPS = new GestorPS();
     
     
     public Monitor(){
@@ -131,12 +132,8 @@ public class Monitor implements IControladorMonitor {
         return Base64.getEncoder().encodeToString(this.llave_cifrado.getEncoded());
     }
     
-    public String getTipoPersistencia() {
-        return tipoPersistencia;
-    }
-    
     public void setTipoPersistencia(String tipo) {
-        this.tipoPersistencia = tipo;
+        gestorPS.tipoArchivo(tipo, this.puertoActivo);
     }
     
     // --- Conexiones ---

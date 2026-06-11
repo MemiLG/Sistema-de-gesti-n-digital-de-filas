@@ -133,7 +133,6 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
 
                 monitor.setCifrado(cifrado);
                 monitor.iniciaLlave(cifrado);
-                monitor.setTipoPersistencia(persistencia);
 
                 String classpath = System.getProperty("java.class.path");
                 String javaHome = System.getProperty("java.home");
@@ -144,8 +143,7 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
                     "servidor.Servidor",
                     "1234", "PRINCIPAL",
                     monitor.getCifrado(),
-                    monitor.getLlaveString(),
-                    monitor.getTipoPersistencia()
+                    monitor.getLlaveString()
                 );
                 pb1.inheritIO();
                 Process procesoPrincipal = pb1.start();
@@ -155,8 +153,7 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
                     "servidor.Servidor",
                     "1235", "SECUNDARIO",
                     monitor.getCifrado(),
-                    monitor.getLlaveString(),
-                    monitor.getTipoPersistencia()
+                    monitor.getLlaveString()
                 );
                 pb2.inheritIO();
                 Process procesoSecundario = pb2.start();
@@ -171,6 +168,8 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
                 monitor.iniciaConexionServidor(1234);
                 monitor.iniciaConexionApliaciones();
                 monitor.establecerProcesos(procesoPrincipal, procesoSecundario);
+
+                monitor.setTipoPersistencia(persistencia);
 
                 javax.swing.SwingUtilities.invokeLater(() -> {
                     vistaApagarMonitor ventana = new vistaApagarMonitor(monitor);

@@ -26,8 +26,9 @@ public class AdministradorPersistencia {
         }
     }
 
-    public AdministradorPersistencia() {
-        //TODO Auto-generated constructor stub
+    public AdministradorPersistencia() 
+    {
+       
     }
 
     private TipoAlmacenamientoFactory crearFactory() 
@@ -76,7 +77,7 @@ public class AdministradorPersistencia {
             return new EstadoSistema();
         }
 
-        try        {   
+        try {   
             EstadoSistema estadoCargado = gestorArchivo.leerArchivo();
             if (estadoCargado != null) {
                 return estadoCargado;
