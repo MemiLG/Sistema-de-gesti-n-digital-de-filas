@@ -15,9 +15,14 @@ public class Configuracion {
         return getPropiedad("formato.almacenamiento", "TEXTO PLANO");
     }
 
-    public static void setFormatoAlmacenamiento(String tipo) {
-
+    public static void setFormatoAlmacenamiento(String tipo) 
+    {
         setPropiedad("formato.almacenamiento", tipo);
+    }
+
+    public static int getPuertoServidor()
+    {
+        return Integer.parseInt(getPropiedad("puertoservidor","1235"));
     }
 
     private static String getPropiedad(String clave, String valorDefault) {
