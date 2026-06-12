@@ -157,9 +157,9 @@ public class MonitorApp {
                         if (historialVentana.buscaHistorial(dni + " " + puesto) != -1) {
                             System.out.println("Entra en el rellamado");
                             historialVentana.eliminaClienteHistorial(historialVentana.buscaHistorial(dni + " " + puesto));
-                            sonidoRenotificacion.reproducir("sonido/SonidoTurno.wav");
                             vistaMonitor.iniciarParpadeo();
                         }
+                        sonidoRenotificacion.reproducir("sonido/SonidoTurno.wav");
                         historialVentana.IngresoHistorial(dni + " " + puesto);
                     
                         SwingUtilities.invokeLater(() -> {

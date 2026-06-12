@@ -386,7 +386,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
     {
         if (personasEnCola <= 0)
         {
-            jLabelEnFila.setText("No clientes en la fila");
+            jLabelEnFila.setText("No hay clientes en la fila");
         }
         else
         {

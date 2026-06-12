@@ -7,6 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -105,10 +106,31 @@ public class Servidor extends Thread{
             String dni_enc = this.encriptador.encriptar(valor);
             colaIng.addCliente(dni_enc);
         }
-        for (String valor_hist:hist_enc){
-            String dni_enc = this.encriptador.encriptar(valor_hist);
-            historial.IngresoHistorial(dni_enc);
+        for (String valor_hist : hist_enc) {
+            if (valor_hist != null && !valor_hist.isEmpty()) {
+                String[] partes = valor_hist.split(" ", 2);
+                String dni_enc = this.encriptador.encriptar(partes[0]);
+                historial.IngresoHistorial(dni_enc + (partes.length > 1 ? " " + partes[1] : ""));
+            }
         }
+
+        // Re-encriptar claves de Intentos (persistencia guarda DNIs desencriptados)
+        HashMap<String, String> intentosEnc = new HashMap<>();
+        for (Map.Entry<String, String> entry : Intentos.entrySet()) {
+            if (entry.getKey() != null && !entry.getKey().isEmpty()) {
+                intentosEnc.put(this.encriptador.encriptar(entry.getKey()), entry.getValue());
+            }
+        }
+        this.Intentos = intentosEnc;
+
+        // Re-encriptar claves de puestoEnRenotificacion
+        HashMap<String, String> puestosEnc = new HashMap<>();
+        for (Map.Entry<String, String> entry : puestoEnRenotificacion.entrySet()) {
+            if (entry.getKey() != null && !entry.getKey().isEmpty()) {
+                puestosEnc.put(this.encriptador.encriptar(entry.getKey()), entry.getValue());
+            }
+        }
+        this.puestoEnRenotificacion = puestosEnc;
     }
     
     //--- Getters y Setters ---
@@ -263,10 +285,17 @@ public class Servidor extends Thread{
     }
     
     public synchronized String siguienteEnCola() throws InterruptedException{
-        while (pausado) 
+        while (pausado)
             wait();
         String dni = colaIng.sacarClienteColaIng();
         loggear("LLAMAR_SIGUIENTE:" + dni);
+        if (dni != null) {
+            ColaIngreso cola_img = new ColaIngreso();
+            for (String dni_enc : colaIng) {
+                cola_img.addCliente(this.encriptador.desencriptar(dni_enc));
+            }
+            gestorps.RCPersistencia(cola_img);
+        }
         return dni;
     }
     
@@ -316,6 +345,19 @@ public class Servidor extends Thread{
         if (this.monitor == null) return;
         String mensaje = dni + "|" + puesto;
         this.monitor.enviarMensaje(mensaje);
+    }
+
+    public synchronized void enviarEstadoRenotificacion(GestorComunicacion gestor, String puesto) {
+        for (Map.Entry<String, String> entry : puestoEnRenotificacion.entrySet()) {
+            if (entry.getValue().equals(puesto)) {
+                String encryptedDNI = entry.getKey();
+                String count = Intentos.get(encryptedDNI);
+                if (count != null) {
+                    gestor.enviarMensaje(ESTADO_RENOTIFICACION + "|" + encryptedDNI + "|" + count);
+                }
+                return;
+            }
+        }
     }
     
     public synchronized void mandaTerminal(String mensaje, String numeroTerminal){

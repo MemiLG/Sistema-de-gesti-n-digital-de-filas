@@ -44,6 +44,7 @@ public class GestorComunicacion implements Runnable {
                     this.numeroInstancia = id;
                     enviarMensaje("ID|" + id);
                     servidor.notificarTamanoColaATodosLosPuestos();
+                    servidor.enviarEstadoRenotificacion(this, id);
                     this.rol=0;
                 }
                 case "TERMINAL" ->{
@@ -118,6 +119,7 @@ public class GestorComunicacion implements Runnable {
                                 if (servidor.getEstado() == 1)
                                     servidor.mandaFuncionesMonitor(funcion);
                                 String dni_renotif = in.readLine();
+                                System.out.println("entra en renotificacion" + dni_renotif);
                                 String dni_renotif_enc = servidor.getEncriptador().encriptar(dni_renotif);
                                 String dni_renotif_entero = dni_renotif_enc + " " + this.numeroInstancia;
                                 int estado = servidor.verificaHistorial(dni_renotif_entero);

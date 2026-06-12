@@ -180,6 +180,30 @@ public class funcionesOperador
             return;
         }
 
+        if (mensaje.startsWith(ESTADO_RENOTIFICACION + "|")) {
+            String[] partes = mensaje.split("\\|", 3);
+            try {
+                String dni_decript = this.encriptador.desencriptar(partes[1]);
+                dniActual = Integer.parseInt(dni_decript);
+                intentosRenotificacion = Integer.parseInt(partes[2]);
+                estadoCliente = 1;
+                this.mensaje = String.valueOf(dniActual);
+                final int intentos = intentosRenotificacion;
+                SwingUtilities.invokeLater(() -> {
+                    vistaOperador.muestraDni(String.valueOf(dniActual));
+                    vistaOperador.actualizarContador(intentos);
+                    if (intentos >= 3) {
+                        vistaOperador.desactivarBotonRenotar();
+                    } else {
+                        vistaOperador.reiniciarBotonRenotificar();
+                    }
+                });
+            } catch (NumberFormatException e) {
+                // ignorar si los datos son inválidos
+            }
+            return;
+        }
+
         try {
             System.out.println("PUESTO recibe para desencriptar: [" + mensaje + "]");
             System.out.println("PUESTO longitud: " + mensaje.length());
@@ -187,7 +211,7 @@ public class funcionesOperador
             dniActual = Integer.parseInt(dni_decript);
             estadoCliente = 1;
             intentosRenotificacion = 1;
-            this.mensaje = String.valueOf(dniActual); 
+            this.mensaje = String.valueOf(dniActual);
             SwingUtilities.invokeLater(() -> {
                 vistaOperador.muestraDni(String.valueOf(dniActual));
                 vistaOperador.actualizarContador(intentosRenotificacion);
