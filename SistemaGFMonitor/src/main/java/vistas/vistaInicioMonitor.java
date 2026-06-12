@@ -143,7 +143,8 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
                     "servidor.Servidor",
                     "1234", "PRINCIPAL",
                     monitor.getCifrado(),
-                    monitor.getLlaveString()
+                    monitor.getLlaveString(),
+                    persistencia
                 );
                 pb1.inheritIO();
                 Process procesoPrincipal = pb1.start();
@@ -153,7 +154,8 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
                     "servidor.Servidor",
                     "1235", "SECUNDARIO",
                     monitor.getCifrado(),
-                    monitor.getLlaveString()
+                    monitor.getLlaveString(),
+                    persistencia
                 );
                 pb2.inheritIO();
                 Process procesoSecundario = pb2.start();

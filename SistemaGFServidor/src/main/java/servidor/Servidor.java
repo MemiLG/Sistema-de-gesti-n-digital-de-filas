@@ -380,10 +380,11 @@ public class Servidor extends Thread{
                 
             nuevosIntentos = nuevosIntentos + 1;
             
-            if(nuevosIntentos > 3)
+            if(nuevosIntentos >= 3)
             {
                 Intentos.remove(dni);
                 puestoEnRenotificacion.remove(dni);
+                
             } else {
                 Intentos.remove(dni);
                 puestoEnRenotificacion.remove(dni);

@@ -32,7 +32,7 @@ public class GestorPS {
         }
 
         try {
-            adminPersistencia.guardarHistorial(historial);
+            this.adminPersistencia.guardarHistorial(historial);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             throw new RuntimeException( e);
@@ -52,9 +52,9 @@ public class GestorPS {
             throw new IllegalArgumentException();
         }
         
-    
+        System.out.println("ESTADI INICIAL");
         String tipoAlmacenamiento = Configuracion.getFormatoAlmacenamiento();
-        adminPersistencia = new AdministradorPersistencia(tipoAlmacenamiento, puerto);
+        this.adminPersistencia = new AdministradorPersistencia(tipoAlmacenamiento, puerto);
         EstadoSistema estado = adminPersistencia.cargarEstadoSistema();
 
         if (estado != null){
@@ -131,8 +131,10 @@ public class GestorPS {
     {
         try 
         {
-            this.adminPersistencia = new AdministradorPersistencia(tipo, puerto); 
+            System.out.println("TIPO DE ARCHIVO");
             Configuracion.setFormatoAlmacenamiento(tipo);
+            this.adminPersistencia = new AdministradorPersistencia(tipo, puerto); 
+            
         } catch (Exception e) {
             System.err.println(e.getMessage());
             throw new RuntimeException( e);
