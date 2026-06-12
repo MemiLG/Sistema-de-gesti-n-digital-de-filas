@@ -52,17 +52,17 @@ public class MonitorApp {
             return null;
         }
         else{
-            String cliente_desencript = this.encriptador.desencriptar(historialVentana.getPosHistorial(0));
-            return cliente_desencript;
+            return historialVentana.getPosHistorial(0);
         }
     }
     public Historial getHistorial() {
-        Historial histo_decript = new Historial();
+        /*Historial histo_decript = new Historial();
         for (int i=0;i<historialVentana.getHistorialSize();i++){
             String cliente_decript = this.encriptador.desencriptar(historialVentana.getPosHistorial(i));
             histo_decript.pasaHistorial(cliente_decript);
         }
-        return histo_decript;
+        return histo_decript;*/
+        return historialVentana;
     }
 
     public void resetearFallos()
@@ -146,12 +146,16 @@ public class MonitorApp {
                     String msg;
                     while ((msg = in.readLine()) != null) {
                         final String mensaje = msg;
-                        String mensaje_decript = this.encriptador.desencriptar(mensaje);
-                        String[] partes = mensaje_decript.split("\\|",3);
-                        String dni = partes[0];
+                        System.out.println(msg);
+                        String[] partes = msg.split("\\|",3);
+                        String dni = this.encriptador.desencriptar(partes[0]);
+                        System.out.println(partes[0]);
+                        System.out.println(dni);
                         String puesto = partes[1];
-                    
+                        
+                        System.out.println(historialVentana.buscaHistorial(dni + " " + puesto));
                         if (historialVentana.buscaHistorial(dni + " " + puesto) != -1) {
+                            System.out.println("Entra en el rellamado");
                             historialVentana.eliminaClienteHistorial(historialVentana.buscaHistorial(dni + " " + puesto));
                             sonidoRenotificacion.reproducir("sonido/SonidoTurno.wav");
                             vistaMonitor.iniciarParpadeo();

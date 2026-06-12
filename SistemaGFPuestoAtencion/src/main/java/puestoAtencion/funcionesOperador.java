@@ -230,6 +230,7 @@ public class funcionesOperador
         }
         
         out.println(RENOVAR_NOTIFICACION);
+        
         //Reintento de envío de mensaje.
         if(out.checkError()){
             this.cantidadFallos++;

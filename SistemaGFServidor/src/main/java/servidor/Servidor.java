@@ -277,8 +277,17 @@ public class Servidor extends Thread{
         historial.IngresoHistorial(cliente);
         loggear("AGREGAR_HISTORIAL:" + cliente);
         Historial hist_img = new Historial();
-        for (int i=0; i<historial.getHistorialSize(); i++){
-            hist_img.pasaHistorial(this.encriptador.desencriptar(historial.getPosHistorial(i)));
+        /*for (int i=0; i<historial.getHistorialSize(); i++){
+            String entrada = historial.getPosHistorial(i);
+            String[] partes = entrada.split(" ", 2);
+            String dni_decript = this.encriptador.desencriptar(partes[0]);
+            hist_img.pasaHistorial(dni_decript + " " + partes[1]);
+        }*/
+        for (String entrada:historial){
+            String[] partes = entrada.split(" ",2);
+            if (partes.length < 2) continue;
+            String dni_decript = this.encriptador.desencriptar(partes[0]);
+            hist_img.pasaHistorial(dni_decript + " " + partes[1]);
         }
         gestorps.GHPersistencia(hist_img);
     }
@@ -294,7 +303,10 @@ public class Servidor extends Thread{
         historial.IngresoHistorial(cliente);
         Historial hist_img = new Historial();
         for (int i=0; i<historial.getHistorialSize(); i++){
-            hist_img.pasaHistorial(this.encriptador.desencriptar(historial.getPosHistorial(i)));
+            String entrada = historial.getPosHistorial(i);
+            String[] partes = entrada.split(" ", 2);
+            String dni_decript = this.encriptador.desencriptar(partes[0]);
+            hist_img.pasaHistorial(dni_decript + " " + partes[1]);
         }
          gestorps.GHPersistencia(hist_img);
          loggear("CAMBIAR_HISTORIAL:" + cliente + " " + pos);
@@ -348,6 +360,7 @@ public class Servidor extends Thread{
         
         HashMap <String, String> puesto_img = new HashMap<>();
         puestoEnRenotificacion.forEach((String dni_encript, String num)->{
+            System.out.println("dni de puesto en renotificacion: "+dni_encript);
             String dni_decript = this.encriptador.desencriptar(dni_encript);
             puesto_img.put(dni_decript, num);
         });

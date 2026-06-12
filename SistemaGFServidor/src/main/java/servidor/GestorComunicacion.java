@@ -117,14 +117,15 @@ public class GestorComunicacion implements Runnable {
                             try{
                                 if (servidor.getEstado() == 1)
                                     servidor.mandaFuncionesMonitor(funcion);
-                                String dni_renotif = in.readLine(); 
-                                String dni_renotif_entero = dni_renotif + " " + this.numeroInstancia;
+                                String dni_renotif = in.readLine();
+                                String dni_renotif_enc = servidor.getEncriptador().encriptar(dni_renotif);
+                                String dni_renotif_entero = dni_renotif_enc + " " + this.numeroInstancia;
                                 int estado = servidor.verificaHistorial(dni_renotif_entero);
                                 if (estado != -1){
                                     servidor.cambiaHistorial(dni_renotif_entero, estado);
-                                    servidor.modificarEstructurasRenotificacion(dni_renotif, this.numeroInstancia);
+                                    servidor.modificarEstructurasRenotificacion(dni_renotif_enc, this.numeroInstancia);
                                     if (servidor.getEstado() == 1)
-                                        servidor.mandaMonitor(dni_renotif, this.numeroInstancia);
+                                        servidor.mandaMonitor(dni_renotif_enc, this.numeroInstancia);
                                 }
                             }catch (InterruptedException e){
                                 JOptionPane.showMessageDialog(null,"No se pudo renovar la notificacion","Error", JOptionPane.ERROR_MESSAGE);
