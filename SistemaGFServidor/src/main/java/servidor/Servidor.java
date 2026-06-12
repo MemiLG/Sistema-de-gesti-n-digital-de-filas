@@ -57,7 +57,7 @@ public class Servidor extends Thread{
     private IEncripta encriptador;
     
     
-    public Servidor(int puerto, int estado) {
+    /*public Servidor(int puerto, int estado) { // Este constructor no puede estar porque no se puede implementar la seguridad sin la llave pasada por el monitor
         this.puerto = puerto;
         colaIng = new ColaIngreso();
         historial = new Historial();
@@ -75,7 +75,7 @@ public class Servidor extends Thread{
         gestorps.cargaEstadoInicial(colaIng, historial, Intentos, puestoEnRenotificacion, puerto);
         
         
-    }
+    }*/
     
     public Servidor(int puerto, int estado, String cif, String llave_str){
         this.puerto = puerto;
@@ -97,8 +97,18 @@ public class Servidor extends Thread{
         try {
             ip = InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {}
-
-        gestorps.cargaEstadoInicial(colaIng, historial, Intentos, puestoEnRenotificacion, puerto);
+        
+        ColaIngreso cola_enc = new ColaIngreso();
+        Historial hist_enc = new Historial();
+        gestorps.cargaEstadoInicial(cola_enc, hist_enc, Intentos, puestoEnRenotificacion, puerto);
+        for(String valor:cola_enc){
+            String dni_enc = this.encriptador.encriptar(valor);
+            colaIng.addCliente(dni_enc);
+        }
+        for (String valor_hist:hist_enc){
+            String dni_enc = this.encriptador.encriptar(valor_hist);
+            historial.IngresoHistorial(dni_enc);
+        }
     }
     
     //--- Getters y Setters ---
@@ -129,6 +139,10 @@ public class Servidor extends Thread{
 
     public void setEstado(int estado) {
         this.estado = estado;
+    }
+    
+    public IEncripta getEncriptador (){
+        return this.encriptador;
     }
     
     //--- Conexion ---
@@ -238,6 +252,7 @@ public class Servidor extends Thread{
         while(pausado)
             wait();
         this.colaIng.nuevoIngreso(dni);
+        System.out.println("dni encriptado que guardo el servidor: "+dni);
         ColaIngreso cola_img = new ColaIngreso();
         for (String dni_enc: colaIng){
             String dni_des = this.encriptador.desencriptar(dni_enc);
@@ -393,7 +408,7 @@ public class Servidor extends Thread{
             Servidor servidor;
             
             // Si se proporcionan cifrado y llave
-            if (args.length >= 4) {
+            //if (args.length >= 4) {
                 String cifrado = args[2];
                 String llave_str = args[3];
                 servidor = new Servidor(puerto, estado, cifrado, llave_str);
@@ -403,9 +418,10 @@ public class Servidor extends Thread{
                     String persistencia = args[4];
                     servidor.gestorps.tipoArchivo(persistencia,puerto);
                 }
-            } else {
+            //} 
+            /*else {
                 servidor = new Servidor(puerto, estado);
-            }
+            }*/
             
             servidor.start();
             

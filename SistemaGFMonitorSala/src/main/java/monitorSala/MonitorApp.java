@@ -146,7 +146,8 @@ public class MonitorApp {
                     String msg;
                     while ((msg = in.readLine()) != null) {
                         final String mensaje = msg;
-                        String[] partes = mensaje.split("\\|");
+                        String mensaje_decript = this.encriptador.desencriptar(mensaje);
+                        String[] partes = mensaje_decript.split("\\|",3);
                         String dni = partes[0];
                         String puesto = partes[1];
                     

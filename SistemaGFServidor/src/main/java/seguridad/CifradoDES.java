@@ -22,9 +22,9 @@ public class CifradoDES implements IEncripta{
     
     public CifradoDES (SecretKey llave){
         try {
-            cifrado = Cipher.getInstance("DES/CBC/NoPadding");
+            cifrado = Cipher.getInstance("DES/CBC/PKCS5Padding");
             this.llave = llave;
-            byte[] ivBytes = Arrays.copyOf(this.llave.getEncoded(), 16);
+            byte[] ivBytes = Arrays.copyOf(this.llave.getEncoded(), 8);
             this.ivFijo = new IvParameterSpec(ivBytes);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException ex) {
             System.getLogger(CifradoAES.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);

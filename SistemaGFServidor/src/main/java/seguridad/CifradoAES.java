@@ -21,7 +21,7 @@ public class CifradoAES implements IEncripta {
     
     public CifradoAES(SecretKey llave){
         try {
-            cifrado = Cipher.getInstance("AES/CBC/NoPadding");
+            cifrado = Cipher.getInstance("AES/CBC/PKCS5Padding");
             this.llave = llave;
             byte[] ivBytes = Arrays.copyOf(this.llave.getEncoded(), 16);
             this.ivFijo = new IvParameterSpec(ivBytes);
@@ -35,7 +35,7 @@ public class CifradoAES implements IEncripta {
         try {
             cifrado.init(Cipher.ENCRYPT_MODE,this.llave,this.ivFijo);
             byte[] mensaje_encript = cifrado.doFinal(mensaje.getBytes("UTF-8"));
-            return Base64.getEncoder().encodeToString(mensaje_encript);
+            return Base64.getUrlEncoder().encodeToString(mensaje_encript);
         } catch (InvalidKeyException | InvalidAlgorithmParameterException | UnsupportedEncodingException | IllegalBlockSizeException | BadPaddingException ex) {
             System.getLogger(CifradoAES.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
@@ -45,7 +45,7 @@ public class CifradoAES implements IEncripta {
     @Override
     public String desencriptar(String mensaje) {
        try{
-           byte[] mensaje_decript = Base64.getDecoder().decode(mensaje);
+           byte[] mensaje_decript = Base64.getUrlDecoder().decode(mensaje);
            this.cifrado.init(Cipher.DECRYPT_MODE, this.llave, this.ivFijo);
            return new String (this.cifrado.doFinal(mensaje_decript), "UTF-8");    
         } catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | UnsupportedEncodingException ex) {

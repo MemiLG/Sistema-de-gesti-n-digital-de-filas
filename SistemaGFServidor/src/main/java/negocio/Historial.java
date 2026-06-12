@@ -4,7 +4,7 @@ package negocio;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class Historial {
+public class Historial implements Iterable<String>{
     private final ArrayList<String> historial;
     
     public Historial(){
@@ -37,5 +37,10 @@ public class Historial {
     
     public void pasaHistorial(String cliente){
         historial.add(cliente);
+    }
+    
+    @Override
+    public Iterator iterator() {
+        return historial.iterator();
     }
 }

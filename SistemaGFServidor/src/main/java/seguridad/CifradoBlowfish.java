@@ -21,9 +21,9 @@ public class CifradoBlowfish implements IEncripta {
     
     public CifradoBlowfish (SecretKey llave){
         try {
-            cifrado = Cipher.getInstance("Blowfish/CBC/NoPadding");
+            cifrado = Cipher.getInstance("Blowfish/CBC/PKCS5Padding");
             this.llave = llave;
-            byte[] ivBytes = Arrays.copyOf(this.llave.getEncoded(), 16);
+            byte[] ivBytes = Arrays.copyOf(this.llave.getEncoded(), 8);
             this.ivFijo = new IvParameterSpec(ivBytes);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException ex) {
             System.getLogger(CifradoAES.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);

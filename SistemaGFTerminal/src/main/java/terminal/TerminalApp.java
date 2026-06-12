@@ -96,7 +96,7 @@ public class TerminalApp {
                     {
 
                         final String msg = mensaje;
-                        String[] partes = msg.split("\\|");
+                        String[] partes = msg.split("\\|",3);
                         int puertoServidor = Integer.parseInt(partes[0]);
                         System.out.println("Partes del mesnaje:"+partes[0]+" "+partes[1]+" "+partes[2]);
                         this.cifrado = partes[1];
@@ -209,6 +209,9 @@ public class TerminalApp {
         this.vistaActual = vistaTotem;
         String dni = vistaTotem.getDNI();
         dni = this.encriptador.encriptar(dni);
+
+        System.out.println("TERMINAL encriptado: [" + dni + "]");
+        System.out.println("TERMINAL longitud: " + dni.length());
         
         out.println(CARGA_NUEVO_CLIENTE);
         if(out.checkError()){

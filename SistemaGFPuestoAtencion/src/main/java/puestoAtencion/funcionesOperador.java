@@ -80,7 +80,7 @@ public class funcionesOperador
                     {
                         System.out.println("PuestoAtencion: mensaje mandado por el monitor: "+ mensaje);
                         final String msg = mensaje;
-                        String[] partes = msg.split("\\|");
+                        String[] partes = msg.split("\\|",3);
                         int puertoServidor = Integer.parseInt(partes[0]);
                         this.cifrado = partes[1];
                         String llave_str = partes[2];
@@ -181,6 +181,8 @@ public class funcionesOperador
         }
 
         try {
+            System.out.println("PUESTO recibe para desencriptar: [" + mensaje + "]");
+            System.out.println("PUESTO longitud: " + mensaje.length());
             String dni_decript = this.encriptador.desencriptar(mensaje);
             dniActual = Integer.parseInt(dni_decript);
             estadoCliente = 1;

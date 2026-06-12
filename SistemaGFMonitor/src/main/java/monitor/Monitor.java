@@ -118,6 +118,8 @@ public class Monitor implements IControladorMonitor {
     public void iniciaLlave(String cifrado){
         LlaveFactory factory = new LlaveFactory();
         this.llave_cifrado = factory.getLlave(cifrado);
+        System.out.println("MONITOR llave: " + Base64.getEncoder().encodeToString(llave_cifrado.getEncoded()));
+        System.out.println("MONITOR algoritmo: " + llave_cifrado.getAlgorithm());
     }
 
     public String getCifrado() {
