@@ -397,6 +397,14 @@ public class Servidor extends Thread{
     }
     
     public synchronized void inicioRenotificacion(String dni, String numeroInstancia){
+        // Quitar el cliente anterior de este puesto para que solo quede el actual
+        puestoEnRenotificacion.entrySet().removeIf(e -> {
+            if (e.getValue().equals(numeroInstancia)) {
+                Intentos.remove(e.getKey());
+                return true;
+            }
+            return false;
+        });
         puestoEnRenotificacion.put(dni, numeroInstancia);
         Intentos.put(dni, "1");
         

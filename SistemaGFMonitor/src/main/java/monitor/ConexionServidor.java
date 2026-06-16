@@ -8,6 +8,7 @@ import java.net.Socket;
 public class ConexionServidor {
     private int puerto;
     private Socket socket;
+    private Socket socketSincro; // socket dedicado al canal de sincronización (solo lo usa el servidor activo)
     private PrintWriter out;
     private BufferedReader in;
     private int estado; // 0 es si el servidor esta inactivo (roto), 1 si es el servidor activo y 2 si es el pasivo.
@@ -15,6 +16,14 @@ public class ConexionServidor {
     public ConexionServidor(int puerto, Socket socket) {
         this.puerto = puerto;
         this.socket = socket;
+    }
+
+    public Socket getSocketSincro() {
+        return socketSincro;
+    }
+
+    public void setSocketSincro(Socket socketSincro) {
+        this.socketSincro = socketSincro;
     }
 
     public int getPuerto() {

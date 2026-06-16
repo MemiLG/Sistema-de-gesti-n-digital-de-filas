@@ -54,6 +54,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
         jLabelEnFila = new javax.swing.JLabel();
+        jLabelMaximo = new javax.swing.JLabel();
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -152,6 +153,12 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         jLabelEspera.setText("Espera: 30s");
         jLabelEspera.setVisible(false);
 
+        jLabelMaximo.setFont(new java.awt.Font("Hind Siliguri Medium", 1, 14)); // NOI18N
+        jLabelMaximo.setForeground(new java.awt.Color(180, 30, 30));
+        jLabelMaximo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelMaximo.setText("Máximo de llamados alcanzado");
+        jLabelMaximo.setVisible(false);
+
         jTextField1.setEditable(false);
         jTextField1.setBackground(new java.awt.Color(245, 240, 233));
         jTextField1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -170,6 +177,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabelEspera, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabelMaximo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jButtonLlamarSiguiente, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -185,7 +193,9 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabelEspera, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabelMaximo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jButtonReLlammado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButtonLlamarSiguiente, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -322,6 +332,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
     public void reiniciarBotonRenotificar() {
         jButtonReLlammado.setText("Volver a llamar");
         jButtonReLlammado.setEnabled(true);
+        jLabelMaximo.setVisible(false);
     }
     /**
      * Inicia el timer de bloqueo
@@ -371,7 +382,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
      */
     public void desactivarBotonRenotar() {
         jButtonReLlammado.setEnabled(false);
-        jButtonReLlammado.setText("Máximo alcanzado");
+        jLabelMaximo.setVisible(true);
     }
     
     /**
@@ -431,6 +442,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabelEspera;
+    private javax.swing.JLabel jLabelMaximo;
     private javax.swing.JLabel jLabelEnFila;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

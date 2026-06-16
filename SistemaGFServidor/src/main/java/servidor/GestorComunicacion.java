@@ -62,18 +62,25 @@ public class GestorComunicacion implements Runnable {
                     this.rol=1;
                 }
                 case "MONITORSINCRO" ->{
-                    servidor.agregarMonitorServidor(this);
-                    this.rol = 0;
+                    servidor.agregaMonitorSincronizacion(this);
+                    this.rol = 1;
                 }
             }
             while (ejecutando){
                 String funcion = in.readLine();
-                if (funcion != null){ 
+                if (funcion != null){
+                    // El servidor pasivo recibe operaciones de sincronización (con sus datos) y las replica
+                    if (funcion.startsWith("SYNC_")){
+                        try{
+                            aplicarSincronizacion(funcion);
+                        }catch (InterruptedException e){
+                            System.getLogger(GestorComunicacion.class.getName()).log(System.Logger.Level.ERROR, "Error al sincronizar", e);
+                        }
+                        continue;
+                    }
                     switch (funcion){
                         case CARGA_NUEVO_CLIENTE ->{
                             try{
-                                if (servidor.getEstado() == 1)
-                                    servidor.mandaFuncionesMonitor(funcion);
                                 String num = in.readLine();
                                 String estado = servidor.verificarCliente(num);
                                 if (estado.equals(CLIENTE_YA_EXISTE) && servidor.getEstado() == 1){
@@ -82,6 +89,7 @@ public class GestorComunicacion implements Runnable {
                                     if (estado.equals(CLIENTE_VERIFICADO)){
                                         servidor.cargarNuevoCliente(num);
                                         if (servidor.getEstado() == 1){
+                                            servidor.mandaFuncionesMonitor(SYNC_CARGA + "|" + num);
                                             servidor.mandaTerminal(CLIENTE_CARGADO, this.numeroInstancia);
                                             servidor.notificarTamanoColaATodosLosPuestos();
                                         }
@@ -93,16 +101,16 @@ public class GestorComunicacion implements Runnable {
                         }
                         case LLAMAR_SIGUIENTE ->{
                             try{
-                                if (servidor.getEstado() == 1)
-                                    servidor.mandaFuncionesMonitor(funcion);
                                 String siguiente_dni = servidor.siguienteEnCola();
                                 if (siguiente_dni != null){
-                                    out.println(siguiente_dni); 
+                                    out.println(siguiente_dni);
                                     String clienteHistorial = siguiente_dni+" "+this.numeroInstancia;
                                     servidor.cargaHistorial(clienteHistorial);
                                     servidor.inicioRenotificacion(siguiente_dni, this.numeroInstancia);
-                                    if (servidor.getEstado() == 1)
+                                    if (servidor.getEstado() == 1){
+                                        servidor.mandaFuncionesMonitor(SYNC_SIGUIENTE + "|" + this.numeroInstancia);
                                         servidor.mandaMonitor(siguiente_dni, this.numeroInstancia);
+                                    }
                                 }
                                 else {
                                     if (servidor.getEstado() == 1)
@@ -116,8 +124,6 @@ public class GestorComunicacion implements Runnable {
                         }
                         case RENOVAR_NOTIFICACION ->{
                             try{
-                                if (servidor.getEstado() == 1)
-                                    servidor.mandaFuncionesMonitor(funcion);
                                 String dni_renotif = in.readLine();
                                 System.out.println("entra en renotificacion" + dni_renotif);
                                 String dni_renotif_enc = servidor.getEncriptador().encriptar(dni_renotif);
@@ -126,8 +132,10 @@ public class GestorComunicacion implements Runnable {
                                 if (estado != -1){
                                     servidor.cambiaHistorial(dni_renotif_entero, estado);
                                     servidor.modificarEstructurasRenotificacion(dni_renotif_enc, this.numeroInstancia);
-                                    if (servidor.getEstado() == 1)
+                                    if (servidor.getEstado() == 1){
+                                        servidor.mandaFuncionesMonitor(SYNC_RENOTIFICAR + "|" + dni_renotif_enc + "|" + this.numeroInstancia);
                                         servidor.mandaMonitor(dni_renotif_enc, this.numeroInstancia);
+                                    }
                                 }
                             }catch (InterruptedException e){
                                 JOptionPane.showMessageDialog(null,"No se pudo renovar la notificacion","Error", JOptionPane.ERROR_MESSAGE);
@@ -174,6 +182,43 @@ public class GestorComunicacion implements Runnable {
         }
     }
     
+    /**
+     * Replica en el servidor pasivo una operación que ejecutó el servidor activo.
+     * El mensaje es autocontenido (trae los datos necesarios), así que no se lee nada
+     * más del socket ni se notifica a clientes (el pasivo no tiene clientes propios).
+     */
+    private void aplicarSincronizacion(String funcion) throws InterruptedException {
+        String[] partes = funcion.split("\\|");
+        switch (partes[0]) {
+            case SYNC_CARGA -> {
+                // partes[1] = DNI encriptado
+                if (partes.length >= 2)
+                    servidor.cargarNuevoCliente(partes[1]);
+            }
+            case SYNC_SIGUIENTE -> {
+                // partes[1] = numero de puesto que llamó
+                if (partes.length >= 2) {
+                    String dni = servidor.siguienteEnCola();
+                    if (dni != null) {
+                        servidor.cargaHistorial(dni + " " + partes[1]);
+                        servidor.inicioRenotificacion(dni, partes[1]);
+                    }
+                }
+            }
+            case SYNC_RENOTIFICAR -> {
+                // partes[1] = DNI encriptado, partes[2] = numero de puesto
+                if (partes.length >= 3) {
+                    String dniEntero = partes[1] + " " + partes[2];
+                    int pos = servidor.verificaHistorial(dniEntero);
+                    if (pos != -1) {
+                        servidor.cambiaHistorial(dniEntero, pos);
+                        servidor.modificarEstructurasRenotificacion(partes[1], partes[2]);
+                    }
+                }
+            }
+        }
+    }
+
     public void enviarMensaje(String mensaje){
         out.println(mensaje);
     }

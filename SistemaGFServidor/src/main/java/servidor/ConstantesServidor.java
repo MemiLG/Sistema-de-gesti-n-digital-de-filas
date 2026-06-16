@@ -19,4 +19,8 @@ public class ConstantesServidor {
     public static final String CAMBIA_ESTADO_ACTIVO = "CAMBIA_ESTADO_ACTIVO";
     public static final String CERRAR_SERVIDOR = "CERRAR_SERVIDOR";
     public static final String ESTADO_RENOTIFICACION = "ESTADO_RENOTIFICACION";
+    // Mensajes de sincronización activo -> monitor -> pasivo (incluyen los datos de la operación)
+    public static final String SYNC_CARGA = "SYNC_CARGA";
+    public static final String SYNC_SIGUIENTE = "SYNC_SIGUIENTE";
+    public static final String SYNC_RENOTIFICAR = "SYNC_RENOTIFICAR";
 }

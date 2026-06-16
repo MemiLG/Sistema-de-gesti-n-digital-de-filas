@@ -8,10 +8,12 @@ import servidor.ConstantesServidor;
 public class Echo extends Thread {
     private BufferedReader in;
     private Monitor monitor;
-    
-    public Echo(BufferedReader in, Monitor monitor){
+    private int puerto;
+
+    public Echo(BufferedReader in, Monitor monitor, int puerto){
         this.in = in;
         this.monitor = monitor;
+        this.puerto = puerto;
     }
 
     @Override
@@ -23,19 +25,26 @@ public class Echo extends Thread {
                     monitor.resetearFallos();
                 }
             }
-        }catch(SocketTimeoutException e){
-            if(!Thread.currentThread().isInterrupted() && monitor.estaCerrando()){
-                System.out.println("Echo cierra por servidor caido");
-                monitor.servidorCaido();
+            // readLine() devolvió null: el servidor cerró la conexión (EOF) => probablemente caído
+            if (!Thread.currentThread().isInterrupted() && !monitor.estaCerrando()){
+                System.out.println("Echo cierra por servidor caido (fin de stream)");
+                monitor.servidorCaido(puerto);
             }
-            else 
+            else
+                System.out.println("Echo cierra por llamado del monitor(para cerrar normalmente)");
+        }catch(SocketTimeoutException e){
+            if(!Thread.currentThread().isInterrupted() && !monitor.estaCerrando()){
+                System.out.println("Echo cierra por servidor caido (timeout)");
+                monitor.servidorCaido(puerto);
+            }
+            else
                 System.out.println("Echo cierra por llamado del monitor(para cerrar normalmente)");
         }catch(IOException e){
-            if (!Thread.currentThread().isInterrupted()&& monitor.estaCerrando()){
+            if (!Thread.currentThread().isInterrupted() && !monitor.estaCerrando()){
                 System.out.println("Echo cierra por servidor caido");
-                monitor.servidorCaido();
+                monitor.servidorCaido(puerto);
             }
-            else 
+            else
                 System.out.println("Echo cierra por llamado del monitor(para cerrar normalmente)");
         }
     }

@@ -123,6 +123,38 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Replica el archivo de persistencia más reciente entre el servidor principal (1234)
+     * y el secundario (1235) hacia el otro, para que ambos arranquen con el mismo estado.
+     * El más reciente (por fecha de modificación) gana, de modo que no se pierden datos
+     * aunque en la sesión anterior haya ocurrido un failover.
+     */
+    private void sincronizarArchivoPersistencia(String persistencia) {
+        String ext = switch (persistencia) {
+            case "XML" -> "xml";
+            case "JSON" -> "json";
+            default -> "txt";
+        };
+        java.io.File f1234 = new java.io.File("estadoSistema_1234." + ext);
+        java.io.File f1235 = new java.io.File("estadoSistema_1235." + ext);
+        try {
+            if (f1234.exists() && f1235.exists()) {
+                if (f1234.lastModified() >= f1235.lastModified())
+                    java.nio.file.Files.copy(f1234.toPath(), f1235.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                else
+                    java.nio.file.Files.copy(f1235.toPath(), f1234.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            } else if (f1234.exists()) {
+                java.nio.file.Files.copy(f1234.toPath(), f1235.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            } else if (f1235.exists()) {
+                java.nio.file.Files.copy(f1235.toPath(), f1234.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            }
+            // Si ninguno existe, ambos arrancan vacíos (también es un estado consistente).
+        } catch (java.io.IOException ex) {
+            // Si la copia falla, el secundario arrancará con su propio archivo; no es crítico.
+            logger.log(java.util.logging.Level.WARNING, "No se pudo sincronizar el archivo de persistencia", ex);
+        }
+    }
+
     private void jButtonIniciarActionPerformed(java.awt.event.ActionEvent evt) {
         jButtonIniciar.setEnabled(false);
 
@@ -137,6 +169,11 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
                 String classpath = System.getProperty("java.class.path");
                 String javaHome = System.getProperty("java.home");
                 String javaExe = javaHome + java.io.File.separator + "bin" + java.io.File.separator + "java";
+
+                // El secundario debe arrancar con los mismos datos persistidos que el principal.
+                // Se replica el archivo de persistencia más reciente entre 1234 y 1235 al otro,
+                // así ambos servidores cargan el mismo estado inicial.
+                sincronizarArchivoPersistencia(persistencia);
 
                 ProcessBuilder pb1 = new ProcessBuilder(
                     javaExe, "-cp", classpath,

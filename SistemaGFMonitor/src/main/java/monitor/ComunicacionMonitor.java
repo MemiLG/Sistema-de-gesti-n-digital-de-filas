@@ -49,8 +49,7 @@ public class ComunicacionMonitor extends Thread {
             while(ejecutando){
                 String mensajeCaida = in.readLine();
                 if (mensajeCaida != null && mensajeCaida.equals("SERVIDOR_CAIDO")){
-                    monitor.setContFallos(3);
-                    monitor.servidorCaido();
+                    monitor.servidorCaido(monitor.getPuertoActivo());
                 }
             }
         } catch(IOException e){}

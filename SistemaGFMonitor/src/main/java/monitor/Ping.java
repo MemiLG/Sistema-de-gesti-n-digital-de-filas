@@ -5,23 +5,27 @@ import java.io.PrintWriter;
 import servidor.ConstantesServidor;
 
 public class Ping extends Thread{
-    
+
     private PrintWriter out;
     private boolean canalSano = true;
     private Monitor monitor;
-    
-    public Ping(PrintWriter out){
+    private int puerto;
+
+    public Ping(PrintWriter out, Monitor monitor, int puerto){
         this.out = out;
+        this.monitor = monitor;
+        this.puerto = puerto;
     }
 
     @Override
     public void run() {
         try{
-            while(canalSano){
+            while(canalSano && !isInterrupted()){
                 out.println(ConstantesServidor.PING);
                 if (out.checkError()) {
                     canalSano = false;
-                    monitor.servidorCaido();
+                    if (!isInterrupted() && !monitor.estaCerrando())
+                        monitor.servidorCaido(puerto);
                 }
                 if (canalSano)
                     Thread.sleep(3000);
