@@ -40,7 +40,7 @@ public class GestorPS {
     }
 
 
-    public void cargaEstadoInicial(ColaIngreso colaIng, Historial historial, HashMap<String,String> intentosRenotificacion, HashMap<String,String> puestoEnRenotificacion, Integer puerto) 
+    public void cargaEstadoInicial(ColaIngreso colaIng, Historial historial, HashMap<String,String> intentosRenotificacion, HashMap<String,String> puestoEnRenotificacion, String nombre)
     {
         if (colaIng == null) 
         {
@@ -54,7 +54,7 @@ public class GestorPS {
         
         System.out.println("ESTADI INICIAL");
         String tipoAlmacenamiento = Configuracion.getFormatoAlmacenamiento();
-        this.adminPersistencia = new AdministradorPersistencia(tipoAlmacenamiento, puerto);
+        this.adminPersistencia = new AdministradorPersistencia(tipoAlmacenamiento, nombre);
         EstadoSistema estado = adminPersistencia.cargarEstadoSistema();
 
         if (estado != null){
@@ -127,13 +127,13 @@ public class GestorPS {
         }
     }
 
-    public void tipoArchivo(String tipo, Integer puerto) 
+    public void tipoArchivo(String tipo, String nombre)
     {
         try 
         {
             System.out.println("TIPO DE ARCHIVO");
             Configuracion.setFormatoAlmacenamiento(tipo);
-            this.adminPersistencia = new AdministradorPersistencia(tipo, puerto); 
+            this.adminPersistencia = new AdministradorPersistencia(tipo, nombre);
             
         } catch (Exception e) {
             System.err.println(e.getMessage());

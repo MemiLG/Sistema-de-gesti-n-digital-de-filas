@@ -6,9 +6,9 @@ import archivo.GestorXML;
 public class XMLFactory implements TipoAlmacenamientoFactory {
 
     @Override
-    public GestorArchivo crearGestor(int puerto) 
+    public GestorArchivo crearGestor(String nombre)
     {
-        return new GestorXML(puerto); 
+        return new GestorXML(nombre);
     }
 
 }

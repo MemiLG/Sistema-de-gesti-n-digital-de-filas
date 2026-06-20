@@ -5,6 +5,7 @@
 package vistas;
 
 import monitor.Monitor;
+import monitor.GestorConfiguracion;
 
 
 /**
@@ -135,8 +136,8 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
             case "JSON" -> "json";
             default -> "txt";
         };
-        java.io.File f1234 = new java.io.File("estadoSistema_1234." + ext);
-        java.io.File f1235 = new java.io.File("estadoSistema_1235." + ext);
+        java.io.File f1234 = new java.io.File("estadoSistema_Servidor1." + ext);
+        java.io.File f1235 = new java.io.File("estadoSistema_Servidor2." + ext);
         try {
             if (f1234.exists() && f1235.exists()) {
                 if (f1234.lastModified() >= f1235.lastModified())
@@ -163,6 +164,10 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
                 String cifrado = (String) jComboBoxEncriptacion.getSelectedItem();
                 String persistencia = (String) jComboBoxPersistencia.getSelectedItem();
 
+                GestorConfiguracion config = new GestorConfiguracion();
+                int puertoPrincipal = config.getPuertoPrincipal();
+                int puertoSecundario = config.getPuertoSecundario();
+
                 monitor.setCifrado(cifrado);
                 monitor.iniciaLlave(cifrado);
 
@@ -170,15 +175,12 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
                 String javaHome = System.getProperty("java.home");
                 String javaExe = javaHome + java.io.File.separator + "bin" + java.io.File.separator + "java";
 
-                // El secundario debe arrancar con los mismos datos persistidos que el principal.
-                // Se replica el archivo de persistencia más reciente entre 1234 y 1235 al otro,
-                // así ambos servidores cargan el mismo estado inicial.
                 sincronizarArchivoPersistencia(persistencia);
 
                 ProcessBuilder pb1 = new ProcessBuilder(
                     javaExe, "-cp", classpath,
                     "servidor.Servidor",
-                    "1234", "PRINCIPAL",
+                    String.valueOf(puertoPrincipal), "PRINCIPAL",
                     monitor.getCifrado(),
                     monitor.getLlaveString(),
                     persistencia
@@ -189,7 +191,7 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
                 ProcessBuilder pb2 = new ProcessBuilder(
                     javaExe, "-cp", classpath,
                     "servidor.Servidor",
-                    "1235", "SECUNDARIO",
+                    String.valueOf(puertoSecundario), "SECUNDARIO",
                     monitor.getCifrado(),
                     monitor.getLlaveString(),
                     persistencia
@@ -201,10 +203,10 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
                 Thread.sleep(2000);
 
                 // Conectar el monitor a los servidores y empezar a escuchar clientes
-                monitor.agregarServidor(1234, 1);
-                monitor.agregarServidor(1235, 2);
-                monitor.setPuertoActivo(1234);
-                monitor.iniciaConexionServidor(1234);
+                monitor.agregarServidor(puertoPrincipal, 1);
+                monitor.agregarServidor(puertoSecundario, 2);
+                monitor.setPuertoActivo(puertoPrincipal);
+                monitor.iniciaConexionServidor(puertoPrincipal);
                 monitor.iniciaConexionApliaciones();
                 monitor.establecerProcesos(procesoPrincipal, procesoSecundario);
 

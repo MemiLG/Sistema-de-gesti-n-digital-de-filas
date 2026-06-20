@@ -101,7 +101,8 @@ public class Servidor extends Thread{
         
         ColaIngreso cola_enc = new ColaIngreso();
         Historial hist_enc = new Historial();
-        gestorps.cargaEstadoInicial(cola_enc, hist_enc, Intentos, puestoEnRenotificacion, puerto);
+        String nombreServidor = (estado == 1) ? "Servidor1" : "Servidor2";
+        gestorps.cargaEstadoInicial(cola_enc, hist_enc, Intentos, puestoEnRenotificacion, nombreServidor);
         for(String valor:cola_enc){
             String dni_enc = this.encriptador.encriptar(valor);
             colaIng.addCliente(dni_enc);
@@ -480,7 +481,8 @@ public class Servidor extends Thread{
                 // Si también se proporciona persistencia, configurarla
                 if (args.length >= 5) {
                     String persistencia = args[4];
-                    servidor.gestorps.tipoArchivo(persistencia,puerto);
+                    String nombreServidor = rol.equalsIgnoreCase("PRINCIPAL") ? "Servidor1" : "Servidor2";
+                    servidor.gestorps.tipoArchivo(persistencia, nombreServidor);
                 }
             //} 
             /*else {

@@ -141,6 +141,7 @@ public class PanelPuestodeOperacion extends javax.swing.JFrame {
         jButtonReLlammado.setForeground(new java.awt.Color(245, 240, 233));
         jButtonReLlammado.setText("Volver a llamar ");
         jButtonReLlammado.setBorderPainted(false);
+        jButtonReLlammado.setEnabled(false);
         jButtonReLlammado.addActionListener(this::jButton2ActionPerformed);
 
         jLabel5.setFont(new java.awt.Font("Hind Siliguri Medium", 0, 14)); // NOI18N

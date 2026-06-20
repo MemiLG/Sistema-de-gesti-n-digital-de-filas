@@ -5,10 +5,9 @@ import archivo.GestorJSON;
 public class JsonFactory implements TipoAlmacenamientoFactory {
 
     @Override
-    public GestorArchivo crearGestor(int puerto) 
+    public GestorArchivo crearGestor(String nombre)
     {
-    
-        return new GestorJSON(puerto); 
+        return new GestorJSON(nombre);
     }
 
 }

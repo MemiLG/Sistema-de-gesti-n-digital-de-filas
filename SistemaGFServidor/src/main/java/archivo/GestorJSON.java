@@ -16,8 +16,8 @@ public class GestorJSON implements GestorArchivo {
     private final String archivojson;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public GestorJSON(int id_servidor) {
-        this.archivojson = "estadoSistema_" + id_servidor + ".json";
+    public GestorJSON(String nombre) {
+        this.archivojson = "estadoSistema_" + nombre + ".json";
     }
 
     @Override

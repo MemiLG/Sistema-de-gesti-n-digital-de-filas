@@ -14,9 +14,9 @@ public class AdministradorPersistencia {
 
     private GestorArchivo gestorArchivo;
     private String tipoAlmacenamiento;
-    private int id_servidor;
+    private String id_servidor;
 
-    public AdministradorPersistencia(String tipo, int id_servidor) 
+    public AdministradorPersistencia(String tipo, String id_servidor)
     {
         this.tipoAlmacenamiento = tipo;
         this.id_servidor = id_servidor;
@@ -66,7 +66,7 @@ public class AdministradorPersistencia {
     
     }
 
-    public Integer getIdServidor() {
+    public String getIdServidor() {
         return id_servidor;
     }
 

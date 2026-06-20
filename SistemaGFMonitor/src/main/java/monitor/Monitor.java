@@ -131,7 +131,7 @@ public class Monitor implements IControladorMonitor {
     }
     
     public void setTipoPersistencia(String tipo) {
-        gestorPS.tipoArchivo(tipo, this.puertoActivo);
+        gestorPS.tipoArchivo(tipo, "Servidor1");
     }
     
     // --- Conexiones ---

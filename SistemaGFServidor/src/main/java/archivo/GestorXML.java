@@ -14,8 +14,8 @@ public class GestorXML implements GestorArchivo {
 
     private final String archivoxml;
 
-    public GestorXML(int id_servidor) {
-        this.archivoxml = "estadoSistema_" + id_servidor + ".xml";
+    public GestorXML(String nombre) {
+        this.archivoxml = "estadoSistema_" + nombre + ".xml";
     }
 
     @Override

@@ -14,8 +14,8 @@ public class GestorTextoPlano implements GestorArchivo {
 
     private final String archivotxt;
 
-    public GestorTextoPlano(int id_servidor) {
-        this.archivotxt = "estadoSistema_" + id_servidor + ".txt";
+    public GestorTextoPlano(String nombre) {
+        this.archivotxt = "estadoSistema_" + nombre + ".txt";
     }
 
 
