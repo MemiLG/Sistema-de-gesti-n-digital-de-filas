@@ -105,6 +105,7 @@ public class GestorComunicacion implements Runnable {
                                 if (siguiente_dni != null){
                                     out.println(siguiente_dni);
                                     String clienteHistorial = siguiente_dni+" "+this.numeroInstancia;
+                                    servidor.finalizarClienteActualEnHistorial(this.numeroInstancia);
                                     servidor.cargaHistorial(clienteHistorial);
                                     servidor.inicioRenotificacion(siguiente_dni, this.numeroInstancia);
                                     if (servidor.getEstado() == 1){
@@ -198,6 +199,7 @@ public class GestorComunicacion implements Runnable {
             case SYNC_SIGUIENTE -> {
                 // partes[1] = numero de puesto que llamó
                 if (partes.length >= 2) {
+                    servidor.finalizarClienteActualEnHistorial(partes[1]);
                     String dni = servidor.siguienteEnCola();
                     if (dni != null) {
                         servidor.cargaHistorial(dni + " " + partes[1]);

@@ -1,9 +1,12 @@
 package monitor;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -36,8 +39,10 @@ public class Monitor implements IControladorMonitor {
     private ServerSocket serverSocket;
     private int puertoMonitor = 2345;
     private boolean cerrando = false; // true solo cuando el monitor se está apagando intencionalmente
-    private Process procesoPrincipal;
-    private Process procesoSecundario;
+    private final HashMap<Integer,Process> procesos = new HashMap<>(); // procesos servidor por puerto
+    private int puertoPrincipal;
+    private int puertoSecundario;
+    private String persistencia;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Servidor.class.getName());
     private SecretKey llave_cifrado;
     private String cifrado;
@@ -131,7 +136,13 @@ public class Monitor implements IControladorMonitor {
     }
     
     public void setTipoPersistencia(String tipo) {
+        this.persistencia = tipo;
         gestorPS.tipoArchivo(tipo, "Servidor1");
+    }
+
+    public void setPuertosConfig(int puertoPrincipal, int puertoSecundario) {
+        this.puertoPrincipal = puertoPrincipal;
+        this.puertoSecundario = puertoSecundario;
     }
     
     // --- Conexiones ---
@@ -284,6 +295,10 @@ public class Monitor implements IControladorMonitor {
 
         try {
             this.cerrando = true;
+            // avisar a las apps cliente que cierren su ventana
+            for (ComunicacionMonitor puesto : puestosdeAtencion) puesto.enviarCierre();
+            for (ComunicacionMonitor terminal : terminales) terminal.enviarCierre();
+            if (this.monitordeSala != null) this.monitordeSala.enviarCierre();
             this.hiloPing.interrupt();
             this.hiloEcho.interrupt();
             this.sincro.interrupt();
@@ -310,10 +325,9 @@ public class Monitor implements IControladorMonitor {
         } catch (IOException e) {
             logger.log(java.util.logging.Level.SEVERE, "Error al cerrar conexion con servidor", e);
         }
-        if (procesoPrincipal != null && procesoPrincipal.isAlive())
-            procesoPrincipal.destroy();
-        if (procesoSecundario != null && procesoSecundario.isAlive())
-            procesoSecundario.destroy();
+        for (Process p : procesos.values()) {
+            if (p != null && p.isAlive()) p.destroy();
+        }
         System.exit(0);
     }
     
@@ -351,7 +365,86 @@ public class Monitor implements IControladorMonitor {
 
     @Override
     public void establecerProcesos(Process procesoPrincipal, Process procesoSecundario) {
-        this.procesoPrincipal = procesoPrincipal;
-        this.procesoSecundario = procesoSecundario;
+        // Se indexan por puerto (setPuertosConfig debe haberse llamado antes).
+        this.procesos.put(this.puertoPrincipal, procesoPrincipal);
+        this.procesos.put(this.puertoSecundario, procesoSecundario);
+    }
+
+    // --- Control manual de servidores desde la ventana de apagado ---
+
+    /**
+     * Apaga el servidor activo (principal) y promueve el pasivo a activo.
+     * Devuelve true si se realizó el failover.
+     */
+    @Override
+    public synchronized boolean apagarServidorPrincipal(){
+        int puertoCaido = this.puertoActivo;
+        // verificar que haya un pasivo para promover
+        boolean hayPasivo = false;
+        for (Integer p : servidores.keySet())
+            if (p != puertoCaido && servidores.get(p).getEstado() == 2){ hayPasivo = true; break; }
+        if (!hayPasivo) return false;
+
+        // apagar realmente el proceso del activo
+        Process proc = procesos.get(puertoCaido);
+        if (proc != null && proc.isAlive()) proc.destroy();
+        procesos.remove(puertoCaido);
+
+        // reutiliza la lógica de failover (promueve el pasivo, reconecta y redirige clientes)
+        servidorCaido(puertoCaido);
+        return true;
+    }
+
+    /**
+     * Lanza un nuevo servidor pasivo en el slot libre, sembrándolo con el estado
+     * actual del servidor activo. Máximo 2 servidores.
+     */
+    @Override
+    public synchronized boolean agregarServidorPasivo(){
+        if (servidores.size() >= 2) return false;
+        int puertoLibre    = (this.puertoActivo == puertoPrincipal) ? puertoSecundario : puertoPrincipal;
+        String nombreLibre  = (puertoLibre == puertoPrincipal) ? "Servidor1" : "Servidor2";
+        String nombreActivo = (this.puertoActivo == puertoPrincipal) ? "Servidor1" : "Servidor2";
+        try {
+            // sembrar el archivo del nuevo pasivo con el estado actual del activo
+            copiarArchivoPersistencia(nombreActivo, nombreLibre);
+            // lanzar el proceso pasivo
+            Process proc = lanzarServidor(puertoLibre, "SECUNDARIO", nombreLibre);
+            procesos.put(puertoLibre, proc);
+            Thread.sleep(2000); // esperar a que levante
+            // conectarlo como pasivo: desde acá recibe la sincronización en vivo
+            agregarServidor(puertoLibre, 2);
+            return true;
+        } catch (IOException | InterruptedException e) {
+            logger.log(java.util.logging.Level.WARNING, "No se pudo agregar el servidor pasivo", e);
+            return false;
+        }
+    }
+
+    private Process lanzarServidor(int puerto, String rol, String nombre) throws IOException {
+        String classpath = System.getProperty("java.class.path");
+        String javaHome = System.getProperty("java.home");
+        String javaExe = javaHome + File.separator + "bin" + File.separator + "java";
+        ProcessBuilder pb = new ProcessBuilder(
+            javaExe, "-cp", classpath,
+            "servidor.Servidor",
+            String.valueOf(puerto), rol,
+            this.cifrado, this.getLlaveString(),
+            this.persistencia, nombre
+        );
+        pb.inheritIO();
+        return pb.start();
+    }
+
+    private void copiarArchivoPersistencia(String origen, String destino) throws IOException {
+        String ext = switch (this.persistencia) {
+            case "XML" -> "xml";
+            case "JSON" -> "json";
+            default -> "txt";
+        };
+        File fo = new File("estadoSistema_" + origen + "." + ext);
+        File fd = new File("estadoSistema_" + destino + "." + ext);
+        if (fo.exists())
+            Files.copy(fo.toPath(), fd.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 }

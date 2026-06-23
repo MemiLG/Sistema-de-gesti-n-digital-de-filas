@@ -13,6 +13,7 @@ import javax.swing.SwingUtilities;
 import negocio.Historial;
 import timbre.SonidoApp;
 import vistas.PanelMonitordeSala;
+import static servidor.ConstantesServidor.CERRAR_APP;
 import seguridad.IEncripta;
 import factorySeguridad.CifradoFactory;
 import java.util.Base64;
@@ -97,15 +98,19 @@ public class MonitorApp {
                         conectar(vistaMonitor, puertoServidor);
 
                     }
-                    while ((mensaje = inMonitor.readLine()) != null) 
+                    while ((mensaje = inMonitor.readLine()) != null)
                     {
 
                         final String msg = mensaje;
+                        if (msg.equals(CERRAR_APP)) {
+                            System.exit(0);
+                        }
                         String[] partes = msg.split("\\|");
                         int puertoServidor = Integer.parseInt(partes[0]);
-                        cerrarConexionMonitor();
+                        // No se cierra la conexión con el monitor: debe quedar abierta para
+                        // recibir futuras redirecciones (cada failover envía un nuevo puerto).
                         conectar(vistaMonitor, puertoServidor);
-                        
+
                     }
                     cerrarConexionMonitor();
                     

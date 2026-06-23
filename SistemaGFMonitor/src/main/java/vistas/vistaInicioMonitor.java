@@ -183,7 +183,7 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
                     String.valueOf(puertoPrincipal), "PRINCIPAL",
                     monitor.getCifrado(),
                     monitor.getLlaveString(),
-                    persistencia
+                    persistencia, "Servidor1"
                 );
                 pb1.inheritIO();
                 Process procesoPrincipal = pb1.start();
@@ -194,7 +194,7 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
                     String.valueOf(puertoSecundario), "SECUNDARIO",
                     monitor.getCifrado(),
                     monitor.getLlaveString(),
-                    persistencia
+                    persistencia, "Servidor2"
                 );
                 pb2.inheritIO();
                 Process procesoSecundario = pb2.start();
@@ -208,6 +208,7 @@ public class vistaInicioMonitor extends javax.swing.JFrame {
                 monitor.setPuertoActivo(puertoPrincipal);
                 monitor.iniciaConexionServidor(puertoPrincipal);
                 monitor.iniciaConexionApliaciones();
+                monitor.setPuertosConfig(puertoPrincipal, puertoSecundario);
                 monitor.establecerProcesos(procesoPrincipal, procesoSecundario);
 
                 monitor.setTipoPersistencia(persistencia);

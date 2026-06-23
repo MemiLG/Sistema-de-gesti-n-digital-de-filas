@@ -2,14 +2,15 @@ package vistas;
 
 @SuppressWarnings({"serial", "this-escape"})
 public class vistaApagarMonitor extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(vistaApagarMonitor.class.getName());
     private IControladorMonitor monitor;
-    
+
     public vistaApagarMonitor(IControladorMonitor monitor) {
-        initComponents();  
+        initComponents();
         this.monitor = monitor;
-    
+
+        // Apagar TODO el sistema (servidores + ventanas de las apps cliente)
         jButton2.addActionListener(e -> {
             jButton2.setEnabled(false); // evitar doble click
             new Thread(() -> {
@@ -17,7 +18,51 @@ public class vistaApagarMonitor extends javax.swing.JFrame {
                 javax.swing.SwingUtilities.invokeLater(() -> dispose());
             }).start();
         });
-    
+
+        // Apagar solo el servidor principal (failover al secundario)
+        jButtonApagarPrincipal.addActionListener(e -> {
+            jButtonApagarPrincipal.setVisible(false);
+            new Thread(() -> {
+                boolean ok = monitor.apagarServidorPrincipal();
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    if (ok) {
+                        javax.swing.JOptionPane.showMessageDialog(this,
+                            "Se apagó el servidor principal. Queda activo el servidor secundario.",
+                            "Servidor principal apagado", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                        jButtonAgregarPasivo.setVisible(true);
+                        jButtonAgregarPasivo.setEnabled(true);
+                    } else {
+                        javax.swing.JOptionPane.showMessageDialog(this,
+                            "No se pudo apagar el servidor principal (no hay un servidor secundario disponible).",
+                            "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                        jButtonApagarPrincipal.setVisible(true);
+                    }
+                });
+            }).start();
+        });
+
+        // Agregar un nuevo servidor pasivo en el slot libre
+        jButtonAgregarPasivo.addActionListener(e -> {
+            jButtonAgregarPasivo.setEnabled(false);
+            new Thread(() -> {
+                boolean ok = monitor.agregarServidorPasivo();
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    if (ok) {
+                        javax.swing.JOptionPane.showMessageDialog(this,
+                            "Se agregó el servidor pasivo.",
+                            "Servidor pasivo agregado", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                        jButtonAgregarPasivo.setVisible(false);
+                        jButtonApagarPrincipal.setVisible(true);
+                    } else {
+                        javax.swing.JOptionPane.showMessageDialog(this,
+                            "No se pudo agregar el servidor pasivo.",
+                            "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                        jButtonAgregarPasivo.setEnabled(true);
+                    }
+                });
+            }).start();
+        });
+
         // por si cierran con la X sin presionar Apagar
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -46,17 +91,20 @@ public class vistaApagarMonitor extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
+        jButtonApagarPrincipal = new javax.swing.JButton();
+        jButtonAgregarPasivo = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(400, 300));
+        setTitle("Monitor");
+        setPreferredSize(new java.awt.Dimension(460, 320));
 
         jPanel1.setLayout(new java.awt.GridLayout(2, 0));
 
         jPanel2.setBackground(new java.awt.Color(245, 240, 233));
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
-        jLabel1.setText("Servidor");
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 20)); // NOI18N
+        jLabel1.setText("Control del Monitor");
         jPanel2.add(jLabel1, new java.awt.GridBagConstraints());
 
         jPanel1.add(jPanel2);
@@ -68,6 +116,17 @@ public class vistaApagarMonitor extends javax.swing.JFrame {
         jButton2.setText("Apagar");
         jPanel3.add(jButton2);
 
+        jButtonApagarPrincipal.setBackground(new java.awt.Color(91, 136, 178));
+        jButtonApagarPrincipal.setForeground(new java.awt.Color(245, 240, 233));
+        jButtonApagarPrincipal.setText("Apagar servidor principal");
+        jPanel3.add(jButtonApagarPrincipal);
+
+        jButtonAgregarPasivo.setBackground(new java.awt.Color(91, 136, 178));
+        jButtonAgregarPasivo.setForeground(new java.awt.Color(245, 240, 233));
+        jButtonAgregarPasivo.setText("Agregar servidor pasivo");
+        jButtonAgregarPasivo.setVisible(false);
+        jPanel3.add(jButtonAgregarPasivo);
+
         jPanel1.add(jPanel3);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
@@ -78,10 +137,12 @@ public class vistaApagarMonitor extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButtonApagarPrincipal;
+    private javax.swing.JButton jButtonAgregarPasivo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     // End of variables declaration//GEN-END:variables
-    
+
 }

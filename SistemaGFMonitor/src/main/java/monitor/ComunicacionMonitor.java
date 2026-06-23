@@ -61,6 +61,11 @@ public class ComunicacionMonitor extends Thread {
         String mensaje = puerto_str+"|"+cifrado+"|"+llave_str;
         out.println(mensaje);
     }
+
+    // Avisa a la app cliente que debe cerrar su ventana (apagado del sistema)
+    public void enviarCierre(){
+        out.println(servidor.ConstantesServidor.CERRAR_APP);
+    }
     
     public void detener(){
         ejecutando = false;

@@ -78,7 +78,7 @@ public class Servidor extends Thread{
         
     }*/
     
-    public Servidor(int puerto, int estado, String cif, String llave_str){
+    public Servidor(int puerto, int estado, String cif, String llave_str, String nombre){
         this.puerto = puerto;
         colaIng = new ColaIngreso();
         historial = new Historial();
@@ -101,8 +101,7 @@ public class Servidor extends Thread{
         
         ColaIngreso cola_enc = new ColaIngreso();
         Historial hist_enc = new Historial();
-        String nombreServidor = (estado == 1) ? "Servidor1" : "Servidor2";
-        gestorps.cargaEstadoInicial(cola_enc, hist_enc, Intentos, puestoEnRenotificacion, nombreServidor);
+        gestorps.cargaEstadoInicial(cola_enc, hist_enc, Intentos, puestoEnRenotificacion, nombre);
         for(String valor:cola_enc){
             String dni_enc = this.encriptador.encriptar(valor);
             colaIng.addCliente(dni_enc);
@@ -132,6 +131,16 @@ public class Servidor extends Thread{
             }
         }
         this.puestoEnRenotificacion = puestosEnc;
+
+        // Los clientes en puestoEnRenotificacion estaban siendo atendidos al apagar;
+        // su entrada en el historial no llegó al archivo (por diseño), así que se
+        // reconstruye en memoria para que "Volver a llamar" siga funcionando.
+        for (Map.Entry<String, String> e : this.puestoEnRenotificacion.entrySet()) {
+            String entrada = e.getKey() + " " + e.getValue();
+            if (historial.buscaHistorial(entrada) == -1) {
+                historial.IngresoHistorial(entrada);
+            }
+        }
     }
     
     //--- Getters y Setters ---
@@ -302,46 +311,61 @@ public class Servidor extends Thread{
     
     
     public synchronized void cargaHistorial(String cliente) throws InterruptedException{
-        while (pausado) 
+        while (pausado)
             wait();
         historial.IngresoHistorial(cliente);
         loggear("AGREGAR_HISTORIAL:" + cliente);
-        Historial hist_img = new Historial();
-        /*for (int i=0; i<historial.getHistorialSize(); i++){
-            String entrada = historial.getPosHistorial(i);
-            String[] partes = entrada.split(" ", 2);
-            String dni_decript = this.encriptador.desencriptar(partes[0]);
-            hist_img.pasaHistorial(dni_decript + " " + partes[1]);
-        }*/
-        for (String entrada:historial){
-            String[] partes = entrada.split(" ",2);
-            if (partes.length < 2) continue;
-            String dni_decript = this.encriptador.desencriptar(partes[0]);
-            hist_img.pasaHistorial(dni_decript + " " + partes[1]);
-        }
-        gestorps.GHPersistencia(hist_img);
+        // La persistencia al archivo ocurre en finalizarClienteActualEnHistorial,
+        // cuando se llama al siguiente cliente (el actual queda "atendido").
     }
     
     public synchronized int verificaHistorial (String cliente){
         return historial.buscaHistorial(cliente);
     }
     
-     public synchronized void cambiaHistorial(String cliente, int pos) throws InterruptedException{
-         while (pausado) 
-             wait();
+    public synchronized void cambiaHistorial(String cliente, int pos) throws InterruptedException{
+        while (pausado)
+            wait();
         historial.eliminaClienteHistorial(pos);
         historial.IngresoHistorial(cliente);
+        loggear("CAMBIAR_HISTORIAL:" + cliente + " " + pos);
+        // La persistencia al archivo ocurre en finalizarClienteActualEnHistorial.
+    }
+    
+    private void persistirHistorialConImagen() {
         Historial hist_img = new Historial();
-        for (int i=0; i<historial.getHistorialSize(); i++){
-            String entrada = historial.getPosHistorial(i);
+        for (String entrada : historial) {
             String[] partes = entrada.split(" ", 2);
+            if (partes.length < 2) continue;
             String dni_decript = this.encriptador.desencriptar(partes[0]);
             hist_img.pasaHistorial(dni_decript + " " + partes[1]);
         }
-         gestorps.GHPersistencia(hist_img);
-         loggear("CAMBIAR_HISTORIAL:" + cliente + " " + pos);
-     }
-    
+        gestorps.GHPersistencia(hist_img);
+    }
+
+    // Llamar ANTES de inicioRenotificacion al presionar "Siguiente":
+    // actualiza la entrada del cliente anterior en el historial (agrega count) y persiste al archivo.
+    public synchronized void finalizarClienteActualEnHistorial(String puesto) throws InterruptedException {
+        while (pausado) wait();
+        String dniEnc = null;
+        String count = "1";
+        for (Map.Entry<String, String> e : puestoEnRenotificacion.entrySet()) {
+            if (e.getValue().equals(puesto)) {
+                dniEnc = e.getKey();
+                count = Intentos.getOrDefault(dniEnc, "1");
+                break;
+            }
+        }
+        if (dniEnc == null) return;
+        String entradaVieja = dniEnc + " " + puesto;
+        int pos = historial.buscaHistorial(entradaVieja);
+        if (pos != -1) {
+            historial.eliminaClienteHistorial(pos);
+            historial.IngresoHistorial(dniEnc + " " + puesto + " " + count);
+        }
+        persistirHistorialConImagen();
+    }
+
     public synchronized void mandaMonitor(String dni, String puesto){
         if (this.monitor == null) return;
         String mensaje = dni + "|" + puesto;
@@ -433,9 +457,17 @@ public class Servidor extends Thread{
             
             if(nuevosIntentos >= 3)
             {
+                // Finalizar en historial con count final antes de borrar de los mapas
+                String entradaVieja = dni + " " + numeroInstancia;
+                int pos = historial.buscaHistorial(entradaVieja);
+                if (pos != -1) {
+                    historial.eliminaClienteHistorial(pos);
+                    historial.IngresoHistorial(dni + " " + numeroInstancia + " " + nuevosIntentos);
+                }
+                persistirHistorialConImagen();
                 Intentos.remove(dni);
                 puestoEnRenotificacion.remove(dni);
-                
+
             } else {
                 Intentos.remove(dni);
                 puestoEnRenotificacion.remove(dni);
@@ -476,15 +508,18 @@ public class Servidor extends Thread{
             //if (args.length >= 4) {
                 String cifrado = args[2];
                 String llave_str = args[3];
-                servidor = new Servidor(puerto, estado, cifrado, llave_str);
-                
+                // El nombre del archivo de estado lo decide el launcher (Monitor) segun el slot/puerto,
+                // independientemente del rol; asi se mantiene estable aunque un pasivo se promueva a activo.
+                String nombre = (args.length >= 6) ? args[5]
+                        : (rol.equalsIgnoreCase("PRINCIPAL") ? "Servidor1" : "Servidor2");
+                servidor = new Servidor(puerto, estado, cifrado, llave_str, nombre);
+
                 // Si también se proporciona persistencia, configurarla
                 if (args.length >= 5) {
                     String persistencia = args[4];
-                    String nombreServidor = rol.equalsIgnoreCase("PRINCIPAL") ? "Servidor1" : "Servidor2";
-                    servidor.gestorps.tipoArchivo(persistencia, nombreServidor);
+                    servidor.gestorps.tipoArchivo(persistencia, nombre);
                 }
-            //} 
+            //}
             /*else {
                 servidor = new Servidor(puerto, estado);
             }*/
